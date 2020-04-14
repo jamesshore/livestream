@@ -1,0 +1,12 @@
+// Copyright (c) 2014 Titanium I.T. LLC. All rights reserved. For license, see "README" or "LICENSE" file.
+"use strict";
+
+module.exports = [
+	"IE 9.0.0 (Windows 7)",
+	"IE 10.0.0 (Windows 7)",
+	"IE 11.0.0 (Windows 7)",
+	"Firefox 41.0.0 (Mac OS X 10.10)",
+	"Chrome 46.0.2490 (Mac OS X 10.10.5)",
+	"Safari 9.0.1 (Mac OS X 10.10.5)",
+	"Mobile Safari 8.0.0 (iOS 8.4)"
+];
