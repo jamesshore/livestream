@@ -1,67 +1,74 @@
-"use strict";
+// Karma configuration
+// Quixote-specific configuration starts with "QUIXOTE:"
 
-module.exports = function(config) {
+(function() {
+	"use strict";
 
-	config.set({
+	var paths = require("./paths.js");
 
-		// base path, that will be used to resolve files and exclude
-		basePath: '../..',
+	module.exports = function(config) {
+		config.set({
 
-		// frameworks to use
-		frameworks: [ 'mocha', 'commonjs' ],
+			// base path, that will be used to resolve files and exclude
+			basePath: '../..',
 
-		urlRoot: '/karma/',
-		proxies: {
-			'/': 'http://localhost:5000/'
-		},
+			// frameworks to use
+			frameworks: ['mocha', 'commonjs'],
 
-		// list of files / patterns to load in the browser
-		files: [
-			'src/lets_code_javascript/client/**/*.js',
-			'src/shared/**/*.js'
-		],
+			// list of files / patterns to load in the browser
+			files: [
+				'src/**/*.js',
+				'vendor/**/*.js',
 
-		// list of files to exclude
-		exclude: [],
+				// QUIXOTE: Serve the CSS file so we can load it in our tests
+				// Mark it `included: false` so Karma doesn't load it automatically
+				{ pattern: 'src/screen.css', included: false }
+			],
 
-		// preprocessors
-		preprocessors: {
-			'src/lets_code_javascript/client/**/*.js': [ 'commonjs' ],
-			'src/shared/**/*.js': [ 'commonjs' ]
-		},
+			// list of files to exclude
+			exclude: [],
 
-		// test results reporter to use
-		// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-		reporters: [ 'dots' ],
+			// preprocess matching files before serving them to the browser
+			// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+			preprocessors: {
+				'src/**/*.js': ['commonjs'],
+				'vendor/**/*.js': ['commonjs']
+			},
 
-		// web server port
-		port: 9876,
+			// test results reporter to use
+			// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
+			reporters: ['dots'],
 
-		// enable / disable colors in the output (reporters and logs)
-		colors: true,
+			// web server port
+			port: 9876,
 
-		// level of logging
-		// possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-		logLevel: config.LOG_INFO,
+			// enable / disable colors in the output (reporters and logs)
+			colors: true,
 
-		// enable / disable watching file and executing tests whenever any file changes
-		autoWatch: false,
+			// level of logging
+			// possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+			logLevel: config.LOG_INFO,
 
-		// Start these browsers, currently available:
-		// - Chrome
-		// - ChromeCanary
-		// - Firefox
-		// - Opera
-		// - Safari (only Mac)
-		// - PhantomJS
-		// - IE (only Windows)
-		browsers: [],
+			// enable / disable watching file and executing tests whenever any file changes
+			autoWatch: false,
 
-		// If browser does not capture in given timeout [ms], kill it
-		captureTimeout: 60000,
+			// Start these browsers, currently available:
+			// - Chrome
+			// - ChromeCanary
+			// - Firefox
+			// - Opera
+			// - Safari (only Mac)
+			// - PhantomJS
+			// - IE (only Windows)
+			browsers: [],
 
-		// Continuous Integration mode
-		// if true, it capture browsers, run tests and exit
-		singleRun: false
-	});
-};
+			// If browser does not capture in given timeout [ms], kill it
+			captureTimeout: 60000,
+
+			// Continuous Integration mode
+			// if true, it capture browsers, run tests and exit
+			singleRun: false
+		});
+	};
+
+}());
