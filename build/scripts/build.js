@@ -17,7 +17,6 @@ const build = new Build({ incrementalDir: `${paths.incrementalDir}/tasks/` });
 
 exports.runAsync = async function(args) {
 	try {
-		global.globals = require("../../src/server/globals");
 		await build.runAsync(args, "✅  BUILD OK ✅");
 		return null;
 	}

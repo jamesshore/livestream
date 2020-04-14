@@ -10,7 +10,6 @@
 const build = require("./build");
 const gaze = require("gaze");
 const pathLib = require("path");
-const jake = require("jake");
 const sh = require("../util/sh");
 
 const BUILD_FILES = [
@@ -110,11 +109,6 @@ function flushCaches() {
 		const nodeModulesPrefix = pathLib.resolve("./node_modules") + "/";
 
 		if (key.startsWith(srcDirPrefix) || key.startsWith(nodeModulesPrefix)) delete require.cache[key];
-	});
-
-	Object.entries(jake.Task).forEach(([ name, task ]) => {
-		if (task.reenable === undefined) return;
-		task.reenable();
 	});
 }
 
