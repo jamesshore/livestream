@@ -13,6 +13,7 @@
     "gaze": "^1.1.3",
     "glob": "^7.1.6",
     "http-server": "^0.12.1",
+    "karma-commonjs": "^1.0.0",
     "minimist": "^1.2.5",
     "mocha": "^7.1.1",
     "semver": "^7.3.2",
