@@ -73,9 +73,7 @@ function runTestsAsync(testFiles) {
 	return new Promise((resolve, reject) => {
 		karmaRunner.run({
 			configFile: path.resolve("build/config/karma.conf.js"),
-			success: resolve,
-			fail: (err) => { reject(new Error(err)); },
-		});
+		}, resolve, (err) => reject(new Error(err)));
 	});
 }
 
