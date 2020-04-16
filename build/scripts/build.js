@@ -8,10 +8,10 @@ const paths = require("../config/paths");
 const lint = require("../util/lint_runner");
 const lintConfig = require("../config/eslint.conf");
 const pathLib = require("path");
-const karmaRunner = require("../util/karma_runner");
-const mochaConfig = require("../config/mocha.conf");
+const karmaRunner = require("simplebuild-karma");
 const shell = require("shelljs"); shell.config.fatal = true;
 const sh = require("../util/sh");
+const path = require("path");
 
 const build = new Build({ incrementalDir: `${paths.incrementalDir}/tasks/` });
 
@@ -39,10 +39,6 @@ build.task("clean", () => {
 	shell.rm("-rf", `${paths.generatedDir}/*`);
 });
 
-build.task("test", async () => {
-	await build.runTasksAsync([ "testCms", "testLcjs", "testJs", "smoketest" ]);
-});
-
 build.task("lint", async () => {
 	let header = "Linting JavaScript: ";
 	let footer = "";
@@ -68,35 +64,18 @@ build.task("lint", async () => {
 	process.stdout.write(footer);
 });
 
-build.incrementalTask("testCms", paths.cmsTestDependencies(), async () => {
-	process.stdout.write("Testing CMS: ");
+build.incrementalTask("test", paths.cmsTestDependencies(), async () => {
+	process.stdout.write("Testing: ");
 	await runTestsAsync(paths.cmsTestFiles());
 });
 
-build.incrementalTask("testLcjs",  paths.lcjsSiteTestDependencies(), async () => {
-	process.stdout.write("Testing letscodejavascript.com: ");
-	await runTestsAsync(paths.lcjsSiteTestFiles());
-});
-
-build.incrementalTask("testJs", paths.jsSiteTestDependencies(), async () => {
-	process.stdout.write("Testing jamesshore.com: ");
-	await runTestsAsync(paths.jsSiteTestFiles());
-});
-
-build.incrementalTask("smoketest", paths.smokeTestDependencies(), async () => {
-	process.stdout.write("Running smoke tests: ");
-	await runTestsAsync(paths.smokeTestFiles());
-});
-
-build.task("logs", async () => {
-	console.log("Opening server logs: .");
-	await sh.runAsync("./heroku.sh", [ "addons:open", "papertrail" ]);
-});
-
-async function runTestsAsync(testFiles) {
-	await karmaRunner.runTestsAsync({
-		files: testFiles,
-		options: mochaConfig,
+function runTestsAsync(testFiles) {
+	return new Promise((resolve, reject) => {
+		karmaRunner.run({
+			configFile: path.resolve("build/config/karma.conf.js"),
+			success: resolve,
+			fail: (err) => { reject(new Error(err)); },
+		});
 	});
 }
 

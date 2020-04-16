@@ -7,7 +7,9 @@
   },
   "description": "",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "simplebuild-karma": "^2.0.0"
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
