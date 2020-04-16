@@ -18,6 +18,7 @@
     "http-server": "^0.12.1",
     "karma": "^5.0.2",
     "karma-commonjs": "^1.0.0",
+    "karma-mocha": "^2.0.0",
     "minimist": "^1.2.5",
     "mocha": "^7.1.1",
     "semver": "^7.3.2",
