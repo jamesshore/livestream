@@ -66,7 +66,7 @@ build.task("lint", async () => {
 
 build.incrementalTask("test", paths.testDependencies(), async () => {
 	process.stdout.write("Testing: ");
-	await runTestsAsync(paths.cmsTestFiles());
+	await runTestsAsync();
 });
 
 function runTestsAsync(testFiles) {
