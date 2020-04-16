@@ -1,1 +1,61 @@
 /* Our CSS file. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.episode {
+}
+
+.episode__button {
+  float: left;
+  width: 20px;
+}
+
+.episode__content {
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-left: 45px;
+}
+
+.episode__title {
+  margin-bottom: 25px;
+}
+
+.episode__description {
+  margin: 0;
+}
+
+
+/* The media object. We use Quixote to test it in `_media_css_test.js`. */
+
+/*
+
+.media:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.media__figure {
+	float: left;
+	margin-right: 10px;
+}
+
+.media__content {
+	overflow: hidden;
+}
+
+*/
+
+/* Our example code also includes a simple JavaScript library for toggling the visibility of an element. */
+/* The .invisible class is used in that example. It's not related to the Quixote tests. */
+/*
+.invisible {
+	visibility: hidden;
+}
+*/
