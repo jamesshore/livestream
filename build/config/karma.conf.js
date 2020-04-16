@@ -1,10 +1,10 @@
 // Karma configuration
 // Quixote-specific configuration starts with "QUIXOTE:"
-
-(function() {
 	"use strict";
 
-	var paths = require("./paths.js");
+(function() {
+
+	let paths = require("./paths.js");
 
 	module.exports = function(config) {
 		config.set({

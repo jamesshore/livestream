@@ -8,7 +8,7 @@ const paths = require("../config/paths");
 const lint = require("../util/lint_runner");
 const lintConfig = require("../config/eslint.conf");
 const pathLib = require("path");
-const mochaRunner = require("../util/mocha_runner");
+const karmaRunner = require("../util/karma_runner");
 const mochaConfig = require("../config/mocha.conf");
 const shell = require("shelljs"); shell.config.fatal = true;
 const sh = require("../util/sh");
@@ -94,7 +94,7 @@ build.task("logs", async () => {
 });
 
 async function runTestsAsync(testFiles) {
-	await mochaRunner.runTestsAsync({
+	await karmaRunner.runTestsAsync({
 		files: testFiles,
 		options: mochaConfig,
 	});

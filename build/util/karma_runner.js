@@ -15,18 +15,19 @@ exports.serve = function(success, fail) {
 	});
 };
 
-exports.runTests = function(requiredBrowsers, success, fail) {
-	const stdout = new CapturedStdout();
+exports.runTestsAsync = function(requiredBrowsers) {
+	// const stdout = new CapturedStdout();
+	return new Promise((resolve, reject) => {
+		runner.run(CONFIG, function(exitCode) {
+			// stdout.restore();
 
-	runner.run(CONFIG, function(exitCode) {
-		stdout.restore();
+			if (exitCode) reject(new Error("Client tests failed"));
+			// const browserMissing = checkRequiredBrowsers(requiredBrowsers, stdout);
+			// if (browserMissing && !process.env.loose) fail("Did not test all supported browsers (use 'loose=true' to suppress error)");
+			// if (stdout.capturedOutput.indexOf("TOTAL: 0 SUCCESS") !== -1) fail("No tests were run!");
 
-		if (exitCode) fail("Client tests failed (to start server, run 'jake karma')");
-		const browserMissing = checkRequiredBrowsers(requiredBrowsers, stdout);
-		if (browserMissing && !process.env.loose) fail("Did not test all supported browsers (use 'loose=true' to suppress error)");
-		if (stdout.capturedOutput.indexOf("TOTAL: 0 SUCCESS") !== -1) fail("No tests were run!");
-
-		success();
+			resolve();
+		});
 	});
 };
 
