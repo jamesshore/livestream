@@ -6,17 +6,12 @@
 }
 
 .episode {
-  padding-right: 25px;
   display: grid;
-  grid-template-columns: 70px 1fr auto;
-  column-gap: 25px;
-  row-gap: 25px;
+  grid-template-columns: 70px 1fr;
 }
 
 .episode__button {
   display: grid;
-  grid-row-start: 1;
-  grid-row-end: 3;
 }
 
 .episode__icon {
@@ -25,18 +20,23 @@
   width: 20px;
 }
 
+.episode__content {
+  padding: 25px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 25px;
+  column-gap: 25px;
+}
+
 .episode__title {
-  margin-top: 25px;
 }
 
 .episode__date {
-  margin-top: 25px;
 }
 
 .episode__description {
-  margin-bottom:25px;
-  grid-column-start: 2;
-  grid-column-end: 4;
+  grid-column-start: 1;
+  grid-column-end: 3;
 }
 
 

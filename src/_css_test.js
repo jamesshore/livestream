@@ -30,9 +30,11 @@ describe("Media Object CSS", function() {
 			  <div class='episode__button' style='background-color:green'>
 			    <img class='episode__icon' src='/base/src/play.png' />
 			  </div>
-		    <div class='episode__title' style='background-color:blue'>Episode Title</div>
-		    <div class='episode__date' style='background-color:yellow'>Fri, 17 Apr ’20</div>
-		    <p class='episode__description' style='background-color:purple'>The episode description.</p>
+			  <div class='episode__content'>
+			    <div class='episode__title' style='background-color:blue'>Episode Title</div>
+			    <div class='episode__date' style='background-color:yellow'>Fri, 17 Apr ’20</div>
+			    <p class='episode__description' style='background-color:purple'>The episode description.</p>
+		    </div>
 			</div>`
 		);
 
