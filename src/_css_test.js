@@ -67,11 +67,11 @@ describe("Media Object CSS", function() {
 
 	/*
 	 * TODO:
-	 * Move episde
+	 * Move episode creation code
 	 * Add the date
 	 * Make the whole element a link
-	 * Semanticize the play button (use `background-image`)?
 	 * Center the play button (use CSS grid? background-position? vertical-align (doesn't work with block elements)?)
+	 * Ensure layout resizes
 	 * Fonts
 	 * Colors
 	 */

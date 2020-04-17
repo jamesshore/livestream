@@ -1,7 +1,7 @@
 Quixote Example
 ===========
 
-This example code was built in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive).
+This example code was used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive).
 
 
 Running the Tests
