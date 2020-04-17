@@ -6,6 +6,8 @@ const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
 
 const WHITESPACE = 25;
+const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
+const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
 
 describe("Media Object CSS", function() {
 
@@ -23,17 +25,17 @@ describe("Media Object CSS", function() {
 
 	function createEpisode() {
 		const container = frame.add(
-			`<div style='width:500px'></div>`
+			`<div style='width: 750px;'></div>`
 		);
 		const episode = container.add(
-			`<div class='episode' style='background-color:red'>
-			  <div class='episode__button' style='background-color:green'>
+			`<div class='episode'>
+			  <div class='episode__button'>
 			    <img class='episode__icon' src='/base/src/play.png' />
 			  </div>
 			  <div class='episode__content'>
-			    <div class='episode__title' style='background-color:blue'>Episode Title</div>
-			    <div class='episode__date' style='background-color:yellow'>Fri, 17 Apr ’20</div>
-			    <p class='episode__description' style='background-color:purple'>The episode description.</p>
+			    <div class='episode__title'>Episode Title</div>
+			    <div class='episode__date'>Fri, 17 Apr ’20</div>
+			    <p class='episode__description'>We end Let’s Code JavaScript with a look at how we avoided using mocks and other test doubles. Although test doubles are useful, they’re not without their problems. But we needed to write unit tests, not integration tests. How did we do it? It’s a tough problem, but we came up with a novel—and practical!—solution.</p>
 		    </div>
 			</div>`
 		);
@@ -58,7 +60,13 @@ describe("Media Object CSS", function() {
 		episode.right.should.equal(container.right);
 	});
 
-	it("has an icon", function() {
+	it("has a white background", function() {
+		const { episode } = createEpisode();
+
+		assertBackgroundColor(episode, CONTENT_BACKGROUND);
+	});
+
+	it("has a button", function() {
 		const { button, icon, episode } = createEpisode();
 
 		button.top.should.equal(episode.top);
@@ -66,6 +74,8 @@ describe("Media Object CSS", function() {
 
 		button.left.should.equal(episode.left);
 		button.width.should.equal(icon.width.plus(WHITESPACE * 2));
+
+		assertBackgroundColor(button, BUTTON_BACKGROUND);
 
 		icon.center.should.equal(button.center);
 		icon.middle.should.equal(button.middle);
@@ -94,15 +104,18 @@ describe("Media Object CSS", function() {
 		description.right.should.equal(episode.right.minus(WHITESPACE));
 	});
 
-
 	/*
 	 * TODO:
-	 * Center the play button
-	 * Ensure layout resizes
 	 * Fonts
-	 * Colors
+	 * Border
+	 * Button hover color
 	 * Make the whole element a link
+	 * Accessibility
 	 */
 
-
 });
+
+
+function assertBackgroundColor(episode, backgroundColor) {
+	assert.equal(episode.getRawStyle("background-color"), backgroundColor);
+}

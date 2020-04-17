@@ -8,10 +8,12 @@
 .episode {
   display: grid;
   grid-template-columns: 70px 1fr;
+  background-color: white;
 }
 
 .episode__button {
   display: grid;
+  background-color: rgb(65, 169, 204);
 }
 
 .episode__icon {
