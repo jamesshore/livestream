@@ -8,7 +8,7 @@
 .episode {
   padding-right: 25px;
   display: grid;
-  grid-template-columns: 120px 1fr auto;
+  grid-template-columns: 70px 1fr auto;
   column-gap: 25px;
   row-gap: 25px;
 }
@@ -22,6 +22,7 @@
 .episode__icon {
   align-self: center;
   justify-self: center;
+  width: 20px;
 }
 
 .episode__title {

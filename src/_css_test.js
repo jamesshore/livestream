@@ -63,7 +63,7 @@ describe("Media Object CSS", function() {
 		button.bottom.should.equal(episode.bottom);
 
 		button.left.should.equal(episode.left);
-		button.width.should.equal(20 + WHITESPACE * 4);
+		button.width.should.equal(icon.width.plus(WHITESPACE * 2));
 
 		icon.center.should.equal(button.center);
 		icon.middle.should.equal(button.middle);
