@@ -19,6 +19,7 @@
 			files: [
 				'src/**/*.js',
 				'vendor/**/*.js',
+				{ pattern: 'src/play.png', included: false },
 
 				// QUIXOTE: Serve the CSS file so we can load it in our tests
 				// Mark it `included: false` so Karma doesn't load it automatically
