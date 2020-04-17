@@ -59,11 +59,14 @@ describe("Media Object CSS", function() {
 	it("has an icon", function() {
 		const { button, icon, episode } = createEpisode();
 
-		button.top.should.equal(episode.top.plus(WHITESPACE));
-		button.left.should.equal(episode.left.plus(WHITESPACE));
-		button.bottom.should.equal(episode.bottom.minus(WHITESPACE));
+		button.top.should.equal(episode.top);
+		button.bottom.should.equal(episode.bottom);
+
+		button.left.should.equal(episode.left);
 		button.width.should.equal(20 + WHITESPACE * 4);
-		// icon.center.should.equal(button.center);
+
+		icon.center.should.equal(button.center);
+		icon.middle.should.equal(button.middle);
 	});
 
 	it("has a title", function() {
@@ -74,7 +77,10 @@ describe("Media Object CSS", function() {
 	});
 
 	it("has a date", function() {
-		const { date } = createEpisode();
+		const { date, title, episode } = createEpisode();
+
+		date.top.should.equal(title.top);
+		date.right.should.equal(episode.right.minus(WHITESPACE));
 	});
 
 	it("has a description", function() {

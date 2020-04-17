@@ -6,29 +6,34 @@
 }
 
 .episode {
-  padding: 25px;
+  padding-right: 25px;
   display: grid;
   grid-template-columns: 120px 1fr auto;
   column-gap: 25px;
   row-gap: 25px;
-  /*grid-template-rows: auto 1fr;*/
-  /*justify-elements: center;*/
 }
 
 .episode__button {
   display: grid;
-  justify-elements: center;
   grid-row-start: 1;
   grid-row-end: 3;
 }
 
 .episode__icon {
+  align-self: center;
+  justify-self: center;
 }
 
 .episode__title {
+  margin-top: 25px;
+}
+
+.episode__date {
+  margin-top: 25px;
 }
 
 .episode__description {
+  margin-bottom:25px;
   grid-column-start: 2;
   grid-column-end: 4;
 }
