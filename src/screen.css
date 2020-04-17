@@ -2,32 +2,35 @@
 
 * {
   box-sizing: border-box;
-}
-
-body {
   margin: 0;
 }
 
 .episode {
+  padding: 25px;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  column-gap: 25px;
+  row-gap: 25px;
+  /*grid-template-rows: auto 1fr;*/
+  /*justify-elements: center;*/
 }
 
 .episode__button {
-  float: left;
-  width: 20px;
+  display: grid;
+  justify-elements: center;
+  grid-row-start: 1;
+  grid-row-end: 3;
 }
 
-.episode__content {
-  padding-top: 25px;
-  padding-bottom: 25px;
-  margin-left: 45px;
+.episode__icon {
 }
 
 .episode__title {
-  margin-bottom: 25px;
 }
 
 .episode__description {
-  margin: 0;
+  grid-column-start: 2;
+  grid-column-end: 4;
 }
 
 

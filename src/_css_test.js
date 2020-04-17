@@ -10,11 +10,6 @@ const WHITESPACE = 25;
 describe("Media Object CSS", function() {
 
 	let frame;
-	let episode;
-	let content;
-	let button;
-	let title;
-	let description;
 
 	before(function(done) {
 		frame = quixote.createFrame({
@@ -24,56 +19,81 @@ describe("Media Object CSS", function() {
 
 	beforeEach(function() {
 		frame.reset();
-		episode = frame.add(
+	});
+
+	function createEpisode() {
+		const container = frame.add(
+			`<div style='width:500px'></div>`
+		);
+		const episode = container.add(
 			`<div class='episode' style='background-color:red'>
-			  <div class='episode__button'>
-			    <img id='icon' src='/base/src/play.png' />
+			  <div class='episode__button' style='background-color:green'>
+			    <img class='episode__icon' src='/base/src/play.png' />
 			  </div>
-			  <div class='episode__content' style='background-color:blue'>
-			    <div class='episode__title'>Episode Title</div>
-			    <p class='episode__description'>The episode description.</p>
-			  </div>
+		    <div class='episode__title' style='background-color:blue'>Episode Title</div>
+		    <div class='episode__date' style='background-color:yellow'>Fri, 17 Apr ’20</div>
+		    <p class='episode__description' style='background-color:purple'>The episode description.</p>
 			</div>`
 		);
 
-		button = frame.get(".episode__button");
-		content = frame.get(".episode__content");
-		title = frame.get(".episode__title");
-		description = frame.get(".episode__description");
+		return {
+			container,
+			episode,
+			button: frame.get(".episode__button"),
+			icon: frame.get(".episode__icon"),
+			title: frame.get(".episode__title"),
+			date: frame.get(".episode__date"),
+			description: frame.get(".episode__description"),
+		};
+	}
+
+	it("fills its container", function() {
+		const { episode, container } = createEpisode();
+
+		episode.top.should.equal(container.top);
+		episode.bottom.should.equal(container.bottom);
+		episode.left.should.equal(container.left);
+		episode.right.should.equal(container.right);
 	});
 
 	it("has an icon", function() {
-		button.top.should.equal(episode.top);
-		button.left.should.equal(episode.left);
-		button.width.should.equal(20);
-	});
+		const { button, icon, episode } = createEpisode();
 
-	it("has a content area", function() {
-		content.top.should.equal(episode.top);
-		content.left.should.equal(button.right.plus(WHITESPACE));
+		button.top.should.equal(episode.top.plus(WHITESPACE));
+		button.left.should.equal(episode.left.plus(WHITESPACE));
+		button.bottom.should.equal(episode.bottom.minus(WHITESPACE));
+		button.width.should.equal(20 + WHITESPACE * 4);
+		// icon.center.should.equal(button.center);
 	});
 
 	it("has a title", function() {
-		title.top.should.equal(content.top.plus(WHITESPACE));
-		title.left.should.equal(content.left);
+		const { title, content, episode, button } = createEpisode();
+
+		title.top.should.equal(episode.top.plus(WHITESPACE));
+		title.left.should.equal(button.right.plus(WHITESPACE));
+	});
+
+	it("has a date", function() {
+		const { date } = createEpisode();
 	});
 
 	it("has a description", function() {
+		const { episode, description, title, button, content } = createEpisode();
+
 		description.top.should.equal(title.bottom.plus(WHITESPACE));
+		description.bottom.should.equal(episode.bottom.minus(WHITESPACE));
 		description.left.should.equal(button.right.plus(WHITESPACE));
-		description.bottom.should.equal(content.bottom.minus(WHITESPACE));
+		description.right.should.equal(episode.right.minus(WHITESPACE));
 	});
 
 
 	/*
 	 * TODO:
-	 * Move episode creation code
-	 * Add the date
-	 * Make the whole element a link
-	 * Center the play button (use CSS grid? background-position? vertical-align (doesn't work with block elements)?)
+	 * Center the play button
 	 * Ensure layout resizes
 	 * Fonts
 	 * Colors
+	 * Make the whole element a link
 	 */
 
 
