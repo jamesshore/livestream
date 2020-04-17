@@ -24,17 +24,16 @@ describe("Media Object CSS", function() {
 
 	beforeEach(function() {
 		frame.reset();
-
 		episode = frame.add(
-			"<div class='episode' style='background-color:red'>" +
-			"  <div class='episode__button'>" +
-			"    <img src='/base/src/icon.svg' />" +
-			"  </div>" +
-			"  <div class='episode__content' style='background-color:blue'>" +
-			"    <div class='episode__title'>Episode Title</div>" +
-			"    <p class='episode__description'>The episode description.</p>" +
-			"  </div>" +
-			"</div>"
+			`<div class='episode' style='background-color:red'>
+			  <div class='episode__button'>
+			    <img id='icon' src='/base/src/play.png' />
+			  </div>
+			  <div class='episode__content' style='background-color:blue'>
+			    <div class='episode__title'>Episode Title</div>
+			    <p class='episode__description'>The episode description.</p>
+			  </div>
+			</div>`
 		);
 
 		button = frame.get(".episode__button");
@@ -66,33 +65,16 @@ describe("Media Object CSS", function() {
 	});
 
 
-	// TODO: Make the whole element a link
+	/*
+	 * TODO:
+	 * Move episde
+	 * Add the date
+	 * Make the whole element a link
+	 * Semanticize the play button (use `background-image`)?
+	 * Center the play button (use CSS grid? background-position? vertical-align (doesn't work with block elements)?)
+	 * Fonts
+	 * Colors
+	 */
 
-
-
-	// it("positions figure flush to the left of its container", function() {
-	// 	figure.left.should.equal(frame.body().left);
-	// });
-	//
-	// it("aligns top edge of figure and content", function() {
-	// 	content.top.should.equal(figure.top);
-	// });
-	//
-	// it("positions content to right of figure", function() {
-	// 	content.left.should.equal(figure.right.plus(10));
-	// });
-	//
-	// it("positions subsequent elements below media object", function() {
-	// 	const subsequent = frame.add("<div>subsequent element</div>", "subsequent");
-	//
-	// 	subsequent.left.should.equal(frame.body().left);
-	//
-	// 	subsequent.top.should.equal(figure.bottom);
-	// });
-	//
-	// it("allows elements' margins to extend outside media object", function() {
-	// 	content.toDomElement().style.marginTop = "15px";
-	// 	content.top.should.equal(figure.top);
-	// });
 
 });
