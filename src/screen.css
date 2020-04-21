@@ -48,6 +48,10 @@
 
 /**** EPISODE LIST ****/
 
+.episode_list {
+  border-radius: 3px;
+}
+
 .episode_list__episode {
   display: grid;
   grid-template-columns: 70px 1fr auto;

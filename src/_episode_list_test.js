@@ -20,94 +20,118 @@ describe("Episode List CSS", function() {
 		frame.reset();
 	});
 
+	function addEpisode(id, episodeList) {
+		return episodeList.add(
+			`<div id="${id}" class="episode_list__episode" style="background-color:red">
+				<div class="episode_list__button" style="background-color:blue">
+			    <img class='episode_list__icon' src='/base/src/play.png' />
+				</div>
+				<div class="episode_list__content">
+					<div class="episode_list__info" style="background-color:green">
+					  <span class="episode_list__number">E1</span>
+					  <span class="episode_list__title">E1</span>
+					</div>
+					<div class="episode_list__date" style="background-color:purple">
+						E1 
+					</div>
+				</div>
+			</div>`
+		);
+	}
+
 	function createEpisodeList() {
 		const container = frame.add(
 			`<div style='width: 750px;'></div>`
 		);
 		const episodeList = container.add(
-			`<div class="episode_list"> 
-				<div class="episode_list__episode" style="background-color:red">
-					<div class="episode_list__button" style="background-color:blue">
-				    <img class='episode_list__icon' src='/base/src/play.png' />
-					</div>
-					<div class="episode_list__content">
-						<div class="episode_list__info" style="background-color:green">
-						  <span class="episode_list__number">E1</span>
-						  <span class="episode_list__title">E1</span>
-						</div>
-						<div class="episode_list__date" style="background-color:purple">
-							E1 
-						</div>
-					</div>
-				</div>
-			</div>`
+			`<div class="episode_list"><div>`
 		);
+		addEpisode("episode1", episodeList);
+		addEpisode("episode2", episodeList);
+		addEpisode("episode3", episodeList);
 
 		return {
 			episodeList,
-			episode: frame.get(".episode_list__episode"),
-			button: frame.get(".episode_list__button"),
-			icon: frame.get(".episode_list__icon"),
-			info: frame.get(".episode_list__info"),
-			number: frame.get(".episode_list__number"),
-			title: frame.get(".episode_list__title"),
-			date: frame.get(".episode_list__date"),
+			episode: frame.get("#episode2"),
+			button: frame.get("#episode2 .episode_list__button"),
+			icon: frame.get("#episode2 .episode_list__icon"),
+			info: frame.get("#episode2 .episode_list__info"),
+			number: frame.get("#episode2 .episode_list__number"),
+			title: frame.get("#episode2 .episode_list__title"),
+			date: frame.get("#episode2 .episode_list__date"),
 		};
 	}
 
-	it("has button on left side", function() {
-		const { episodeList, episode, button, icon } = createEpisodeList();
+	it("has rounded corners", function() {
+		const { episodeList } = createEpisodeList();
 
-		button.top.should.equal(episode.top);
-		button.bottom.should.equal(episode.bottom);
-
-		button.left.should.equal(episodeList.left);
-		button.width.should.equal(icon.width.plus(WHITESPACE * 2));
+		assertBorderRadius(episodeList, "3px");
 	});
 
-	it("has an icon in the center of the button", function() {
-		const { icon, button } = createEpisodeList();
+	describe("episode", function() {
 
-		icon.width.should.equal(20);
-		icon.center.should.equal(button.center);
-		icon.middle.should.equal(button.middle);
-	});
+		it("has button on left side", function() {
+			const { episodeList, episode, button, icon } = createEpisodeList();
 
-	it("has an episode number to the right of the button", function() {
-		const { number, button, episode } = createEpisodeList();
+			button.top.should.equal(episode.top);
+			button.bottom.should.equal(episode.bottom);
 
-		number.left.should.equal(button.right.plus(WHITESPACE));
-	});
+			button.left.should.equal(episodeList.left);
+			button.width.should.equal(icon.width.plus(WHITESPACE * 2));
+		});
 
-	it("centers episode number in the middle of the episode", function() {
-		const { number, episode } = createEpisodeList();
+		it("has an icon in the center of the button", function() {
+			const { icon, button } = createEpisodeList();
 
-		number.middle.should.equal(episode.middle);
-	});
+			icon.width.should.equal(20);
+			icon.center.should.equal(button.center);
+			icon.middle.should.equal(button.middle);
+		});
 
-	it("puts episode title to right of episode number", function() {
-		const { title, number, episode } = createEpisodeList();
+		it("has an episode number to the right of the button", function() {
+			const { number, button, episode } = createEpisodeList();
 
-		title.left.should.equal(number.right.plus(WHITESPACE / 2));
-	});
+			number.left.should.equal(button.right.plus(WHITESPACE));
+		});
 
-	it("puts episode date at right side of episode block", function() {
-		const { date, episode, title, info } = createEpisodeList();
+		it("centers episode number in the middle of the episode", function() {
+			const { number, episode } = createEpisodeList();
 
-		date.left.should.equal(info.right.plus(WHITESPACE));
-		date.right.should.equal(episode.right.minus(WHITESPACE));
-		date.bottom.should.equal(title.bottom);
-	});
+			number.middle.should.equal(episode.middle);
+		});
 
-	it("has vertical padding focused on the title", function() {
-		const { title, episode } = createEpisodeList();
+		it("puts episode title to right of episode number", function() {
+			const { title, number, episode } = createEpisodeList();
 
-		title.top.should.equal(episode.top.plus(WHITESPACE));
-		title.bottom.should.equal(episode.bottom.minus(WHITESPACE));
+			title.left.should.equal(number.right.plus(WHITESPACE / 2));
+		});
+
+		it("puts episode date at right side of episode block", function() {
+			const { date, episode, title, info } = createEpisodeList();
+
+			date.left.should.equal(info.right.plus(WHITESPACE));
+			date.right.should.equal(episode.right.minus(WHITESPACE));
+			date.bottom.should.equal(title.bottom);
+		});
+
+		it("has vertical padding focused on the title", function() {
+			const { title, episode } = createEpisodeList();
+
+			title.top.should.equal(episode.top.plus(WHITESPACE));
+			title.bottom.should.equal(episode.bottom.minus(WHITESPACE));
+		});
+
 	});
 
 });
 
+
+function assertBorderRadius(episodeList, s) {
+	assert.equal(episodeList.getRawStyle("border-top-left-radius"), s);
+	assert.equal(episodeList.getRawStyle("border-top-right-radius"), s);
+	assert.equal(episodeList.getRawStyle("border-bottom-left-radius"), s);
+	assert.equal(episodeList.getRawStyle("border-bottom-right-radius"), s);
+}
 
 /*
  * TODO:
