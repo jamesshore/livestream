@@ -9,7 +9,7 @@ const WHITESPACE = 25;
 const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
 const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
 
-describe("Media Object CSS", function() {
+describe("Episode CSS", function() {
 
 	let frame;
 
@@ -82,7 +82,7 @@ describe("Media Object CSS", function() {
 	});
 
 	it("has a title", function() {
-		const { title, content, episode, button } = createEpisode();
+		const { title, episode, button } = createEpisode();
 
 		title.top.should.equal(episode.top.plus(WHITESPACE));
 		title.left.should.equal(button.right.plus(WHITESPACE));
