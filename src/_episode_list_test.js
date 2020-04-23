@@ -27,12 +27,12 @@ describe("Episode List CSS", function() {
 			    <img class='episode_list__icon' src='/base/src/play.png' />
 				</div>
 				<div class="episode_list__content">
-					<div class="episode_list__info" style="background-color:green">
+					<div class="episode_list__title" style="background-color:green">
 					  <span class="episode_list__number">E1</span>
-					  <span class="episode_list__title">E1</span>
+					  <span class="episode_list__name">Episode Title</span>
 					</div>
 					<div class="episode_list__date" style="background-color:purple">
-						E1 
+						Thu, 23 Apr ’20 
 					</div>
 				</div>
 			</div>`
@@ -55,9 +55,9 @@ describe("Episode List CSS", function() {
 			episode: frame.get("#episode2"),
 			button: frame.get("#episode2 .episode_list__button"),
 			icon: frame.get("#episode2 .episode_list__icon"),
-			info: frame.get("#episode2 .episode_list__info"),
-			number: frame.get("#episode2 .episode_list__number"),
 			title: frame.get("#episode2 .episode_list__title"),
+			number: frame.get("#episode2 .episode_list__number"),
+			name: frame.get("#episode2 .episode_list__name"),
 			date: frame.get("#episode2 .episode_list__date"),
 		};
 	}
@@ -100,16 +100,16 @@ describe("Episode List CSS", function() {
 			number.middle.should.equal(episode.middle);
 		});
 
-		it("puts episode title to right of episode number", function() {
-			const { title, number, episode } = createEpisodeList();
+		it("puts episode name to right of episode number", function() {
+			const { name, number, episode } = createEpisodeList();
 
-			title.left.should.equal(number.right.plus(WHITESPACE / 2));
+			name.left.should.equal(number.right.plus(WHITESPACE / 2));
 		});
 
 		it("puts episode date at right side of episode block", function() {
-			const { date, episode, title, info } = createEpisodeList();
+			const { date, episode, name, title } = createEpisodeList();
 
-			date.left.should.equal(info.right.plus(WHITESPACE));
+			date.left.should.equal(title.right.plus(WHITESPACE));
 			date.right.should.equal(episode.right.minus(WHITESPACE));
 			date.bottom.should.equal(title.bottom);
 		});
