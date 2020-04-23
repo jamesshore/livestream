@@ -8,6 +8,7 @@ const quixote = require("../vendor/quixote.js");
 const WHITESPACE = 25;
 const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
 const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
+const DROP_SHADOW = "rgba(0, 0, 0, 0.2) 0px 1px 2px 0px";
 
 describe("Episode CSS", function() {
 
@@ -50,6 +51,19 @@ describe("Episode CSS", function() {
 			description: frame.get(".episode__description"),
 		};
 	}
+
+	it("has rounded corners", function() {
+		const { episode } = createEpisode();
+
+		assertBorderRadius(episode, "5px");
+		assertOverflowHidden(episode);
+	});
+
+	it("has a drop shadow", function() {
+		const { episode } = createEpisode();
+
+		assertBoxShadow(episode, DROP_SHADOW);
+	});
 
 	it("fills its container", function() {
 		const { episode, container } = createEpisode();
@@ -104,18 +118,24 @@ describe("Episode CSS", function() {
 		description.right.should.equal(episode.right.minus(WHITESPACE));
 	});
 
-	/*
-	 * TODO:
-	 * Fonts
-	 * Border
-	 * Button hover color
-	 * Make the whole element a link
-	 * Accessibility
-	 */
-
 });
 
 
-function assertBackgroundColor(episode, backgroundColor) {
-	assert.equal(episode.getRawStyle("background-color"), backgroundColor);
+function assertBorderRadius(element, radius) {
+	assert.equal(element.getRawStyle("border-top-left-radius"), radius);
+	assert.equal(element.getRawStyle("border-top-right-radius"), radius);
+	assert.equal(element.getRawStyle("border-bottom-left-radius"), radius);
+	assert.equal(element.getRawStyle("border-bottom-right-radius"), radius);
+}
+
+function assertBackgroundColor(element, backgroundColor) {
+	assert.equal(element.getRawStyle("background-color"), backgroundColor);
+}
+
+function assertBoxShadow(element, shadow) {
+	assert.equal(element.getRawStyle("box-shadow"), shadow);
+}
+
+function assertOverflowHidden(element) {
+	assert.equal(element.getRawStyle("overflow"), "hidden");
 }

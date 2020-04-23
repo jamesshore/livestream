@@ -10,9 +10,9 @@ const DATE_FONT_SIZE = "14px";
 const EPISODE_NUMBER_FONT_SIZE = "13px";
 const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
 const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
+const DROP_SHADOW = "rgba(0, 0, 0, 0.2) 0px 1px 2px 0px";
 
-
-describe("Episode List CSS", function() {
+describe.only("Episode List CSS", function() {
 
 	let frame;
 
@@ -72,6 +72,13 @@ describe("Episode List CSS", function() {
 		const { episodeList } = createEpisodeList();
 
 		assertBorderRadius(episodeList, "3px");
+		assertOverflowHidden(episodeList);
+	});
+
+	it("has a drop shadow", function() {
+		const { episodeList } = createEpisodeList();
+
+		assertBoxShadow(episodeList, DROP_SHADOW);
 	});
 
 	describe("episode", function() {
@@ -140,15 +147,23 @@ describe("Episode List CSS", function() {
 });
 
 
-function assertBorderRadius(episodeList, s) {
-	assert.equal(episodeList.getRawStyle("border-top-left-radius"), s);
-	assert.equal(episodeList.getRawStyle("border-top-right-radius"), s);
-	assert.equal(episodeList.getRawStyle("border-bottom-left-radius"), s);
-	assert.equal(episodeList.getRawStyle("border-bottom-right-radius"), s);
+function assertBorderRadius(element, radius) {
+	assert.equal(element.getRawStyle("border-top-left-radius"), radius);
+	assert.equal(element.getRawStyle("border-top-right-radius"), radius);
+	assert.equal(element.getRawStyle("border-bottom-left-radius"), radius);
+	assert.equal(element.getRawStyle("border-bottom-right-radius"), radius);
 }
 
-function assertBackgroundColor(episode, backgroundColor) {
-	assert.equal(episode.getRawStyle("background-color"), backgroundColor);
+function assertBackgroundColor(element, backgroundColor) {
+	assert.equal(element.getRawStyle("background-color"), backgroundColor);
+}
+
+function assertBoxShadow(element, shadow) {
+	assert.equal(element.getRawStyle("box-shadow"), shadow);
+}
+
+function assertOverflowHidden(element) {
+	assert.equal(element.getRawStyle("overflow"), "hidden");
 }
 
 /*
