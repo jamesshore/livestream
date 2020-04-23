@@ -55,10 +55,12 @@
 .episode_list__episode {
   display: grid;
   grid-template-columns: 70px 1fr auto;
+  background-color: white;
 }
 
 .episode_list__button {
   display: grid;
+  background-color: rgb(65, 169, 204);
 }
 
 .episode_list__icon {

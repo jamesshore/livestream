@@ -5,6 +5,12 @@ const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
 
 const WHITESPACE = 25;
+const TITLE_FONT_SIZE = "18px";
+const DATE_FONT_SIZE = "14px";
+const EPISODE_NUMBER_FONT_SIZE = "13px";
+const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
+const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
+
 
 describe("Episode List CSS", function() {
 
@@ -22,16 +28,16 @@ describe("Episode List CSS", function() {
 
 	function addEpisode(id, episodeList) {
 		return episodeList.add(
-			`<div id="${id}" class="episode_list__episode" style="background-color:red">
-				<div class="episode_list__button" style="background-color:blue">
+			`<div id="${id}" class="episode_list__episode">
+				<div class="episode_list__button">
 			    <img class='episode_list__icon' src='/base/src/play.png' />
 				</div>
 				<div class="episode_list__content">
-					<div class="episode_list__title" style="background-color:green">
+					<div class="episode_list__title">
 					  <span class="episode_list__number">E1</span>
 					  <span class="episode_list__name">Episode Title</span>
 					</div>
-					<div class="episode_list__date" style="background-color:purple">
+					<div class="episode_list__date">
 						Thu, 23 Apr ’20 
 					</div>
 				</div>
@@ -70,6 +76,12 @@ describe("Episode List CSS", function() {
 
 	describe("episode", function() {
 
+		it("has a white background", function() {
+			const { episode } = createEpisodeList();
+
+			assertBackgroundColor(episode, CONTENT_BACKGROUND);
+		});
+
 		it("has button on left side", function() {
 			const { episodeList, episode, button, icon } = createEpisodeList();
 
@@ -78,6 +90,8 @@ describe("Episode List CSS", function() {
 
 			button.left.should.equal(episodeList.left);
 			button.width.should.equal(icon.width.plus(WHITESPACE * 2));
+
+			assertBackgroundColor(button, BUTTON_BACKGROUND);
 		});
 
 		it("has an icon in the center of the button", function() {
@@ -131,6 +145,10 @@ function assertBorderRadius(episodeList, s) {
 	assert.equal(episodeList.getRawStyle("border-top-right-radius"), s);
 	assert.equal(episodeList.getRawStyle("border-bottom-left-radius"), s);
 	assert.equal(episodeList.getRawStyle("border-bottom-right-radius"), s);
+}
+
+function assertBackgroundColor(episode, backgroundColor) {
+	assert.equal(episode.getRawStyle("background-color"), backgroundColor);
 }
 
 /*
