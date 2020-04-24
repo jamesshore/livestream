@@ -5,7 +5,7 @@ const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
 const CssHelper = require("./__css_helper.js");
 
-describe("Episode List CSS", function() {
+describe("Playlist CSS", function() {
 
 	let frame;
 	let cssHelper;
@@ -21,99 +21,99 @@ describe("Episode List CSS", function() {
 		cssHelper = new CssHelper(frame);
 	});
 
-	function addEpisode(id, episodeList) {
-		return episodeList.add(
-			`<div id="${id}" class="episode-list__episode">
-				<div class="episode__button">
-			    <img class='episode__icon' src='/base/src/play.png' />
+	function addEpisode(id, playlist) {
+		return playlist.add(
+			`<div id="${id}" class="playlist__episode">
+				<div class="playlist__button">
+			    <img class='playlist__icon' src='/base/src/play.png' />
 				</div>
-				<div class="episode__content">
-					<div class="episode__title">
-					  <span class="episode__number">E1</span>
-					  <span class="episode__name">Episode Title</span>
+				<div class="playlist__content">
+					<div class="playlist__title">
+					  <span class="playlist__number">E1</span>
+					  <span class="playlist__name">Episode Title</span>
 					</div>
-					<div class="episode__date">
+					<div class="playlist__date">
 						Thu, 23 Apr ’20 
 					</div>
-			    <p class='episode__description'>We end Let’s Code JavaScript with a look at how we avoided using mocks and other test doubles. Although test doubles are useful, they’re not without their problems. But we needed to write unit tests, not integration tests. How did we do it? It’s a tough problem, but we came up with a novel—and practical!—solution.</p>
+			    <p class='playlist__description'>We end Let’s Code JavaScript with a look at how we avoided using mocks and other test doubles. Although test doubles are useful, they’re not without their problems. But we needed to write unit tests, not integration tests. How did we do it? It’s a tough problem, but we came up with a novel—and practical!—solution.</p>
 				</div>
 			</div>`
 		);
 	}
 
-	function createEpisodeList(episodeListClasses) {
+	function createPlaylist(playlistClasses) {
 		const container = frame.add(
 			`<div style='width: 750px;'></div>`
 		);
-		const episodeList = container.add(
-			`<div class="${episodeListClasses}"><div>`
+		const playlist = container.add(
+			`<div class="${playlistClasses}"><div>`
 		);
 
-		addEpisode("episode1", episodeList);
-		addEpisode("episode2", episodeList);
-		addEpisode("episode3", episodeList);
+		addEpisode("episode1", playlist);
+		addEpisode("episode2", playlist);
+		addEpisode("episode3", playlist);
 
 		return {
 			container,
-			episodeList,
+			playlist,
 			episode: frame.get("#episode2"),
-			button: frame.get("#episode2 .episode__button"),
-			icon: frame.get("#episode2 .episode__icon"),
-			title: frame.get("#episode2 .episode__title"),
-			number: frame.get("#episode2 .episode__number"),
-			name: frame.get("#episode2 .episode__name"),
-			date: frame.get("#episode2 .episode__date"),
-			description: frame.get("#episode2 .episode__description"),
+			button: frame.get("#episode2 .playlist__button"),
+			icon: frame.get("#episode2 .playlist__icon"),
+			title: frame.get("#episode2 .playlist__title"),
+			number: frame.get("#episode2 .playlist__number"),
+			name: frame.get("#episode2 .playlist__name"),
+			date: frame.get("#episode2 .playlist__date"),
+			description: frame.get("#episode2 .playlist__description"),
 		};
 	}
 
-	function createStandardEpisodeList() {
-		return createEpisodeList("episode-list");
+	function createStandardPlaylist() {
+		return createPlaylist("playlist");
 	}
 
-	function createCompactEpisodeList() {
-		return createEpisodeList("episode-list episode-list--compact");
+	function createCompactPlaylist() {
+		return createPlaylist("playlist playlist--compact");
 	}
 
 	it("has rounded corners", function() {
-		const { episodeList } = createCompactEpisodeList();
+		const { playlist } = createCompactPlaylist();
 
-		cssHelper.assertBorderRadius(episodeList, "3px");
-		cssHelper.assertOverflowHidden(episodeList);
+		cssHelper.assertBorderRadius(playlist, "3px");
+		cssHelper.assertOverflowHidden(playlist);
 	});
 
 	it("has a drop shadow", function() {
-		const { episodeList } = createCompactEpisodeList();
+		const { playlist } = createCompactPlaylist();
 
-		cssHelper.assertBoxShadow(episodeList, cssHelper.DROP_SHADOW);
+		cssHelper.assertBoxShadow(playlist, cssHelper.DROP_SHADOW);
 	});
 
 
 
-	describe("Standard episode list", function() {
+	describe("Standard playlist", function() {
 
 
 		it("has rounded corners", function() {
-			const { episode } = createStandardEpisodeList();
+			const { episode } = createStandardPlaylist();
 
 			cssHelper.assertBorderRadius(episode, "5px");
 			cssHelper.assertOverflowHidden(episode);
 		});
 
 		it("has a drop shadow", function() {
-			const { episode } = createStandardEpisodeList();
+			const { episode } = createStandardPlaylist();
 
 			cssHelper.assertBoxShadow(episode, cssHelper.DROP_SHADOW);
 		});
 
 		it("has a white background", function() {
-			const { episode } = createStandardEpisodeList();
+			const { episode } = createStandardPlaylist();
 
 			cssHelper.assertBackgroundColor(episode, cssHelper.CONTENT_BACKGROUND);
 		});
 
 		it("has a button", function() {
-			const { button, icon, episode } = createStandardEpisodeList();
+			const { button, icon, episode } = createStandardPlaylist();
 
 			button.top.should.equal(episode.top);
 			button.bottom.should.equal(episode.bottom);
@@ -128,21 +128,21 @@ describe("Episode List CSS", function() {
 		});
 
 		it("has a title", function() {
-			const { title, episode, button } = createStandardEpisodeList();
+			const { title, episode, button } = createStandardPlaylist();
 
 			title.top.should.equal(episode.top.plus(cssHelper.WHITESPACE));
 			title.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
 		});
 
 		it("has a date", function() {
-			const { date, title, episode } = createStandardEpisodeList();
+			const { date, title, episode } = createStandardPlaylist();
 
 			date.top.should.equal(title.top);
 			date.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
 		});
 
 		it("has a description", function() {
-			const { episode, description, title, button, content } = createStandardEpisodeList();
+			const { episode, description, title, button, content } = createStandardPlaylist();
 
 			description.top.should.equal(title.bottom.plus(cssHelper.WHITESPACE));
 			description.bottom.should.equal(episode.bottom.minus(cssHelper.WHITESPACE));
@@ -153,41 +153,41 @@ describe("Episode List CSS", function() {
 	});
 
 
-	describe("compact episode list", function() {
+	describe("compact playlist", function() {
 
 		it("does not have rounded corners", function() {
-			const { episode } = createCompactEpisodeList();
+			const { episode } = createCompactPlaylist();
 
 			cssHelper.assertBorderRadius(episode, "0px");
 			cssHelper.assertBoxShadow(episode, "none");
 		});
 
 		it("has a white background", function() {
-			const { episode } = createCompactEpisodeList();
+			const { episode } = createCompactPlaylist();
 
 			cssHelper.assertBackgroundColor(episode, cssHelper.CONTENT_BACKGROUND);
 		});
 
 		it("doesn't show description", function() {
-			const { description } = createCompactEpisodeList();
+			const { description } = createCompactPlaylist();
 
 			description.render.should.equal(false);
 		});
 
 		it("has button on left side", function() {
-			const { episodeList, episode, button, icon } = createCompactEpisodeList();
+			const { playlist, episode, button, icon } = createCompactPlaylist();
 
 			button.top.should.equal(episode.top);
 			button.bottom.should.equal(episode.bottom);
 
-			button.left.should.equal(episodeList.left);
+			button.left.should.equal(playlist.left);
 			button.width.should.equal(icon.width.plus(cssHelper.WHITESPACE * 2));
 
 			cssHelper.assertBackgroundColor(button, cssHelper.BACKGROUND_BLUE);
 		});
 
 		it("has an icon in the center of the button", function() {
-			const { icon, button } = createCompactEpisodeList();
+			const { icon, button } = createCompactPlaylist();
 
 			icon.width.should.equal(20);
 			icon.center.should.equal(button.center);
@@ -195,25 +195,25 @@ describe("Episode List CSS", function() {
 		});
 
 		it("has an episode number to the right of the button", function() {
-			const { number, button, episode } = createCompactEpisodeList();
+			const { number, button, episode } = createCompactPlaylist();
 
 			number.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
 		});
 
 		it("centers episode number in the middle of the episode", function() {
-			const { number, episode } = createCompactEpisodeList();
+			const { number, episode } = createCompactPlaylist();
 
 			number.middle.should.equal(episode.middle);
 		});
 
 		it("puts episode name to right of episode number", function() {
-			const { name, number, episode } = createCompactEpisodeList();
+			const { name, number, episode } = createCompactPlaylist();
 
 			name.left.should.equal(number.right.plus(cssHelper.WHITESPACE / 2));
 		});
 
 		it("puts episode date at right side of episode block", function() {
-			const { date, episode, name, title } = createCompactEpisodeList();
+			const { date, episode, name, title } = createCompactPlaylist();
 
 			date.left.should.equal(title.right.plus(cssHelper.WHITESPACE));
 			date.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
@@ -221,7 +221,7 @@ describe("Episode List CSS", function() {
 		});
 
 		it("has vertical padding focused on the title", function() {
-			const { title, episode } = createCompactEpisodeList();
+			const { title, episode } = createCompactPlaylist();
 
 			title.top.should.equal(episode.top.plus(cssHelper.WHITESPACE));
 			title.bottom.should.equal(episode.bottom.minus(cssHelper.WHITESPACE));
