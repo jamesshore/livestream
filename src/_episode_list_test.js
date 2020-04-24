@@ -3,6 +3,7 @@
 
 const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
+const cssHelper = require("./__css_helper.js");
 
 const WHITESPACE = 25;
 const TITLE_FONT_SIZE = "18px";
@@ -73,14 +74,14 @@ describe("Episode List CSS", function() {
 	it("has rounded corners", function() {
 		const { episodeList } = createEpisodeList();
 
-		assertBorderRadius(episodeList, "3px");
-		assertOverflowHidden(episodeList);
+		cssHelper.assertBorderRadius(episodeList, "3px");
+		cssHelper.assertOverflowHidden(episodeList);
 	});
 
 	it("has a drop shadow", function() {
 		const { episodeList } = createEpisodeList();
 
-		assertBoxShadow(episodeList, DROP_SHADOW);
+		cssHelper.assertBoxShadow(episodeList, DROP_SHADOW);
 	});
 
 	describe("compact episode", function() {
@@ -88,14 +89,14 @@ describe("Episode List CSS", function() {
 		it("does not have rounded corners", function() {
 			const { episode } = createEpisodeList();
 
-			assertBorderRadius(episode, "0px");
-			assertBoxShadow(episode, "none");
+			cssHelper.assertBorderRadius(episode, "0px");
+			cssHelper.assertBoxShadow(episode, "none");
 		});
 
 		it("has a white background", function() {
 			const { episode } = createEpisodeList();
 
-			assertBackgroundColor(episode, CONTENT_BACKGROUND);
+			cssHelper.assertBackgroundColor(episode, CONTENT_BACKGROUND);
 		});
 
 		it("doesn't show description", function() {
@@ -113,7 +114,7 @@ describe("Episode List CSS", function() {
 			button.left.should.equal(episodeList.left);
 			button.width.should.equal(icon.width.plus(WHITESPACE * 2));
 
-			assertBackgroundColor(button, BUTTON_BACKGROUND);
+			cssHelper.assertBackgroundColor(button, BUTTON_BACKGROUND);
 		});
 
 		it("has an icon in the center of the button", function() {
@@ -161,25 +162,6 @@ describe("Episode List CSS", function() {
 
 });
 
-
-function assertBorderRadius(element, radius) {
-	assert.equal(element.getRawStyle("border-top-left-radius"), radius);
-	assert.equal(element.getRawStyle("border-top-right-radius"), radius);
-	assert.equal(element.getRawStyle("border-bottom-left-radius"), radius);
-	assert.equal(element.getRawStyle("border-bottom-right-radius"), radius);
-}
-
-function assertBackgroundColor(element, backgroundColor) {
-	assert.equal(element.getRawStyle("background-color"), backgroundColor);
-}
-
-function assertBoxShadow(element, shadow) {
-	assert.equal(element.getRawStyle("box-shadow"), shadow);
-}
-
-function assertOverflowHidden(element) {
-	assert.equal(element.getRawStyle("overflow"), "hidden");
-}
 
 /*
  * TODO:

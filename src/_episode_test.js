@@ -4,6 +4,7 @@
 
 const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
+const cssHelper = require("./__css_helper.js");
 
 const WHITESPACE = 25;
 const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
@@ -55,14 +56,14 @@ describe("Episode CSS", function() {
 	it("has rounded corners", function() {
 		const { episode } = createEpisode();
 
-		assertBorderRadius(episode, "5px");
-		assertOverflowHidden(episode);
+		cssHelper.assertBorderRadius(episode, "5px");
+		cssHelper.assertOverflowHidden(episode);
 	});
 
 	it("has a drop shadow", function() {
 		const { episode } = createEpisode();
 
-		assertBoxShadow(episode, DROP_SHADOW);
+		cssHelper.assertBoxShadow(episode, DROP_SHADOW);
 	});
 
 	it("fills its container", function() {
@@ -77,7 +78,7 @@ describe("Episode CSS", function() {
 	it("has a white background", function() {
 		const { episode } = createEpisode();
 
-		assertBackgroundColor(episode, CONTENT_BACKGROUND);
+		cssHelper.assertBackgroundColor(episode, CONTENT_BACKGROUND);
 	});
 
 	it("has a button", function() {
@@ -89,7 +90,7 @@ describe("Episode CSS", function() {
 		button.left.should.equal(episode.left);
 		button.width.should.equal(icon.width.plus(WHITESPACE * 2));
 
-		assertBackgroundColor(button, BUTTON_BACKGROUND);
+		cssHelper.assertBackgroundColor(button, BUTTON_BACKGROUND);
 
 		icon.center.should.equal(button.center);
 		icon.middle.should.equal(button.middle);
@@ -119,23 +120,3 @@ describe("Episode CSS", function() {
 	});
 
 });
-
-
-function assertBorderRadius(element, radius) {
-	assert.equal(element.getRawStyle("border-top-left-radius"), radius);
-	assert.equal(element.getRawStyle("border-top-right-radius"), radius);
-	assert.equal(element.getRawStyle("border-bottom-left-radius"), radius);
-	assert.equal(element.getRawStyle("border-bottom-right-radius"), radius);
-}
-
-function assertBackgroundColor(element, backgroundColor) {
-	assert.equal(element.getRawStyle("background-color"), backgroundColor);
-}
-
-function assertBoxShadow(element, shadow) {
-	assert.equal(element.getRawStyle("box-shadow"), shadow);
-}
-
-function assertOverflowHidden(element) {
-	assert.equal(element.getRawStyle("overflow"), "hidden");
-}
