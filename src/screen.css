@@ -15,9 +15,15 @@
 }
 
 
-/**** EPISODE ****/
+/**** EPISODE LIST ****/
 
-.episode {
+.episode-list {
+  border-radius: 3px;
+  box-shadow: var(--drop-shadow);
+  overflow: hidden;
+}
+
+.episode-list__episode {
   display: grid;
   grid-template-columns: 70px 1fr;
   background-color: var(--background-white);
@@ -55,22 +61,14 @@
 }
 
 
-/**** COMPACT EPISODE VARIANT ****/
+/**** COMPACT EPISODE LIST VARIANT ****/
 
-.episode--compact {
+.episode-list--compact .episode-list__episode {
   border-radius: 0px;
   box-shadow: none;
 }
 
-.episode--compact .episode__description {
+.episode-list--compact .episode__description {
   display: none;
 }
 
-
-/**** EPISODE LIST ****/
-
-.episode_list {
-  border-radius: 3px;
-  box-shadow: var(--drop-shadow);
-  overflow: hidden;
-}

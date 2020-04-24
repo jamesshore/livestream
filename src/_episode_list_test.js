@@ -21,9 +21,9 @@ describe("Episode List CSS", function() {
 		cssHelper = new CssHelper(frame);
 	});
 
-	function addEpisode(id, episodeList, className) {
+	function addEpisode(id, episodeList) {
 		return episodeList.add(
-			`<div id="${id}" class="${className}">
+			`<div id="${id}" class="episode-list__episode">
 				<div class="episode__button">
 			    <img class='episode__icon' src='/base/src/play.png' />
 				</div>
@@ -41,17 +41,17 @@ describe("Episode List CSS", function() {
 		);
 	}
 
-	function createEpisodeList(className) {
+	function createEpisodeList(episodeListClasses) {
 		const container = frame.add(
 			`<div style='width: 750px;'></div>`
 		);
 		const episodeList = container.add(
-			`<div class="episode_list"><div>`
+			`<div class="${episodeListClasses}"><div>`
 		);
 
-		addEpisode("episode1", episodeList, className);
-		addEpisode("episode2", episodeList, className);
-		addEpisode("episode3", episodeList, className);
+		addEpisode("episode1", episodeList);
+		addEpisode("episode2", episodeList);
+		addEpisode("episode3", episodeList);
 
 		return {
 			container,
@@ -68,11 +68,11 @@ describe("Episode List CSS", function() {
 	}
 
 	function createStandardEpisodeList() {
-		return createEpisodeList("episode");
+		return createEpisodeList("episode-list");
 	}
 
 	function createCompactEpisodeList() {
-		return createEpisodeList("episode episode--compact");
+		return createEpisodeList("episode-list episode-list--compact");
 	}
 
 	it("has rounded corners", function() {
@@ -90,7 +90,7 @@ describe("Episode List CSS", function() {
 
 
 
-	describe("Standard episode", function() {
+	describe("Standard episode list", function() {
 
 
 		it("has rounded corners", function() {
@@ -153,10 +153,7 @@ describe("Episode List CSS", function() {
 	});
 
 
-
-
-
-	describe("compact episode", function() {
+	describe("compact episode list", function() {
 
 		it("does not have rounded corners", function() {
 			const { episode } = createCompactEpisodeList();
