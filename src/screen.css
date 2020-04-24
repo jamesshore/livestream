@@ -1,5 +1,5 @@
 :root {
-  --background-white: white;
+  --background-white: rgb(255, 255, 255);
   --background-blue: rgb(65, 169, 204);
 
   --drop-shadow: rgba(0, 0, 0, 0.2) 0px 1px 2px 0px;

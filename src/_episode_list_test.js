@@ -5,14 +5,6 @@ const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
 const CssHelper = require("./__css_helper.js");
 
-const WHITESPACE = 25;
-const TITLE_FONT_SIZE = "18px";
-const DATE_FONT_SIZE = "14px";
-const EPISODE_NUMBER_FONT_SIZE = "13px";
-const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
-const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
-const DROP_SHADOW = "rgba(0, 0, 0, 0.2) 0px 1px 2px 0px";
-
 describe("Episode List CSS", function() {
 
 	let frame;
@@ -26,7 +18,7 @@ describe("Episode List CSS", function() {
 
 	beforeEach(function() {
 		frame.reset();
-		cssHelper = new CssHelper();
+		cssHelper = new CssHelper(frame);
 	});
 
 	function addEpisode(id, episodeList) {
@@ -83,7 +75,7 @@ describe("Episode List CSS", function() {
 	it("has a drop shadow", function() {
 		const { episodeList } = createEpisodeList();
 
-		cssHelper.assertBoxShadow(episodeList, DROP_SHADOW);
+		cssHelper.assertBoxShadow(episodeList, cssHelper.DROP_SHADOW);
 	});
 
 	describe("compact episode", function() {
@@ -98,7 +90,7 @@ describe("Episode List CSS", function() {
 		it("has a white background", function() {
 			const { episode } = createEpisodeList();
 
-			cssHelper.assertBackgroundColor(episode, CONTENT_BACKGROUND);
+			cssHelper.assertBackgroundColor(episode, cssHelper.CONTENT_BACKGROUND);
 		});
 
 		it("doesn't show description", function() {
@@ -114,9 +106,9 @@ describe("Episode List CSS", function() {
 			button.bottom.should.equal(episode.bottom);
 
 			button.left.should.equal(episodeList.left);
-			button.width.should.equal(icon.width.plus(WHITESPACE * 2));
+			button.width.should.equal(icon.width.plus(cssHelper.WHITESPACE * 2));
 
-			cssHelper.assertBackgroundColor(button, BUTTON_BACKGROUND);
+			cssHelper.assertBackgroundColor(button, cssHelper.BACKGROUND_BLUE);
 		});
 
 		it("has an icon in the center of the button", function() {
@@ -130,7 +122,7 @@ describe("Episode List CSS", function() {
 		it("has an episode number to the right of the button", function() {
 			const { number, button, episode } = createEpisodeList();
 
-			number.left.should.equal(button.right.plus(WHITESPACE));
+			number.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
 		});
 
 		it("centers episode number in the middle of the episode", function() {
@@ -142,22 +134,22 @@ describe("Episode List CSS", function() {
 		it("puts episode name to right of episode number", function() {
 			const { name, number, episode } = createEpisodeList();
 
-			name.left.should.equal(number.right.plus(WHITESPACE / 2));
+			name.left.should.equal(number.right.plus(cssHelper.WHITESPACE / 2));
 		});
 
 		it("puts episode date at right side of episode block", function() {
 			const { date, episode, name, title } = createEpisodeList();
 
-			date.left.should.equal(title.right.plus(WHITESPACE));
-			date.right.should.equal(episode.right.minus(WHITESPACE));
+			date.left.should.equal(title.right.plus(cssHelper.WHITESPACE));
+			date.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
 			date.bottom.should.equal(title.bottom);
 		});
 
 		it("has vertical padding focused on the title", function() {
 			const { title, episode } = createEpisodeList();
 
-			title.top.should.equal(episode.top.plus(WHITESPACE));
-			title.bottom.should.equal(episode.bottom.minus(WHITESPACE));
+			title.top.should.equal(episode.top.plus(cssHelper.WHITESPACE));
+			title.bottom.should.equal(episode.bottom.minus(cssHelper.WHITESPACE));
 		});
 
 	});
@@ -170,7 +162,7 @@ describe("Episode List CSS", function() {
  *
  * Factor common constants?
  *  button width
- *  WHITESPACE
+ *  cssHelper.WHITESPACE
  *  icon width
  * Use CSS variables and functions?
  * Automatically handle regular episode inside episode_list?

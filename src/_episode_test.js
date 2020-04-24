@@ -6,11 +6,6 @@ const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
 const CssHelper = require("./__css_helper.js");
 
-const WHITESPACE = 25;
-const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
-const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
-const DROP_SHADOW = "rgba(0, 0, 0, 0.2) 0px 1px 2px 0px";
-
 describe("Episode CSS", function() {
 
 	let frame;
@@ -24,7 +19,7 @@ describe("Episode CSS", function() {
 
 	beforeEach(function() {
 		frame.reset();
-		cssHelper = new CssHelper();
+		cssHelper = new CssHelper(frame);
 	});
 
 	function createEpisode() {
@@ -65,7 +60,7 @@ describe("Episode CSS", function() {
 	it("has a drop shadow", function() {
 		const { episode } = createEpisode();
 
-		cssHelper.assertBoxShadow(episode, DROP_SHADOW);
+		cssHelper.assertBoxShadow(episode, cssHelper.DROP_SHADOW);
 	});
 
 	it("fills its container", function() {
@@ -80,7 +75,7 @@ describe("Episode CSS", function() {
 	it("has a white background", function() {
 		const { episode } = createEpisode();
 
-		cssHelper.assertBackgroundColor(episode, CONTENT_BACKGROUND);
+		cssHelper.assertBackgroundColor(episode, cssHelper.CONTENT_BACKGROUND);
 	});
 
 	it("has a button", function() {
@@ -90,9 +85,9 @@ describe("Episode CSS", function() {
 		button.bottom.should.equal(episode.bottom);
 
 		button.left.should.equal(episode.left);
-		button.width.should.equal(icon.width.plus(WHITESPACE * 2));
+		button.width.should.equal(icon.width.plus(cssHelper.WHITESPACE * 2));
 
-		cssHelper.assertBackgroundColor(button, BUTTON_BACKGROUND);
+		cssHelper.assertBackgroundColor(button, cssHelper.BACKGROUND_BLUE);
 
 		icon.center.should.equal(button.center);
 		icon.middle.should.equal(button.middle);
@@ -101,24 +96,24 @@ describe("Episode CSS", function() {
 	it("has a title", function() {
 		const { title, episode, button } = createEpisode();
 
-		title.top.should.equal(episode.top.plus(WHITESPACE));
-		title.left.should.equal(button.right.plus(WHITESPACE));
+		title.top.should.equal(episode.top.plus(cssHelper.WHITESPACE));
+		title.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
 	});
 
 	it("has a date", function() {
 		const { date, title, episode } = createEpisode();
 
 		date.top.should.equal(title.top);
-		date.right.should.equal(episode.right.minus(WHITESPACE));
+		date.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
 	});
 
 	it("has a description", function() {
 		const { episode, description, title, button, content } = createEpisode();
 
-		description.top.should.equal(title.bottom.plus(WHITESPACE));
-		description.bottom.should.equal(episode.bottom.minus(WHITESPACE));
-		description.left.should.equal(button.right.plus(WHITESPACE));
-		description.right.should.equal(episode.right.minus(WHITESPACE));
+		description.top.should.equal(title.bottom.plus(cssHelper.WHITESPACE));
+		description.bottom.should.equal(episode.bottom.minus(cssHelper.WHITESPACE));
+		description.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
+		description.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
 	});
 
 });
