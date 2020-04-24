@@ -37,15 +37,21 @@
   column-gap: 25px;
 }
 
-.episode__title {
-}
-
-.episode__date {
-}
-
 .episode__description {
   grid-column-start: 1;
   grid-column-end: 3;
+}
+
+.episode__number {
+  margin-right: 8.5px;
+}
+
+
+/**** COMPACT EPISODE VARIANT ****/
+
+.episode--compact {
+  border-radius: 0px;
+  box-shadow: none;
 }
 
 
@@ -55,39 +61,4 @@
   border-radius: 3px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 2px 0px;
   overflow: hidden;
-}
-
-.episode_list__episode {
-  display: grid;
-  grid-template-columns: 70px 1fr auto;
-  background-color: white;
-}
-
-.episode_list__button {
-  display: grid;
-  background-color: rgb(65, 169, 204);
-}
-
-.episode_list__icon {
-  width: 20px;
-  justify-self: center;
-  align-self: center;
-}
-
-.episode_list__content {
-  padding: 25px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  column-gap: 25px;
-}
-
-.episode_list__info {
-}
-
-.episode_list__number {
-  margin-right: 8.5px;
-}
-
-.episode_list__date {
-  align-self: center;
 }

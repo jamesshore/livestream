@@ -12,7 +12,7 @@ const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
 const CONTENT_BACKGROUND = "rgb(255, 255, 255)";
 const DROP_SHADOW = "rgba(0, 0, 0, 0.2) 0px 1px 2px 0px";
 
-describe.only("Episode List CSS", function() {
+describe("Episode List CSS", function() {
 
 	let frame;
 
@@ -28,16 +28,16 @@ describe.only("Episode List CSS", function() {
 
 	function addEpisode(id, episodeList) {
 		return episodeList.add(
-			`<div id="${id}" class="episode_list__episode">
-				<div class="episode_list__button">
-			    <img class='episode_list__icon' src='/base/src/play.png' />
+			`<div id="${id}" class="episode episode--compact">
+				<div class="episode__button">
+			    <img class='episode__icon' src='/base/src/play.png' />
 				</div>
-				<div class="episode_list__content">
-					<div class="episode_list__title">
-					  <span class="episode_list__number">E1</span>
-					  <span class="episode_list__name">Episode Title</span>
+				<div class="episode__content">
+					<div class="episode__title">
+					  <span class="episode__number">E1</span>
+					  <span class="episode__name">Episode Title</span>
 					</div>
-					<div class="episode_list__date">
+					<div class="episode__date">
 						Thu, 23 Apr ’20 
 					</div>
 				</div>
@@ -59,12 +59,12 @@ describe.only("Episode List CSS", function() {
 		return {
 			episodeList,
 			episode: frame.get("#episode2"),
-			button: frame.get("#episode2 .episode_list__button"),
-			icon: frame.get("#episode2 .episode_list__icon"),
-			title: frame.get("#episode2 .episode_list__title"),
-			number: frame.get("#episode2 .episode_list__number"),
-			name: frame.get("#episode2 .episode_list__name"),
-			date: frame.get("#episode2 .episode_list__date"),
+			button: frame.get("#episode2 .episode__button"),
+			icon: frame.get("#episode2 .episode__icon"),
+			title: frame.get("#episode2 .episode__title"),
+			number: frame.get("#episode2 .episode__number"),
+			name: frame.get("#episode2 .episode__name"),
+			date: frame.get("#episode2 .episode__date"),
 		};
 	}
 
@@ -81,7 +81,14 @@ describe.only("Episode List CSS", function() {
 		assertBoxShadow(episodeList, DROP_SHADOW);
 	});
 
-	describe("episode", function() {
+	describe("compact episode", function() {
+
+		it("does not have rounded corners", function() {
+			const { episode } = createEpisodeList();
+
+			assertBorderRadius(episode, "0px");
+			assertBoxShadow(episode, "none");
+		});
 
 		it("has a white background", function() {
 			const { episode } = createEpisodeList();
