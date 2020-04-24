@@ -40,6 +40,7 @@ describe("Episode List CSS", function() {
 					<div class="episode__date">
 						Thu, 23 Apr ’20 
 					</div>
+			    <p class='episode__description'>We end Let’s Code JavaScript with a look at how we avoided using mocks and other test doubles. Although test doubles are useful, they’re not without their problems. But we needed to write unit tests, not integration tests. How did we do it? It’s a tough problem, but we came up with a novel—and practical!—solution.</p>
 				</div>
 			</div>`
 		);
@@ -65,6 +66,7 @@ describe("Episode List CSS", function() {
 			number: frame.get("#episode2 .episode__number"),
 			name: frame.get("#episode2 .episode__name"),
 			date: frame.get("#episode2 .episode__date"),
+			description: frame.get("#episode2 .episode__description"),
 		};
 	}
 
@@ -94,6 +96,12 @@ describe("Episode List CSS", function() {
 			const { episode } = createEpisodeList();
 
 			assertBackgroundColor(episode, CONTENT_BACKGROUND);
+		});
+
+		it("doesn't show description", function() {
+			const { description } = createEpisodeList();
+
+			description.render.should.equal(false);
 		});
 
 		it("has button on left side", function() {
@@ -182,4 +190,5 @@ function assertOverflowHidden(element) {
  *  icon width
  * Use CSS variables and functions?
  * Refactor episode_list into a modifier of episode? Or maybe episode_list__episode
+ * Automatically handle regular episode inside episode_list?
  */

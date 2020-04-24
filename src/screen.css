@@ -54,6 +54,10 @@
   box-shadow: none;
 }
 
+.episode--compact .episode__description {
+  display: none;
+}
+
 
 /**** EPISODE LIST ****/
 
