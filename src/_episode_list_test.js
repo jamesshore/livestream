@@ -21,9 +21,9 @@ describe("Episode List CSS", function() {
 		cssHelper = new CssHelper(frame);
 	});
 
-	function addEpisode(id, episodeList) {
+	function addEpisode(id, episodeList, className) {
 		return episodeList.add(
-			`<div id="${id}" class="episode episode--compact">
+			`<div id="${id}" class="${className}">
 				<div class="episode__button">
 			    <img class='episode__icon' src='/base/src/play.png' />
 				</div>
@@ -41,18 +41,20 @@ describe("Episode List CSS", function() {
 		);
 	}
 
-	function createEpisodeList() {
+	function createEpisodeList(className) {
 		const container = frame.add(
 			`<div style='width: 750px;'></div>`
 		);
 		const episodeList = container.add(
 			`<div class="episode_list"><div>`
 		);
-		addEpisode("episode1", episodeList);
-		addEpisode("episode2", episodeList);
-		addEpisode("episode3", episodeList);
+
+		addEpisode("episode1", episodeList, className);
+		addEpisode("episode2", episodeList, className);
+		addEpisode("episode3", episodeList, className);
 
 		return {
+			container,
 			episodeList,
 			episode: frame.get("#episode2"),
 			button: frame.get("#episode2 .episode__button"),
@@ -65,42 +67,118 @@ describe("Episode List CSS", function() {
 		};
 	}
 
+	function createStandardEpisodeList() {
+		return createEpisodeList("episode");
+	}
+
+	function createCompactEpisodeList() {
+		return createEpisodeList("episode episode--compact");
+	}
+
 	it("has rounded corners", function() {
-		const { episodeList } = createEpisodeList();
+		const { episodeList } = createCompactEpisodeList();
 
 		cssHelper.assertBorderRadius(episodeList, "3px");
 		cssHelper.assertOverflowHidden(episodeList);
 	});
 
 	it("has a drop shadow", function() {
-		const { episodeList } = createEpisodeList();
+		const { episodeList } = createCompactEpisodeList();
 
 		cssHelper.assertBoxShadow(episodeList, cssHelper.DROP_SHADOW);
 	});
 
+
+
+	describe("Standard episode", function() {
+
+
+		it("has rounded corners", function() {
+			const { episode } = createStandardEpisodeList();
+
+			cssHelper.assertBorderRadius(episode, "5px");
+			cssHelper.assertOverflowHidden(episode);
+		});
+
+		it("has a drop shadow", function() {
+			const { episode } = createStandardEpisodeList();
+
+			cssHelper.assertBoxShadow(episode, cssHelper.DROP_SHADOW);
+		});
+
+		it("has a white background", function() {
+			const { episode } = createStandardEpisodeList();
+
+			cssHelper.assertBackgroundColor(episode, cssHelper.CONTENT_BACKGROUND);
+		});
+
+		it("has a button", function() {
+			const { button, icon, episode } = createStandardEpisodeList();
+
+			button.top.should.equal(episode.top);
+			button.bottom.should.equal(episode.bottom);
+
+			button.left.should.equal(episode.left);
+			button.width.should.equal(icon.width.plus(cssHelper.WHITESPACE * 2));
+
+			cssHelper.assertBackgroundColor(button, cssHelper.BACKGROUND_BLUE);
+
+			icon.center.should.equal(button.center);
+			icon.middle.should.equal(button.middle);
+		});
+
+		it("has a title", function() {
+			const { title, episode, button } = createStandardEpisodeList();
+
+			title.top.should.equal(episode.top.plus(cssHelper.WHITESPACE));
+			title.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
+		});
+
+		it("has a date", function() {
+			const { date, title, episode } = createStandardEpisodeList();
+
+			date.top.should.equal(title.top);
+			date.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
+		});
+
+		it("has a description", function() {
+			const { episode, description, title, button, content } = createStandardEpisodeList();
+
+			description.top.should.equal(title.bottom.plus(cssHelper.WHITESPACE));
+			description.bottom.should.equal(episode.bottom.minus(cssHelper.WHITESPACE));
+			description.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
+			description.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
+		});
+
+	});
+
+
+
+
+
 	describe("compact episode", function() {
 
 		it("does not have rounded corners", function() {
-			const { episode } = createEpisodeList();
+			const { episode } = createCompactEpisodeList();
 
 			cssHelper.assertBorderRadius(episode, "0px");
 			cssHelper.assertBoxShadow(episode, "none");
 		});
 
 		it("has a white background", function() {
-			const { episode } = createEpisodeList();
+			const { episode } = createCompactEpisodeList();
 
 			cssHelper.assertBackgroundColor(episode, cssHelper.CONTENT_BACKGROUND);
 		});
 
 		it("doesn't show description", function() {
-			const { description } = createEpisodeList();
+			const { description } = createCompactEpisodeList();
 
 			description.render.should.equal(false);
 		});
 
 		it("has button on left side", function() {
-			const { episodeList, episode, button, icon } = createEpisodeList();
+			const { episodeList, episode, button, icon } = createCompactEpisodeList();
 
 			button.top.should.equal(episode.top);
 			button.bottom.should.equal(episode.bottom);
@@ -112,7 +190,7 @@ describe("Episode List CSS", function() {
 		});
 
 		it("has an icon in the center of the button", function() {
-			const { icon, button } = createEpisodeList();
+			const { icon, button } = createCompactEpisodeList();
 
 			icon.width.should.equal(20);
 			icon.center.should.equal(button.center);
@@ -120,25 +198,25 @@ describe("Episode List CSS", function() {
 		});
 
 		it("has an episode number to the right of the button", function() {
-			const { number, button, episode } = createEpisodeList();
+			const { number, button, episode } = createCompactEpisodeList();
 
 			number.left.should.equal(button.right.plus(cssHelper.WHITESPACE));
 		});
 
 		it("centers episode number in the middle of the episode", function() {
-			const { number, episode } = createEpisodeList();
+			const { number, episode } = createCompactEpisodeList();
 
 			number.middle.should.equal(episode.middle);
 		});
 
 		it("puts episode name to right of episode number", function() {
-			const { name, number, episode } = createEpisodeList();
+			const { name, number, episode } = createCompactEpisodeList();
 
 			name.left.should.equal(number.right.plus(cssHelper.WHITESPACE / 2));
 		});
 
 		it("puts episode date at right side of episode block", function() {
-			const { date, episode, name, title } = createEpisodeList();
+			const { date, episode, name, title } = createCompactEpisodeList();
 
 			date.left.should.equal(title.right.plus(cssHelper.WHITESPACE));
 			date.right.should.equal(episode.right.minus(cssHelper.WHITESPACE));
@@ -146,7 +224,7 @@ describe("Episode List CSS", function() {
 		});
 
 		it("has vertical padding focused on the title", function() {
-			const { title, episode } = createEpisodeList();
+			const { title, episode } = createCompactEpisodeList();
 
 			title.top.should.equal(episode.top.plus(cssHelper.WHITESPACE));
 			title.bottom.should.equal(episode.bottom.minus(cssHelper.WHITESPACE));
