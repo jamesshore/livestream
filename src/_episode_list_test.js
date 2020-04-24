@@ -56,14 +56,15 @@ describe("Playlist CSS", function() {
 		return {
 			container,
 			playlist,
-			episode: frame.get("#episode2"),
-			button: frame.get("#episode2 .playlist__button"),
-			icon: frame.get("#episode2 .playlist__icon"),
-			title: frame.get("#episode2 .playlist__title"),
-			number: frame.get("#episode2 .playlist__number"),
-			name: frame.get("#episode2 .playlist__name"),
-			date: frame.get("#episode2 .playlist__date"),
-			description: frame.get("#episode2 .playlist__description"),
+			episode: frame.get("#episode1"),
+			episode2: frame.get("#episode2"),
+			button: frame.get("#episode1 .playlist__button"),
+			icon: frame.get("#episode1 .playlist__icon"),
+			title: frame.get("#episode1 .playlist__title"),
+			number: frame.get("#episode1 .playlist__number"),
+			name: frame.get("#episode1 .playlist__name"),
+			date: frame.get("#episode1 .playlist__date"),
+			description: frame.get("#episode1 .playlist__description"),
 		};
 	}
 
@@ -75,23 +76,30 @@ describe("Playlist CSS", function() {
 		return createPlaylist("playlist playlist--compact");
 	}
 
-	it("has rounded corners", function() {
-		const { playlist } = createCompactPlaylist();
 
-		cssHelper.assertBorderRadius(playlist, "3px");
-		cssHelper.assertOverflowHidden(playlist);
+	describe.only("Standard playlist", function() {
+
+		it("does not have rounded corners", function() {
+			const { playlist } = createStandardPlaylist();
+
+			cssHelper.assertBorderRadius(playlist, "0px");
+		});
+
+		it("does not have a drop shadow", function() {
+			const { playlist } = createStandardPlaylist();
+
+			cssHelper.assertBoxShadow(playlist, "none");
+		});
+
+		it("puts some whitespace between episodes", function() {
+			const { episode, episode2 } = createStandardPlaylist();
+
+			episode2.top.should.equal(episode.bottom.plus(15));
+		});
+
 	});
 
-	it("has a drop shadow", function() {
-		const { playlist } = createCompactPlaylist();
-
-		cssHelper.assertBoxShadow(playlist, cssHelper.DROP_SHADOW);
-	});
-
-
-
-	describe("Standard playlist", function() {
-
+	describe("Standard playlist episodes", function() {
 
 		it("has rounded corners", function() {
 			const { episode } = createStandardPlaylist();
@@ -154,6 +162,30 @@ describe("Playlist CSS", function() {
 
 
 	describe("compact playlist", function() {
+
+		it("has rounded corners", function() {
+			const { playlist } = createCompactPlaylist();
+
+			cssHelper.assertBorderRadius(playlist, "3px");
+			cssHelper.assertOverflowHidden(playlist);
+		});
+
+		it("has a drop shadow", function() {
+			const { playlist } = createCompactPlaylist();
+
+			cssHelper.assertBoxShadow(playlist, cssHelper.DROP_SHADOW);
+		});
+
+		it("has no whitespace between episodes", function() {
+			const { episode, episode2 } = createCompactPlaylist();
+
+			episode2.top.should.equal(episode.bottom);
+		});
+
+	});
+
+
+	describe("compact playlist episodes", function() {
 
 		it("does not have rounded corners", function() {
 			const { episode } = createCompactPlaylist();
@@ -235,11 +267,6 @@ describe("Playlist CSS", function() {
 /*
  * TODO:
  *
- * Factor common constants?
- *  button width
- *  cssHelper.WHITESPACE
- *  icon width
- * Use CSS variables and functions?
  * Automatically handle regular episode inside episode_list?
- * Extract 'box' element instead of having it be part of episode
+ *
  */

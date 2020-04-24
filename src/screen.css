@@ -18,8 +18,6 @@
 /**** PLAYLIST ****/
 
 .playlist {
-  border-radius: 3px;
-  box-shadow: var(--drop-shadow);
   overflow: hidden;
 }
 
@@ -30,6 +28,7 @@
   border-radius: 5px;
   box-shadow: var(--drop-shadow);
   overflow: hidden;
+  margin-bottom: 15px;
 }
 
 .playlist__button {
@@ -63,9 +62,15 @@
 
 /**** PLAYLIST VARIANT: COMPACT ****/
 
+.playlist--compact {
+  border-radius: 3px;
+  box-shadow: var(--drop-shadow);
+}
+
 .playlist--compact .playlist__episode {
   border-radius: 0px;
   box-shadow: none;
+  margin-bottom: 0px;
 }
 
 .playlist--compact .playlist__description {
