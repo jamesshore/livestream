@@ -3,7 +3,7 @@
 
 const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
-const cssHelper = require("./__css_helper.js");
+const CssHelper = require("./__css_helper.js");
 
 const WHITESPACE = 25;
 const TITLE_FONT_SIZE = "18px";
@@ -16,6 +16,7 @@ const DROP_SHADOW = "rgba(0, 0, 0, 0.2) 0px 1px 2px 0px";
 describe("Episode List CSS", function() {
 
 	let frame;
+	let cssHelper;
 
 	before(function(done) {
 		frame = quixote.createFrame({
@@ -25,6 +26,7 @@ describe("Episode List CSS", function() {
 
 	beforeEach(function() {
 		frame.reset();
+		cssHelper = new CssHelper();
 	});
 
 	function addEpisode(id, episodeList) {

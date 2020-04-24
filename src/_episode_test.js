@@ -4,7 +4,7 @@
 
 const assert = require("./assert.js");
 const quixote = require("../vendor/quixote.js");
-const cssHelper = require("./__css_helper.js");
+const CssHelper = require("./__css_helper.js");
 
 const WHITESPACE = 25;
 const BUTTON_BACKGROUND = "rgb(65, 169, 204)";
@@ -14,6 +14,7 @@ const DROP_SHADOW = "rgba(0, 0, 0, 0.2) 0px 1px 2px 0px";
 describe("Episode CSS", function() {
 
 	let frame;
+	let cssHelper;
 
 	before(function(done) {
 		frame = quixote.createFrame({
@@ -23,6 +24,7 @@ describe("Episode CSS", function() {
 
 	beforeEach(function() {
 		frame.reset();
+		cssHelper = new CssHelper();
 	});
 
 	function createEpisode() {

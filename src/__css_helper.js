@@ -3,21 +3,25 @@
 
 const assert = require("./assert.js");
 
-exports.assertBorderRadius = function(element, radius) {
-	assert.equal(element.getRawStyle("border-top-left-radius"), radius);
-	assert.equal(element.getRawStyle("border-top-right-radius"), radius);
-	assert.equal(element.getRawStyle("border-bottom-left-radius"), radius);
-	assert.equal(element.getRawStyle("border-bottom-right-radius"), radius);
-};
+module.exports = class CssHelper {
 
-exports.assertBackgroundColor = function(element, backgroundColor) {
-	assert.equal(element.getRawStyle("background-color"), backgroundColor);
-};
+	assertBorderRadius(element, radius) {
+		assert.equal(element.getRawStyle("border-top-left-radius"), radius);
+		assert.equal(element.getRawStyle("border-top-right-radius"), radius);
+		assert.equal(element.getRawStyle("border-bottom-left-radius"), radius);
+		assert.equal(element.getRawStyle("border-bottom-right-radius"), radius);
+	}
 
-exports.assertBoxShadow = function(element, shadow) {
-	assert.equal(element.getRawStyle("box-shadow"), shadow);
-};
+	assertBackgroundColor(element, backgroundColor) {
+		assert.equal(element.getRawStyle("background-color"), backgroundColor);
+	}
 
-exports.assertOverflowHidden = function(element) {
-	assert.equal(element.getRawStyle("overflow"), "hidden");
+	assertBoxShadow(element, shadow) {
+		assert.equal(element.getRawStyle("box-shadow"), shadow);
+	}
+
+	assertOverflowHidden(element) {
+		assert.equal(element.getRawStyle("overflow"), "hidden");
+	}
+
 };
