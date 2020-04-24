@@ -189,6 +189,6 @@ function assertOverflowHidden(element) {
  *  WHITESPACE
  *  icon width
  * Use CSS variables and functions?
- * Refactor episode_list into a modifier of episode? Or maybe episode_list__episode
  * Automatically handle regular episode inside episode_list?
+ * Extract 'box' element instead of having it be part of episode
  */

@@ -1,3 +1,11 @@
+:root {
+  --background-white: white;
+  --background-blue: rgb(65, 169, 204);
+
+  --drop-shadow: rgba(0, 0, 0, 0.2) 0px 1px 2px 0px;
+  --standard-gap: 25px;
+}
+
 /* Our CSS file. */
 
 * {
@@ -12,15 +20,15 @@
 .episode {
   display: grid;
   grid-template-columns: 70px 1fr;
-  background-color: white;
+  background-color: var(--background-white);
   border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 2px 0px;
+  box-shadow: var(--drop-shadow);
   overflow: hidden;
 }
 
 .episode__button {
   display: grid;
-  background-color: rgb(65, 169, 204);
+  background-color: var(--background-blue);
 }
 
 .episode__icon {
@@ -30,11 +38,11 @@
 }
 
 .episode__content {
-  padding: 25px;
+  padding: var(--standard-gap);
   display: grid;
   grid-template-columns: 1fr auto;
-  row-gap: 25px;
-  column-gap: 25px;
+  row-gap: var(--standard-gap);
+  column-gap: var(--standard-gap);
 }
 
 .episode__description {
@@ -63,6 +71,6 @@
 
 .episode_list {
   border-radius: 3px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 2px 0px;
+  box-shadow: var(--drop-shadow);
   overflow: hidden;
 }
