@@ -8,10 +8,9 @@ const paths = require("../config/paths");
 const lint = require("../util/lint_runner");
 const lintConfig = require("../config/eslint.conf");
 const pathLib = require("path");
-const karmaRunner = require("simplebuild-karma");
 const shell = require("shelljs"); shell.config.fatal = true;
-const sh = require("../util/sh");
-const path = require("path");
+const mochaRunner = require("../util/mocha_runner");
+const mochaConfig = require("../config/mocha.conf");
 
 const build = new Build({ incrementalDir: `${paths.incrementalDir}/tasks/` });
 
@@ -65,16 +64,15 @@ build.task("lint", async () => {
 });
 
 build.incrementalTask("test", paths.cmsTestDependencies(), async () => {
-	// process.stdout.write("Testing: ");
-	// await runTestsAsync(paths.cmsTestFiles());
+	process.stdout.write("Testing: ");
+	await runTestsAsync(paths.cmsTestFiles());
 });
 
-function runTestsAsync(testFiles) {
-	// return new Promise((resolve, reject) => {
-	// 	karmaRunner.run({
-	// 		configFile: path.resolve("build/config/karma.conf.js"),
-	// 	}, resolve, (err) => reject(new Error(err)));
-	// });
+async function runTestsAsync(testFiles) {
+	await mochaRunner.runTestsAsync({
+		files: testFiles,
+		options: mochaConfig,
+	});
 }
 
 function lintDependencyName(lintFilename) {
