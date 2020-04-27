@@ -13,6 +13,8 @@ To run this code, install [Node.js](http://nodejs.org).
 Running the Tests
 -----------------
 
+(All commands must be run from the repository root.)
+
 Run `./build.sh` to run the tests once, or `./watch.sh` to run the tests every time a file changes.
 
 Use `./build.sh quick` or `./watch.sh quick` to perform an incremental build, and `./clean.sh` to reset the incremental build.
