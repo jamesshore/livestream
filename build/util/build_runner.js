@@ -90,7 +90,6 @@ function showHelp(taskFns) {
 	const name = pathLib.basename(process.argv[1]).split(".")[0];
 	console.log(`usage: ${name} [-h|--help|-T|--tasks] [--perf] <tasks>`);
 	console.log("--help  This message");
-	console.log("--perf  Show performance data");
 	console.log();
 	console.log("Available tasks:");
 	Object.keys(taskFns).forEach((task) => console.log(`  ${task}`));
