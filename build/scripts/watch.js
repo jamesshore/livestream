@@ -17,7 +17,6 @@ const BUILD_FILES = [
 ];
 const SOURCE_FILES = [
 	"src/**/*",
-	"vendor/**/*.js",
 ];
 
 const args = process.argv.slice(2);

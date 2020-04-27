@@ -39,7 +39,7 @@ build.task("clean", () => {
 });
 
 build.task("lint", async () => {
-	let header = "Linting JavaScript: ";
+	let header = "Linting: ";
 	let footer = "";
 
 	const lintPromises = paths.lintFiles().map(async (lintFile) => {
@@ -63,9 +63,9 @@ build.task("lint", async () => {
 	process.stdout.write(footer);
 });
 
-build.incrementalTask("test", paths.cmsTestDependencies(), async () => {
+build.incrementalTask("test", paths.testDependencies(), async () => {
 	process.stdout.write("Testing: ");
-	await runTestsAsync(paths.cmsTestFiles());
+	await runTestsAsync(paths.testFiles());
 });
 
 async function runTestsAsync(testFiles) {
@@ -78,5 +78,5 @@ async function runTestsAsync(testFiles) {
 function lintDependencyName(lintFilename) {
 	const rootDir = pathLib.resolve(__dirname, "..");
 	const filenameRelativeToRoot = lintFilename.replace(rootDir, "");
-	return `${paths.incrementalDir}/${filenameRelativeToRoot}.lint`;
+	return `${paths.incrementalDir}/lint/${filenameRelativeToRoot}.lint`;
 }
