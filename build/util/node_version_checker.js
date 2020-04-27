@@ -10,7 +10,9 @@ exports.check = function() {
 	const actualVersion = process.version;
 
 	if (semver.neq(actualVersion, expectedVersion)) {
-		throw new Error(`Incorrect Node version. Expected ${expectedVersion}, but was ${actualVersion}.`);
+		console.log(
+			`CAUTION: Different Node version. Created for v${expectedVersion}, but you have ${actualVersion}.`
+		);
 	}
 
 };
