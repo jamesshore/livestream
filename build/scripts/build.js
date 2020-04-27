@@ -65,16 +65,16 @@ build.task("lint", async () => {
 });
 
 build.incrementalTask("test", paths.cmsTestDependencies(), async () => {
-	process.stdout.write("Testing: ");
-	await runTestsAsync(paths.cmsTestFiles());
+	// process.stdout.write("Testing: ");
+	// await runTestsAsync(paths.cmsTestFiles());
 });
 
 function runTestsAsync(testFiles) {
-	return new Promise((resolve, reject) => {
-		karmaRunner.run({
-			configFile: path.resolve("build/config/karma.conf.js"),
-		}, resolve, (err) => reject(new Error(err)));
-	});
+	// return new Promise((resolve, reject) => {
+	// 	karmaRunner.run({
+	// 		configFile: path.resolve("build/config/karma.conf.js"),
+	// 	}, resolve, (err) => reject(new Error(err)));
+	// });
 }
 
 function lintDependencyName(lintFilename) {
