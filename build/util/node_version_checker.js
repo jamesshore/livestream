@@ -1,17 +1,17 @@
 // Copyright (c) 2013-2017 Titanium I.T. LLC. All rights reserved. See LICENSE.TXT for details.
 "use strict";
 
-const semver = require("semver");
-
 exports.check = function() {
 	console.log("Checking Node.js version: .");
 
-	const expectedVersion = require("../../package.json").engines.node;
+	const expectedVersion = "v" + require("../../package.json").engines.node;
 	const actualVersion = process.version;
 
-	if (semver.neq(actualVersion, expectedVersion)) {
+	if (actualVersion !== expectedVersion) {
 		console.log(
-			`CAUTION: Different Node version. Created for v${expectedVersion}, but you have ${actualVersion}.`
+			"CAUTION: Different Node version.\n" +
+			"This example was created with Node " + expectedVersion + ", but you have " + actualVersion + ".\n" +
+			"If it doesn't work, try installing Node " + expectedVersion + "."
 		);
 	}
 
