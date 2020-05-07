@@ -104,8 +104,8 @@ function alertBuildResult(buildResult) {
 
 function flushCaches() {
 	Object.keys(require.cache).forEach((key) => {
-		const srcDirPrefix = pathLib.resolve("./src");
-		const nodeModulesPrefix = pathLib.resolve("./node_modules");
+		const srcDirPrefix = pathLib.resolve("./src") + pathLib.sep;
+		const nodeModulesPrefix = pathLib.resolve("./node_modules") + pathLib.sep;
 
 		if (key.startsWith(srcDirPrefix) || key.startsWith(nodeModulesPrefix)) delete require.cache[key];
 	});
