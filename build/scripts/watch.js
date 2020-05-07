@@ -91,15 +91,8 @@ function queueAnotherBuild() {
 }
 
 function alertBuildResult(buildResult) {
-	if (buildResult === null) {
-		playSoundAsync("../sounds/success.mp3");
-	}
-	else if (buildResult === "lint") {
-		playSoundAsync("../sounds/lint_error.mp3");
-	}
-	else {
-		playSoundAsync("../sounds/fail.m4a");
-	}
+	let fileName = getAlertFileNameFromBuildResult(buildResult);
+	playSoundAsync(fileName);
 }
 
 function flushCaches() {
@@ -129,11 +122,40 @@ function logEvent(event, filepath) {
 	console.log(`*** ${event.toUpperCase()}: ${truncatedPath}`);
 }
 
+function getAlertFileNameFromBuildResult(buildResult) {
+	if(process.platform === 'win32'){
+		let fileName = "../sounds/power_failure.wav";
+		if (buildResult === null) {
+			fileName = "../sounds/success.wav";
+		}
+		else if (buildResult === "lint") {
+			fileName = "../sounds/lint_error.wav";
+		}
+		return fileName;
+	} else {
+		let fileName = "../sounds/fail.m4a";
+		if (buildResult === null) {
+			fileName = "../sounds/success.mp3";
+		}
+		else if (buildResult === "lint") {
+			fileName = "../sounds/lint_error.mp3";
+		}
+		return fileName;
+	}
+}
+
 async function playSoundAsync(filename) {
-	// Designed for MacOS, which has built-in 'afplay' command
+	
 	try {
 		const path = pathLib.resolve(__dirname, filename);
-		await sh.runSilentlyAsync("afplay", [ path ]);
+		if(process.platform === 'win32'){
+			// If on windows create a Media.SoundPlayer .Net object to play the sound, it is invoked through powershell
+			// note that Media.SoundPlayer has a restriction of only working on .wav files.
+			await sh.runSilentlyAsync(`powershell`,['-c',`(New-Object Media.SoundPlayer "${path}").PlaySync();`]);
+		} else {
+			// Designed for MacOS, which has built-in 'afplay' command
+			await sh.runSilentlyAsync("afplay", [ path ]);
+		}
 	}
 	catch (err) {
 		// If audio player isn't found, just ignore it
