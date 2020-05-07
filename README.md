@@ -38,7 +38,7 @@ To run the code in this repository, install [Node.js](http://nodejs.org). Then:
 
 * Use `./build.sh quick` or `./watch.sh quick` to perform an incremental build, and `./clean.sh` to reset the incremental build.
 
-* On Windows, use `build` or `build quick` to perform a build. Sorry, the watch script doesn't work on Windows.
+* On Windows, use `build` or `build quick` to perform a build. use `watch` to run tests every time a file changes.  If you are using gitbash on windows you can use the above mentioned *.sh files which will work and display the output better.
 
 All commands must be run from the repository root.
 
