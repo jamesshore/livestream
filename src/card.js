@@ -12,4 +12,8 @@ module.exports = class Card {
 		return this._rank;
 	}
 
+	get suit() {
+		return this._suit;
+	}
+
 };
