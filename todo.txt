@@ -1,0 +1,3 @@
+To Do:
+
+* Fail illegal hands, e.g., two of the same card
