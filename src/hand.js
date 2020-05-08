@@ -23,4 +23,12 @@ module.exports = class Hand {
 		return score;
 	}
 
+	scoreHisNibs() {
+		const starterSuit = this._starterCard.suit;
+
+		const jacks = this._hand.filter((card) => card.rank === "J");
+		if (jacks.length > 0 && jacks[0].suit === starterSuit) return 1;
+		else return 0;
+	}
+
 };

@@ -52,6 +52,25 @@ describe("Hand", function() {
 
 	});
 
+	describe("His Nibs", function() {
+
+		it("hands without jacks score 0", function() {
+			const hand = createHand("2H", "3C", "4S", "5D", "6H");
+			assert.equal(hand.scoreHisNibs(), 0);
+		});
+
+		it("hands with jacks that don't match starter card suit score 0", function() {
+			const hand = createHand("2H", "JC", "4S", "5D", "6H");
+			assert.equal(hand.scoreHisNibs(), 0);
+		});
+
+		it("hands with a jack that matches starter card suit score 1", function() {
+			const hand = createHand("2H", "JH", "4S", "5D", "6H");
+			assert.equal(hand.scoreHisNibs(), 1);
+		});
+
+	});
+
 });
 
 function createHand(...cards) {

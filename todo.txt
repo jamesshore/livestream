@@ -1,5 +1,12 @@
 To Do:
 
+* Score his nibs
+	* Score case where there's multiple jacks and the second one is his nibs, but the first isn't
+
+* Score straights
+* Score flushes
+* Score 15s
+
 * Fail illegal hands, e.g., two of the same card
 
-* Score crib?
+* Score crib (it has slightly different rules)?
