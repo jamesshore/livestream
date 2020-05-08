@@ -1,7 +1,7 @@
 James Shore Live
 ================
 
-This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information.
+This example code is used in my [livestream](https://www.jamesshore.com/Blog/Lunch-and-Learn/). See the individual episodes for more information.
 
 
 Running the Code
