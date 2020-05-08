@@ -8,4 +8,8 @@ module.exports = class Card {
 		this._suit = suit;
 	}
 
+	get rank() {
+		return this._rank;
+	}
+
 };
