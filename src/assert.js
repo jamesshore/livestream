@@ -2,11 +2,10 @@
 
 // A small modification to Chai. Why? Just to demonstrate how you can customize an assertion library
 // without writing it all yourself.
-// There's nothing related to Quixote in this file.
 
 "use strict";
 
-const assert = require("../vendor/chai-4.2.0").assert;
+const assert = require("chai").assert;
 
 // 'module.exports = assert' doesn't work because it's a shallow copy. Any changes (such as when we
 // overwrite exports.fail) changes Chai's functions. In the case of export.fail, it causes an infinite
