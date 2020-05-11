@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("./assert");
+const assert = require("../assert");
 const rot13 = require("./rot13");
 
 describe("ROT-13", function() {
@@ -14,7 +14,7 @@ describe("ROT-13", function() {
 		assert.equal(rot13.transform("abcdefghijklmnopqrstuvwxyz"), "nopqrstuvwxyzabcdefghijklm");
 	});
 
-	it("tranforms upper-case letters", function() {
+	it("transforms upper-case letters", function() {
 		assert.equal(rot13.transform("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), "NOPQRSTUVWXYZABCDEFGHIJKLM");
 	});
 
