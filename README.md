@@ -9,6 +9,12 @@ This Week's Challenge (12 May 2020)
 
 Make a small ROT-13 command-line application using the algorithm [we built last week](https://www.jamesshore.com/Blog/Lunch-and-Learn/Incremental-TDD.html), but do so in a way that isolates the command-line infrastructure from the rest of the application. Write tests to prove that the infrastructure is being used correctly.
 
+Some JavaScript hints:
+
+* `process.env` is used to get command-line arguments.
+* `console.log` or `process.stdout.write` is used to write to the console.
+* `child_process.fork` can be used to spawn processes.
+
 
 The Thinking Framework
 ----------------------
