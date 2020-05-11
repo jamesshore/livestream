@@ -1,32 +1,33 @@
 James Shore Live
 ================
 
-This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information.
+This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (5 May 2020)
+This Week's Challenge (12 May 2020)
 -----------------------------------
 
-Implement a ROT-13 algorithm using Test-Driven Development and small steps.
-
-ROT-13 is a Caesar cypher that rotates the letters of the alphabet 13 places. "A" becomes "N", "B" becomes "O," etc. And vice-versa. "N" becomes "A." ROT-13 is popular for hiding spoilers on the Internet because running the algorithm twice in a row gives you the original text back.
+Make a small ROT-13 command-line application using the algorithm [we built last week](https://www.jamesshore.com/Blog/Lunch-and-Learn/Incremental-TDD.html), but do so in a way that isolates the command-line infrastructure from the rest of the application. Write tests to prove that the infrastructure is being used correctly.
 
 
 The Thinking Framework
 ----------------------
 
-**Eat the Onion from the Inside Out.**
+Infrastructure code talks over a network, interacts with a file system, or involves some other communication with external state. It's often complicated and difficult to test, but if you don't test it, you're likely to have bugs.
 
-Problems are made of layers, like ogres, and onions. To break the problem down into small steps, start with the inner-most layer. Find the thing that everything else depends on and build that first. Then build the thing that depends on it, and the thing that depends on that, and so forth, until you've solved everything.
+You can use two techniques to isolate the complexity of your infrastructure and make it easier to test:
 
-Starting with the innermost layer often looks something like this:
+**1. Infrastructure Wrappers.**
 
-1. Interface - everything depends on the interface you decide to build.
-2. Calculations and branches
-3. Loops and generalization
-4. Special cases and error handling
+Create a wrapper—a single class or module—for each piece of infrastructure that you use. For each wrapper, provide an API that provides a crisp, clean view of the messy outside world. Design your API to be focused on the needs of your application rather than the implementation of the infrastructure. Put all the code that interacts with infrastructure in the wrappers.
 
-Some people call this "Zero, One, Many." James Grenning talks about [ZOMBIES](http://blog.wingman-sw.com/tdd-guided-by-zombies). "Uncle Bob" Martin has his [Transformation Priority Premise](https://blog.cleancoder.com/uncle-bob/2013/05/27/TheTransformationPriorityPremise.html). No matter how you slice it, it's about solving the easy, core problems first, and working out from there.
+By doing so, you'll isolate your infrastructure behind an interface that you control. When the infrastructure changes in the future, or if you find yourself switching to a different provider, you can change the wrapper without changing the rest of your application.
+
+**2. Focused Integration Tests.**
+
+Your application's correctness depends on it using its infrastructure correctly, so test each infrastructure wrapper with a "focused integration test." A focused integration test is like a unit test, in that it checks that a single part of your code is working, but unlike a unit test, it runs code that talks to the outside world.
+
+When testing your infrastructure wrappers, test the external communication for real. For file system code, checks that it reads and writes real files. For databases and services, access a real database or service whenever possible. Make sure that your test systems are configured identically to your production systems (except for using test data instead of production data). Otherwise your code will fail in production when it encounters subtle incompatibilities.
 
 
 Running the Code
