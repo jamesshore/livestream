@@ -7,15 +7,12 @@
   },
   "description": "",
   "main": "index.js",
-  "dependencies": {
-    "simplebuild-karma": "^2.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
     "gaze": "^1.1.3",
     "glob": "^7.1.6",
-    "http-server": "^0.12.1",
     "minimist": "^1.2.5",
     "mocha": "^7.1.1",
     "shelljs": "^0.8.3"
