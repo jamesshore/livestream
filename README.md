@@ -15,6 +15,11 @@ Some JavaScript hints:
 * `console.log` or `process.stdout.write` is used to write to the console.
 * `child_process.fork` can be used to spawn processes.
 
+Already provided:
+
+* The ROT-13 algorithm is provided in `src/logic/rot13.js`. Call `transform(string)` to encode a string.
+* The `run.sh` and `run.cmd` scripts run `src/run.js`.
+
 
 The Thinking Framework
 ----------------------
@@ -31,7 +36,7 @@ By doing so, you'll isolate your infrastructure behind an interface that you con
 
 **2. Focused Integration Tests.**
 
-Your application's correctness depends on it using its infrastructure correctly, so test each infrastructure wrapper with a "focused integration test." A focused integration test is like a unit test, in that it checks that a single part of your code is working, but unlike a unit test, it runs code that talks to the outside world.
+Your application's correctness depends on it using its infrastructure correctly, so test each infrastructure wrapper with a "focused integration test." A focused integration test is like a unit test in that it checks that a single part of your code is working. But unlike a unit test, it runs code that talks to the outside world.
 
 When testing your infrastructure wrappers, test the external communication for real. For file system code, checks that it reads and writes real files. For databases and services, access a real database or service whenever possible. Make sure that your test systems are configured identically to your production systems (except for using test data instead of production data). Otherwise your code will fail in production when it encounters subtle incompatibilities.
 
