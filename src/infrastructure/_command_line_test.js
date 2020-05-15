@@ -16,7 +16,7 @@ describe("CommandLine", function() {
 
 	it("writes output", async function() {
 		const stdout = await runModule("./_command_line_test_output_runner.js");
-		assert.equal(stdout, "my output\n");
+		assert.equal(stdout, "my output");
 	});
 
 });

@@ -6,5 +6,5 @@ exports.args = function() {
 };
 
 exports.writeOutput = function(text) {
-	console.log(text);
+	process.stdout.write(text);
 };
