@@ -2,9 +2,8 @@
 "use strict";
 
 const assert = require("../util/assert");
+const testHelper = require("../util/test_helper");
 const commandLine = require("./command_line");
-const childProcess = require("child_process");
-const path = require("path");
 
 describe("CommandLine", function() {
 
@@ -38,31 +37,6 @@ describe("CommandLine", function() {
 
 });
 
-function runModule(relativeModulePath, { args, failOnError = true } = {}) {
-	return new Promise((resolve, reject) => {
-		const absolutePath = path.resolve(__dirname, relativeModulePath);
-		const options = {
-			stdio: "pipe",
-		};
-		const child = childProcess.fork(absolutePath, args, options);
-
-		let stdout = "";
-		let stderr = "";
-		child.stdout.on("data", (data) => {
-			stdout += data;
-		});
-		child.stderr.on("data", (data) => {
-			stderr += data;
-		});
-
-		child.on("exit", (code) => {
-			if (failOnError && stderr !== "") {
-				console.log(stderr);
-				return reject(new Error("Runner failed"));
-			}
-			else {
-				return resolve({ code, stdout, stderr });
-			}
-		});
-	});
+function runModule(relativeModulePath, options) {
+	return testHelper.runModule(__dirname, relativeModulePath, options);
 }
