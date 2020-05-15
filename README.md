@@ -7,7 +7,7 @@ This example code is used in my [livestream](https://www.jamesshore.com/Blog/Lun
 This Week's Challenge
 ---------------------
 
-Write a simple scoring tool for the [Cribbage card game](http://www.cribbage.org/NewSite/rules/rule1.asp) that can be run from the command-line, like this:
+Improve the command-line processing for the incomplete [Cribbage](http://www.cribbage.org/NewSite/rules/rule1.asp) scoring tool in this branch. Currently, it's run like this:
 
 ```sh
 $ ./run.sh JH5D5S5C5H
@@ -21,9 +21,9 @@ That command means "score a hand consisting of Jack of Hearts, 5 of Diamonds, 5 
 1. The first character is the rank of the card, with '0' representing '10': A, 2, 3, 4, 5, 6, 7, 8, 9, 0, J, Q, K.
 2. The second character is the suit of the card: H, S, D, C referring to Hearts, Spades, Diamonds, and Clubs respectively.
 
-Unless you change `src/cli`, which you aren't expected to, `./run.sh` will call the `analyze()` function in `src/score.js` and pass in the first command-line parameter. What happens after that is up to you.
+The `run` script calls `src/cli/run.js`, which in turns calls `src/score.js`. The scoring code is in the `src/` directory. It's incomplete, but may be ignored and/or moved for this week's challenge.
 
-See below for Cribbage's scoring rules.
+The `CommandLine` infrastructure built in [this week's Lunch & Learn](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html) is available in the `src/infrastructure/` directory. It can be used as a starting point.
 
 
 Running the Code
