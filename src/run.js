@@ -4,8 +4,16 @@
 const score = require("./logic/score");
 const commandLine = require("./infrastructure/command_line");
 
+const args = commandLine.args();
+
+if (args.length === 0) {
+	commandLine.writeError("Usage: run hand\n");
+	commandLine.exitWithCommandLineError();
+}
+
+const arg = args[0];
+
 try {
-	const arg = commandLine.args()[0];
 	commandLine.writeOutput(score.analyze(arg) + "\n");
 	commandLine.exitWithoutError();
 }

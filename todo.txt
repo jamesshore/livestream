@@ -1,6 +1,7 @@
 Command Line To Do:
 
 * Add error code constants to CommandLine?
+* Improve 'run' name
 
 
 Scoring To Do:
