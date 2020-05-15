@@ -4,6 +4,7 @@
 const assert = require("./util/assert");
 const testHelper = require("./util/test_helper");
 const score = require("./logic/score");
+const ERROR_CODE = require("./infrastructure/command_line").ERROR_CODE;
 
 describe("Run", function() {
 
@@ -13,13 +14,13 @@ describe("Run", function() {
 
 		assert.equal(stdout, score.analyze(arg) + "\n", "stdout");
 		assert.equal(stderr, "", "stderr");
-		assert.equal(code, 0, "error code");
+		assert.equal(code, ERROR_CODE.NONE, "error code");
 	});
 
 	it("Provides usage and exits with error when no command-line arguments provided", async function() {
 		const { code, stderr } = await runAppAsync([]);
 		assert.equal(stderr, "Usage: run hand\n", stderr);
-		assert.equal(code, 1, "error code");
+		assert.equal(code, ERROR_CODE.BAD_COMMAND_LINE, "error code");
 	});
 
 	it("Exits with error when bad hand provided", async function() {
@@ -37,7 +38,7 @@ describe("Run", function() {
 
 		assert.equal(stdout, "", "stdout");
 		assert.equal(stderr, expectedError, "stderr");
-		assert.equal(code, 1, "error code");
+		assert.equal(code, ERROR_CODE.BAD_COMMAND_LINE, "error code");
 	});
 
 });

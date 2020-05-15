@@ -17,3 +17,4 @@ Object.keys(assert).forEach(function(property) {
 exports.fail = function(message) {
 	assert.fail(null, null, message);
 };
+
