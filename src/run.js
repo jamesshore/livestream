@@ -2,13 +2,14 @@
 "use strict";
 
 const score = require("./logic/score");
+const commandLine = require("./infrastructure/command_line");
 
-const arg = process.argv[2];
 try {
-	process.stdout.write(score.analyze(arg) + "\n");
-	process.exit(0);
+	const arg = commandLine.args()[0];
+	commandLine.writeOutput(score.analyze(arg) + "\n");
+	commandLine.exitWithoutError();
 }
 catch (err) {
-	process.stderr.write(err.message + "\n");
-	process.exit(1);
+	commandLine.writeError(err.message + "\n");
+	commandLine.exitWithCommandLineError();
 }

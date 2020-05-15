@@ -1,7 +1,6 @@
 Command Line To Do:
 
-* Improve runModule to use named parameters?
-
+* Add error code constants to CommandLine?
 
 
 Scoring To Do:
