@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("./assert.js");
+const assert = require("../util/assert");
 const Hand = require("./hand.js");
 const Card = require("./card.js");
 const parser = require("./parser.js");

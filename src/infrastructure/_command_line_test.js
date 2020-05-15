@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("../assert");
+const assert = require("../util/assert");
 const commandLine = require("./command_line");
 const childProcess = require("child_process");
 const path = require("path");

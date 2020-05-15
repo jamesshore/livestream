@@ -2,7 +2,7 @@
 "use strict";
 
 const score = require("./score");
-const assert = require("./assert");
+const assert = require("../util/assert");
 
 describe("Score", function() {
 
