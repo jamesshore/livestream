@@ -19,7 +19,7 @@ describe("Run", function() {
 
 	it("Provides usage and exits with error when no command-line arguments provided", async function() {
 		const { code, stderr } = await runAppAsync([]);
-		assert.equal(stderr, "Usage: run hand\n", stderr);
+		assert.equal(stderr, "Usage: node run.js hand\n", stderr);
 		assert.equal(code, ERROR_CODE.BAD_COMMAND_LINE, "error code");
 	});
 

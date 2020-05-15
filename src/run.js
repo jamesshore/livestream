@@ -7,7 +7,7 @@ const commandLine = require("./infrastructure/command_line");
 const args = commandLine.args();
 
 if (args.length === 0) {
-	commandLine.writeError("Usage: run hand\n");
+	commandLine.writeError(`Usage: ${commandLine.invokedCommand()} hand\n`);
 	commandLine.exitWithCommandLineError();
 }
 
