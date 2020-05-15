@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const score = require("../logic/score");
+const score = require("./logic/score");
 
 const arg = process.argv[2];
 try {
