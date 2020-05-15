@@ -14,8 +14,8 @@ describe("CommandLine", function() {
 	});
 
 	it("provides name used to run program", async function() {
-		const { stdout } = await runModuleAsync("./command_line_test_name_runner.js");
-		assert.equal(stdout, "node command_line_test_name_runner.js");
+		const { stdout } = await runModuleAsync("./_command_line_test_name_runner.js");
+		assert.equal(stdout, "node _command_line_test_name_runner.js");
 	});
 
 	it("writes output", async function() {
@@ -36,7 +36,7 @@ describe("CommandLine", function() {
 	});
 
 	it("exits with 'bad command line' error", async function() {
-		const { code } = await runModuleAsync("./command_line_test_exit_with_command_line_error_runner.js");
+		const { code } = await runModuleAsync("./_command_line_test_exit_with_command_line_error_runner.js");
 		assert.equal(code, 1);
 	});
 
