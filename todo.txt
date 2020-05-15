@@ -1,4 +1,10 @@
-To Do:
+Command Line To Do:
+
+* Improve runModule to use named parameters?
+
+
+
+Scoring To Do:
 
 * Score his nibs
 	* Score case where there's multiple jacks and the second one is his nibs, but the first isn't

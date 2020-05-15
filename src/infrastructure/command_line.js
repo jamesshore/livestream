@@ -8,3 +8,7 @@ exports.args = function() {
 exports.writeOutput = function(text) {
 	process.stdout.write(text);
 };
+
+exports.writeError = function(text) {
+	process.stderr.write(text);
+};
