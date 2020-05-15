@@ -4,7 +4,7 @@
 const childProcess = require("child_process");
 const path = require("path");
 
-exports.runModule = function(baseDir, modulePath, { args, failOnError = true } = {}) {
+exports.runModuleAsync = function(baseDir, modulePath, { args, failOnError = true } = {}) {
 	return new Promise((resolve, reject) => {
 		const absolutePath = path.resolve(baseDir, modulePath);
 		const options = {
