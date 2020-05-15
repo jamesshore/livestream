@@ -31,6 +31,11 @@ describe("CommandLine", function() {
 		assert.equal(code, 0);
 	});
 
+	it("exits with 'bad command line' error", async function() {
+		const { code } = await runModule("./command_line_test_exit_with_command_line_error_runner.js");
+		assert.equal(code, 1);
+	});
+
 });
 
 function runModule(relativeModulePath, { args, failOnError = true } = {}) {

@@ -9,6 +9,10 @@ exports.exitWithoutError = function() {
 	process.exit(0);
 };
 
+exports.exitWithCommandLineError = function() {
+	process.exit(1);
+};
+
 exports.writeOutput = function(text) {
 	process.stdout.write(text);
 };
