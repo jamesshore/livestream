@@ -5,6 +5,10 @@ exports.args = function() {
 	return process.argv.slice(2);
 };
 
+exports.exitWithoutError = function() {
+	process.exit(0);
+};
+
 exports.writeOutput = function(text) {
 	process.stdout.write(text);
 };

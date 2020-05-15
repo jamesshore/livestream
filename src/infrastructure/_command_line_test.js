@@ -26,6 +26,11 @@ describe("CommandLine", function() {
 		assert.equal(stdout, "", "stdout");
 	});
 
+	it("exits with no error", async function() {
+		const { code } = await runModule("./_command_line_test_exit_without_error_runner.js");
+		assert.equal(code, 0);
+	});
+
 });
 
 function runModule(relativeModulePath, { args, failOnError = true } = {}) {
@@ -45,13 +50,13 @@ function runModule(relativeModulePath, { args, failOnError = true } = {}) {
 			stderr += data;
 		});
 
-		child.on("exit", () => {
+		child.on("exit", (code) => {
 			if (failOnError && stderr !== "") {
 				console.log(stderr);
 				return reject(new Error("Runner failed"));
 			}
 			else {
-				return resolve({ stdout, stderr });
+				return resolve({ code, stdout, stderr });
 			}
 		});
 	});
