@@ -1,7 +1,6 @@
 Command Line To Do:
 
-* Improve 'run' name
-* Figure out calling convention for CommandLine's accessors
+* Good enough for now!
 
 Scoring To Do:
 
