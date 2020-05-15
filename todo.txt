@@ -1,8 +1,7 @@
 Command Line To Do:
 
-* Add error code constants to CommandLine?
 * Improve 'run' name
-
+* Figure out calling convention for CommandLine's accessors
 
 Scoring To Do:
 

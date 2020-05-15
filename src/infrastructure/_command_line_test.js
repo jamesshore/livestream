@@ -13,6 +13,11 @@ describe("CommandLine", function() {
 		assert.equal(stdout, '["my arg 1","my arg 2"]');
 	});
 
+	it("provides name used to run program", async function() {
+		const { stdout } = await runModuleAsync("./command_line_test_name_runner.js");
+		assert.equal(stdout, "node command_line_test_name_runner.js");
+	});
+
 	it("writes output", async function() {
 		const { stdout, stderr } = await runModuleAsync("./_command_line_test_output_runner.js");
 		assert.equal(stdout, "my output", "stdout");
