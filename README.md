@@ -4,7 +4,7 @@ James Shore Live
 This example code is used in my [livestream](https://www.jamesshore.com/Blog/Lunch-and-Learn/). See the individual episodes for more information.
 
 
-This Week's Challenge
+This Week's Challenge (15 May 2020)
 ---------------------
 
 Improve the command-line processing for the incomplete [Cribbage](http://www.cribbage.org/NewSite/rules/rule1.asp) scoring tool in this branch. Currently, it's run like this:
@@ -21,9 +21,7 @@ That command means "score a hand consisting of Jack of Hearts, 5 of Diamonds, 5 
 1. The first character is the rank of the card, with '0' representing '10': A, 2, 3, 4, 5, 6, 7, 8, 9, 0, J, Q, K.
 2. The second character is the suit of the card: H, S, D, C referring to Hearts, Spades, Diamonds, and Clubs respectively.
 
-The `run` script calls `src/cli/run.js`, which in turns calls `src/score.js`. The scoring code is in the `src/` directory. It's incomplete, but may be ignored and/or moved for this week's challenge.
-
-The `CommandLine` infrastructure built in [this week's Lunch & Learn](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html) is available in the `src/infrastructure/` directory. It can be used as a starting point.
+The `run` script calls `src/score.js`. The scoring code is in the `src/logic/` directory. It's incomplete, but may be ignored and/or moved for this week's challenge. Command-line infrastructure is in the `src/infrastructure/` directory.
 
 
 Running the Code
