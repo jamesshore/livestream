@@ -1,10 +1,18 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-exports.args = function() {
-	return process.argv.slice(2);
-};
+module.exports = class CommandLine {
 
-exports.writeOutput = function(text) {
-	console.log(text);
+	static create() {
+		return new CommandLine();
+	}
+
+	args() {
+		return process.argv.slice(2);
+	}
+
+	writeOutput(text) {
+		console.log(text);
+	}
+
 };
