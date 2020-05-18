@@ -2,9 +2,11 @@
 "use strict";
 
 const assert = require("../util/assert");
-const rot13 = require("./rot13");
+const Rot13 = require("./rot13");
 
 describe("ROT-13", function() {
+
+	const rot13 = Rot13.create();
 
 	it("does nothing when input is empty", function() {
 		assert.equal(rot13.transform(""), "");
@@ -19,19 +21,19 @@ describe("ROT-13", function() {
 	});
 
 	it("doesn't transform symbols", function() {
-		assertNoTransform("`{@[");
+		assertNoTransform(rot13, "`{@[");
 	});
 
 	it("doesn't transform numbers", function() {
-		assertNoTransform("1234567890");
+		assertNoTransform(rot13, "1234567890");
 	});
 
 	it("doesn't transform non-English letters", function() {
-		assertNoTransform("åéîøüçñ");
+		assertNoTransform(rot13, "åéîøüçñ");
 	});
 
 	it("doesn't break when given emojis", function() {
-		assertNoTransform("✅🚫🙋");
+		assertNoTransform(rot13, "✅🚫🙋");
 	});
 
 	it("fails fast when no parameter provided", function() {
@@ -50,6 +52,6 @@ describe("ROT-13", function() {
 
 });
 
-function assertNoTransform(input) {
+function assertNoTransform(rot13, input) {
 	assert.equal(rot13.transform(input), input);
 }

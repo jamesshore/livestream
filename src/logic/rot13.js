@@ -1,15 +1,23 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-exports.transform = function(input) {
-	if (input === undefined || typeof input !== "string") throw new Error("Expected string parameter");
+module.exports = class Rot13 {
 
-	let result = "";
-	for (let i = 0; i < input.length; i++) {
-		let charCode = input.charCodeAt(i);
-		result += transformLetter(charCode);
+	static create() {
+		return new Rot13();
 	}
-	return result;
+
+	transform(input) {
+		if (input === undefined || typeof input !== "string") throw new Error("Expected string parameter");
+
+		let result = "";
+		for (let i = 0; i < input.length; i++) {
+			let charCode = input.charCodeAt(i);
+			result += transformLetter(charCode);
+		}
+		return result;
+	}
+
 };
 
 function transformLetter(charCode) {
