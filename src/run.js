@@ -3,7 +3,6 @@
 
 const commandLine = require("./infrastructure/command_line").create();
 const rot13 = require("./logic/rot13").create();
+const App = require("./app");
 
-const input = commandLine.args()[0];
-const output = rot13.transform(input);
-commandLine.writeOutput(output);
+App.create(commandLine, rot13).run();
