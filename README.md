@@ -12,12 +12,12 @@ Re-implement the top-level command-line processor using test-driven development 
 1. When no parameter is provided, output `Usage: run text_to_transform`.
 2. When more than one parameter is provided, output `too many arguments`.
 
-The `run.js` script has a bare-bones command-line interface, but it should be reimplemented in `app.js`. Remove the existing implementation in `run.js` and have it call `app.js` instead.
+The `run.js` script already has a bare-bones command-line interface, but it should be reimplemented in `app.js`. Remove the existing implementation in `run.js` and have it call `app.js` instead.
 
 Already provided:
 
-* The ROT-13 algorithm is provided in `src/logic/rot13.js`. Call `transform(string)` to encode a string.
-* A Command-line infrastructure wrapper is provided in `src/infrastructure/command_line.js`. Call `args()` to get an array of command-line arguments and `writeOutput()` to write out a string.
+* The ROT-13 algorithm is provided in `src/logic/rot13.js`. Instantiate it with `create()` and call `transform(string)` to encode a string.
+* A Command-line infrastructure wrapper is provided in `src/infrastructure/command_line.js`. Instantiate it with `create()`, then call `args()` to get an array of command-line arguments and `writeOutput()` to write out a string.
 
 
 The Thinking Framework
