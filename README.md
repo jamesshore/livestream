@@ -4,41 +4,48 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (12 May 2020)
+This Week's Challenge (19 May 2020)
 -----------------------------------
 
-Make a small ROT-13 command-line application using the algorithm [we built last week](https://www.jamesshore.com/Blog/Lunch-and-Learn/Incremental-TDD.html), but do so in a way that isolates the command-line infrastructure from the rest of the application. Write tests to prove that the infrastructure is being used correctly.
+Re-implement the top-level command-line processor using test-driven development and mocks or spies. Add support for these cases:
 
-Some JavaScript hints:
+1. When no parameter is provided, output `Usage: run text_to_transform`.
+2. When more than one parameter is provided, output `too many arguments`.
 
-* `process.env` is used to get command-line arguments.
-* `console.log` or `process.stdout.write` is used to write to the console.
-* `child_process.fork` can be used to spawn processes.
+The `run.js` script has a bare-bones command-line interface, but it should be reimplemented in `app.js`. Remove the existing implementation in `run.js` and have it call `app.js` instead.
 
 Already provided:
 
 * The ROT-13 algorithm is provided in `src/logic/rot13.js`. Call `transform(string)` to encode a string.
-* The `run.sh` and `run.cmd` scripts run `src/run.js`.
+* A Command-line infrastructure wrapper is provided in `src/infrastructure/command_line.js`. Call `args()` to get an array of command-line arguments and `writeOutput()` to write out a string.
 
 
 The Thinking Framework
 ----------------------
 
-Infrastructure code talks over a network, interacts with a file system, or involves some other communication with external state. It's often complicated and difficult to test, but if you don't test it, you're likely to have bugs.
+Mocks make it possible to test code in isolation by taking the place of real dependencies. They were developed as a tool for testing how objects interact. These are two excellent resources for learning more about how mocks are intended to be used:
 
-You can use two techniques to isolate the complexity of your infrastructure and make it easier to test:
+* [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) by Steve Freeman and Nat Pryce. This is the definitive resource about designing code with mocks, written by the inventors of the technique.
 
-**1. Infrastructure Wrappers.**
+* [Please Don't Mock Me](https://www.youtube.com/watch?v=Af4M8GMoxi4) by Justin Searls. A fast and fun conference talk about how to use mocks well.
 
-Create a wrapper—a single class or module—for each piece of infrastructure that you use. For each wrapper, provide an API that provides a crisp, clean view of the messy outside world. Design your API to be focused on the needs of your application rather than the implementation of the infrastructure. Put all the code that interacts with infrastructure in the wrappers.
+Unfortunately, in common practice, mock-based tests have several problems:
 
-By doing so, you'll isolate your infrastructure behind an interface that you control. When the infrastructure changes in the future, or if you find yourself switching to a different provider, you can change the wrapper without changing the rest of your application.
+1. Tests are hard to understand. They execute out of order, have complicated setup, and assertions talk about method calls rather than outcomes.
+2. Code is harder to refactor. Assumptions about the implementation of the code under test is spread throughout all the tests.
+3. Integration tests are required. The behavior defined in the tests doesn't always match the real world.
 
-**2. Focused Integration Tests.**
+The third problem is unavoidable with mock-based tests, but the other issues can be mitigated.
 
-Your application's correctness depends on it using its infrastructure correctly, so test each infrastructure wrapper with a "focused integration test." A focused integration test is like a unit test in that it checks that a single part of your code is working. But unlike a unit test, it runs code that talks to the outside world.
+1. To prevent out-of-order execution, use spies instead of mocks. Unlike mocks, which require you to declare your test assertions in advance, spies allow you to make assertions after running the code under test.
 
-When testing your infrastructure wrappers, test the external communication for real. For file system code, checks that it reads and writes real files. For databases and services, access a real database or service whenever possible. Make sure that your test systems are configured identically to your production systems (except for using test data instead of production data). Otherwise your code will fail in production when it encounters subtle incompatibilities.
+2. To simplify setup, don't mock everything. Call simple logic dependencies for real rather than using mocks. This often leads to duplicate assertions in your tests. You can eliminate the duplication by calling the logic dependency in your test code, too.
+
+3. To further simplify setup, use factory methods and other helpers to hide setup behind a small, self-documenting interface.
+
+4. To make assertions easier to understand, create custom outcome-oriented assertions that wrap the implementation-specific mock/spy code.
+
+The final two solutions—factory methods and custom assertions—will reduce the duplicated implementation assumptions, which will make refactoring easier.
 
 
 Running the Code
