@@ -1,15 +1,16 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
+const rot13 = require("./logic/rot13").create();
+
 module.exports = class App {
 
-	static create(commandLine, rot13) {
-		return new App(commandLine, rot13);
+	static create(commandLine) {
+		return new App(commandLine);
 	}
 
-	constructor(commandLine, rot13) {
+	constructor(commandLine) {
 		this._commandLine = commandLine;
-		this._rot13 = rot13;
 	}
 
 	run() {
@@ -24,7 +25,7 @@ module.exports = class App {
 		}
 
 		const input = args[0];
-		const output = this._rot13.transform(input);
+		const output = rot13.transform(input);
 		this._commandLine.writeOutput(output);
 	}
 

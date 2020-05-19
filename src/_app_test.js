@@ -10,24 +10,22 @@ describe("App", function() {
 
 	it("read command-line argument, transform it with ROT-13, and write result", function() {
 		const commandLine = td.object(CommandLine.create());
-		const rot13 = td.object(Rot13.create());
-		const app = App.create(commandLine, rot13);
+		const rot13 = Rot13.create();
+		const app = App.create(commandLine);
 
 		td.when(commandLine.args()).thenReturn([ "my input" ]);
-		td.when(rot13.transform("my input")).thenReturn("my output");
+		const expectedOutput = rot13.transform("my input");
 
 		app.run();
 
-		td.verify(commandLine.writeOutput("my output"));
+		td.verify(commandLine.writeOutput(expectedOutput));
 	});
 
 	it("writes usage to command-line when no argument provided", function() {
 		const commandLine = td.object(CommandLine.create());
-		const rot13 = td.object(Rot13.create());
-		const app = App.create(commandLine, rot13);
+		const app = App.create(commandLine);
 
 		td.when(commandLine.args()).thenReturn([]);
-		td.when(rot13.transform("my input")).thenReturn("my output");
 
 		app.run();
 
@@ -36,11 +34,9 @@ describe("App", function() {
 
 	it("complains when too many command-line arguments provided", function() {
 		const commandLine = td.object(CommandLine.create());
-		const rot13 = td.object(Rot13.create());
-		const app = App.create(commandLine, rot13);
+		const app = App.create(commandLine);
 
 		td.when(commandLine.args()).thenReturn([ "a", "b" ]);
-		td.when(rot13.transform("my input")).thenReturn("my output");
 
 		app.run();
 
