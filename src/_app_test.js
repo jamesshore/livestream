@@ -13,19 +13,19 @@ describe("App", function() {
 		const expectedOutput = Rot13.create().transform("my input");
 
 		app.run();
-		td.verify(commandLine.writeOutput(expectedOutput));
+		assertOutput(commandLine, expectedOutput);
 	});
 
 	it("writes usage to command-line when no argument provided", function() {
 		const { commandLine, app } = setup([]);
 		app.run();
-		td.verify(commandLine.writeOutput("Usage: run text_to_transform"));
+		assertOutput(commandLine, "Usage: run text_to_transform");
 	});
 
 	it("complains when too many command-line arguments provided", function() {
 		const { commandLine, app } = setup([ "a", "b" ]);
 		app.run();
-		td.verify(commandLine.writeOutput("too many arguments"));
+		assertOutput(commandLine, "too many arguments");
 	});
 
 });
@@ -38,4 +38,8 @@ function setup(args) {
 	td.when(commandLine.args()).thenReturn(args);
 
 	return { commandLine, app };
+}
+
+function assertOutput(commandLine, expectedOutput) {
+	td.verify(commandLine.writeOutput(expectedOutput));
 }
