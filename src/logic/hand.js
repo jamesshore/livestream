@@ -8,38 +8,13 @@ module.exports = class Hand {
 		this._starterCard = starterCard;
 	}
 
-	static allCombinationsStrings(cards) {
-		const firstCard = cards[0];
-		let remainingCombos;
-		if (cards.length > 1) {
-			remainingCombos = this.allCombinationsStrings(cards.slice(1));
-			return [ [ firstCard ], ...remainingCombos, cards ];
-		}
-		else {
-			return [ cards ];
-		}
+	static allCombinations(cards) {
+		if (cards.length === 0) return [];
 
-	}
-
-	static allCombinations(cards, depth = 0) {
-		const allCards = cards;
-		const firstCard = [ cards[0] ];
-
-		if (cards.length > 1) {
-			const remainingCards = this.allCombinations(cards.slice(1), depth + 1)[0];
-
-			console.log(depth, "FIRST CARD", firstCard);
-			console.log(depth, "REMAINING CARDS", remainingCards);
-			console.log(depth, "ALL CARDS", allCards);
-
-			return [ firstCard, remainingCards, allCards ];
-		}
-		else {
-			console.log(depth, "BASE CASE", firstCard);
-
-			return [ firstCard ];
-		}
-
+		const [ firstCard, ...remainingCards ] = cards;
+		const allRemainingCombos = this.allCombinations(remainingCards);
+		const combosWithFirstCard = allRemainingCombos.map((combo) => [ firstCard, ...combo ]);
+		return [ [ firstCard ], ...combosWithFirstCard, ...allRemainingCombos ];
 	}
 
 	scorePairs() {
@@ -66,10 +41,6 @@ module.exports = class Hand {
 		}
 
 		return nibs.length;
-	}
-
-	allCombinations(allCards) {
-
 	}
 
 };

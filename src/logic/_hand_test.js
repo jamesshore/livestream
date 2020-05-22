@@ -10,36 +10,16 @@ describe("Hand", function() {
 
 	describe("Card combinations", function() {
 
-		it("one card", function() {
-			assert.deepEqual(allCombinations("AC"), [
-				[ "AC" ]
-			]);
-		});
-
-		it("two cards", function() {
-			assert.deepEqual(allCombinations("AC", "2C"), [
+		it("provides all combinations of cards", function() {
+			assert.deepEqual(allCombinations("AC", "2C", "3C"), [
 				[ "AC" ],
-				[ "2C" ],
 				[ "AC", "2C" ],
+				[ "AC", "2C", "3C" ],
+				[ "AC", "3C" ],
+				[ "2C" ],
+				[ "2C", "3C" ],
+				[ "3C" ],
 			]);
-		});
-
-		it.only("three cards", function() {
-			const result = Hand.allCombinationsStrings([ "AC", "2C", "3C", "4C" ]);
-			console.log("****\nRESULT", result);
-
-
-			// assert.deepEqual(allCombinations("AC", "2C", "3C"), [
-			// 	[ "AC" ],
-			// 	[ "2C" ],
-			// 	[ "3C" ],
-			// 	[ "2C", "3C" ],
-			// 	[ "AC", "3C" ],
-			// 	[ "AC", "2C", "3C" ],
-				// [ "AC" ],
-				// [ "2C", "3C" ],
-				// [ "AC", "2C", "3C" ],
-			// ]);
 
 		});
 
@@ -47,12 +27,9 @@ describe("Hand", function() {
 			const cards = cardStrings.map((cardString) => parser.parseCard(cardString));
 			const allCombos = Hand.allCombinations(cards);
 
-			const result = allCombos.map((combo) => {
+			return allCombos.map((combo) => {
 				return combo.map((card) => card.toString());
 			});
-
-			console.log("RESULT", result);
-			return result;
 		}
 
 	});
