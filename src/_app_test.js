@@ -7,6 +7,8 @@ const score = require("./logic/score");
 const CommandLine = require("./infrastructure/command_line");
 const App = require("./app");
 
+const USAGE = "Usage: node program.js hand\n";
+
 describe("Run", function() {
 
 	it("Analyzes hand, writes output, and exits without error", function() {
@@ -28,7 +30,19 @@ describe("Run", function() {
 
 		const exitCode = app.run();
 
-		assertStderr(commandLine, "Usage: node program.js hand\n");
+		assertStderr(commandLine, USAGE);
+		assert.equal(exitCode, 1, "exit code");
+	});
+
+	it("Provides usage and exits with error when too many command-line arguments provided", function() {
+		const { commandLine, app } = setup({
+			args: [ "too", "many" ],
+			invokedCommand: "node program.js"
+		});
+
+		const exitCode = app.run();
+
+		assertStderr(commandLine, USAGE);
 		assert.equal(exitCode, 1, "exit code");
 	});
 

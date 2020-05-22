@@ -22,7 +22,7 @@ module.exports = class App {
 	run() {
 		const args = this._commandLine.args();
 
-		if (args.length === 0) {
+		if (args.length !== 1) {
 			this._commandLine.writeError(`Usage: ${this._commandLine.invokedCommand()} hand\n`);
 			return EXIT_CODE.BAD_COMMAND_LINE;
 		}
