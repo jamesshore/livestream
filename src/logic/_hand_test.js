@@ -65,8 +65,16 @@ describe("Hand", function() {
 		});
 
 		it("hands with a jack that matches starter card suit score 1", function() {
-			const hand = createHand("2H", "JH", "4S", "5D", "6H");
+			const hand = createHand("2H", "JH", "4S", "JD", "6D");
 			assert.equal(hand.scoreHisNibs(), 1);
+		});
+
+		it("fails fast if there are multiple matching jacks", function() {
+			const hand = createHand("2H", "JD", "4S", "JD", "6D");
+			assert.throws(
+				() => hand.scoreHisNibs(),
+				"too many nibs: 2H, JD, 4S, JD matching 6D"
+			);
 		});
 
 	});

@@ -26,9 +26,12 @@ module.exports = class Hand {
 	scoreHisNibs() {
 		const starterSuit = this._starterCard.suit;
 
-		const jacks = this._hand.filter((card) => card.rank === "J");
-		if (jacks.length > 0 && jacks[0].suit === starterSuit) return 1;
-		else return 0;
+		const nibs = this._hand.filter((card) => card.rank === "J" && card.suit === starterSuit);
+		if (nibs.length > 1) {
+			throw new Error(`too many nibs: ${this._hand.join(", ")} matching ${this._starterCard}`);
+		}
+
+		return nibs.length;
 	}
 
 };

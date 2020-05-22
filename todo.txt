@@ -1,11 +1,4 @@
-Command Line To Do:
-
-* Good enough for now!
-
 Scoring To Do:
-
-* Score his nibs
-	* Score case where there's multiple jacks and the second one is his nibs, but the first isn't
 
 * Score straights
 * Score flushes
