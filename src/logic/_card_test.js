@@ -16,4 +16,9 @@ describe("Card", function() {
 		assert.equal(card.suit, "C");
 	});
 
+	it("converts to string", function() {
+		const card = new Card("3", "C");
+		assert.equal(card.toString(), "3C");
+	});
+
 });

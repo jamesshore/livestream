@@ -16,4 +16,8 @@ module.exports = class Card {
 		return this._suit;
 	}
 
+	toString() {
+		return `${this._rank}${this._suit}`;
+	}
+
 };
