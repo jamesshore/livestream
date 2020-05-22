@@ -1,13 +1,23 @@
 James Shore Live
 ================
 
-This example code is used in my [livestream](https://www.jamesshore.com/Blog/Lunch-and-Learn/). See the individual episodes for more information.
+This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (15 May 2020)
+This Week's Challenge (22 May 2020)
 ---------------------
 
-Improve the command-line processing for the incomplete [Cribbage](http://www.cribbage.org/NewSite/rules/rule1.asp) scoring tool in this branch. Currently, it's run like this:
+This branch contains an incomplete [Cribbage](http://www.cribbage.org/NewSite/rules/rule1.asp) scoring tool. See below for details.
+
+The challenge: Replace the end-to-end application runner tests with mock- or spy-based unit tests, and do so in a way that's clean and readable. Add additional tests and behavior as desired to improve command-line processing.
+
+The current end-to-end tests are in `src/_score_test.js`. The current application runner is in `src/score.js`.
+
+
+About the Application
+---------------------
+
+The application is an incomplete [Cribbage](http://www.cribbage.org/NewSite/rules/rule1.asp) scoring tool. Currently, it's run like this:
 
 ```sh
 $ ./run.sh JH5D5S5C5H
