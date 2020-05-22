@@ -4,17 +4,14 @@
 const assert = require("./util/assert");
 const testHelper = require("./util/test_helper");
 const score = require("./logic/score");
-const ERROR_CODE = require("./infrastructure/command_line").ERROR_CODE;
 
 describe("Top-level Application Runner", function() {
 
-	it("works end-to-end", async function() {
-		let arg = "JH5D5S5C5H";
-		const { code, stdout, stderr } = await runAppAsync([ arg ]);
+	it("works end-to-end and exits with error code", async function() {
+		const { code, stdout, stderr } = await runAppAsync([]);
 
-		assert.equal(stdout, score.analyze(arg) + "\n", "stdout");
-		assert.equal(stderr, "", "stderr");
-		assert.equal(code, ERROR_CODE.NONE, "error code");
+		assert.match(stderr, /^Usage:/, "stdout");
+		assert.equal(code, 1, "error code");
 	});
 
 });
