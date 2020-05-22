@@ -4,6 +4,11 @@
 const score = require("./logic/score");
 const CommandLine = require("./infrastructure/command_line");
 
+const EXIT_CODE = {
+	OK: 0,
+	BAD_COMMAND_LINE: 1,
+};
+
 module.exports = class App {
 
 	static create(commandLine = CommandLine.create()) {
@@ -19,18 +24,18 @@ module.exports = class App {
 
 		if (args.length === 0) {
 			this._commandLine.writeError(`Usage: ${this._commandLine.invokedCommand()} hand\n`);
-			this._commandLine.exitWithCommandLineError();
+			return EXIT_CODE.BAD_COMMAND_LINE;
 		}
 
 		const arg = args[0];
 
 		try {
 			this._commandLine.writeOutput(score.analyze(arg) + "\n");
-			this._commandLine.exitWithoutError();
+			return EXIT_CODE.OK;
 		}
 		catch (err) {
 			this._commandLine.writeError(err.message + "\n");
-			this._commandLine.exitWithCommandLineError();
+			return EXIT_CODE.BAD_COMMAND_LINE;
 		}
 	}
 

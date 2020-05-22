@@ -4,4 +4,7 @@
 const App = require("./app.js");
 
 const app = App.create();
-app.run();
+const exitCode = app.run();
+
+process.exit(exitCode);
+
