@@ -3,7 +3,6 @@
 
 const assert = require("./util/assert");
 const td = require("testdouble");
-const testHelper = require("./util/test_helper");
 const score = require("./logic/score");
 const CommandLine = require("./infrastructure/command_line");
 const App = require("./app");
@@ -11,28 +10,30 @@ const App = require("./app");
 describe("Run", function() {
 
 	it("Analyzes hand, writes output, and exits without error", function() {
-		const commandLine = td.object(CommandLine.create());
-		const app = App.create(commandLine);
-
 		const arg = "JH5D5S5C5H";
-		td.when(commandLine.args()).thenReturn([ arg ]);
-
-		const errorCode = app.run();
-
 		const expectedOutput = score.analyze(arg) + "\n";
-		td.verify(commandLine.writeOutput(expectedOutput));
-		assert.equal(errorCode, 0);
+		const { commandLine, app } = setup({ args: [ arg ] });
+
+		const exitCode = app.run();
+
+		assertStdout(commandLine, expectedOutput);
+		assert.equal(exitCode, 0, "exit code");
 	});
 
-	it("Provides usage and exits with error when no command-line arguments provided", async function() {
-		const { code, stderr } = await runAppAsync([]);
-		assert.equal(stderr, "Usage: node score.js hand\n", "stderr");
-		assert.equal(code, 1, "error code");
+	it("Provides usage and exits with error when no command-line arguments provided", function() {
+		const { commandLine, app } = setup({
+			args: [],
+			invokedCommand: "node program.js"
+		});
+
+		const exitCode = app.run();
+
+		assertStderr(commandLine, "Usage: node program.js hand\n");
+		assert.equal(exitCode, 1, "exit code");
 	});
 
-	it("Exits with error when bad hand provided", async function() {
+	it("Exits with error when bad hand provided", function() {
 		const arg = "BAD_HAND";
-
 		let expectedError;
 		try {
 			score.analyze(arg);
@@ -41,15 +42,30 @@ describe("Run", function() {
 			expectedError = err.message + "\n";
 		}
 
-		const { code, stdout, stderr } = await runAppAsync([ arg ]);
+		const { commandLine, app } = setup({ args: [ arg ] });
 
-		assert.equal(stdout, "", "stdout");
-		assert.equal(stderr, expectedError, "stderr");
-		assert.equal(code, 1, "error code");
+		const exitCode = app.run();
+
+		assertStderr(commandLine, expectedError);
+		assert.equal(exitCode, 1, "exit code");
 	});
 
 });
 
-async function runAppAsync(args) {
-	return await testHelper.runModuleAsync(__dirname, "./score.js", { args, failOnError: false });
+function setup({ args, invokedCommand = "irrelevant_invoked_command" }) {
+	const commandLine = td.object(CommandLine.create());
+	const app = App.create(commandLine);
+
+	td.when(commandLine.args()).thenReturn(args);
+	td.when(commandLine.invokedCommand()).thenReturn(invokedCommand);
+
+	return { commandLine, app };
+}
+
+function assertStdout(commandLine, expectedOutput) {
+	td.verify(commandLine.writeOutput(expectedOutput), "stdout");
+}
+
+function assertStderr(commandLine, expectedError) {
+	td.verify(commandLine.writeError(expectedError), "stderr");
 }

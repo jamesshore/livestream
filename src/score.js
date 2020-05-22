@@ -7,4 +7,3 @@ const app = App.create();
 const exitCode = app.run();
 
 process.exit(exitCode);
-
