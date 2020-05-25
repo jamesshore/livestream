@@ -12,7 +12,7 @@ module.exports = class CommandLine {
 	}
 
 	writeOutput(text) {
-		console.log(text);
+		process.stdout.write(text + "\n");
 	}
 
 };
