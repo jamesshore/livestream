@@ -12,35 +12,34 @@ describe("App", function() {
 		const input = "my input";
 		const expectedOutput = rot13.transform(input);
 
-		const { commandLine, app } = setup([ input ]);
+		const commandLine = new (td.constructor(CommandLine));
+		const app = App.create(commandLine);
+
+		td.when(commandLine.args()).thenReturn([ input ]);
+
 		app.run();
-		assertOutput(commandLine, expectedOutput);
+		td.verify(commandLine.writeOutput(expectedOutput));
 	});
 
 	it("writes usage to command-line when no argument provided", function() {
-		const { commandLine, app } = setup([]);
+		const commandLine = new (td.constructor(CommandLine));
+		const app = App.create(commandLine);
+
+		td.when(commandLine.args()).thenReturn([]);
+
 		app.run();
-		assertOutput(commandLine, "Usage: run text_to_transform");
+		td.verify(commandLine.writeOutput("Usage: run text_to_transform"));
 	});
 
 	it("complains when too many command-line arguments provided", function() {
-		const { commandLine, app } = setup([ "a", "b" ]);
+		const commandLine = new (td.constructor(CommandLine));
+		const app = App.create(commandLine);
+
+		td.when(commandLine.args()).thenReturn([ "a", "b" ]);
+
 		app.run();
-		assertOutput(commandLine, "too many arguments");
+		td.verify(commandLine.writeOutput("too many arguments"));
 	});
 
 });
 
-
-function setup(args) {
-	const commandLine = new (td.constructor(CommandLine));
-	const app = App.create(commandLine);
-
-	td.when(commandLine.args()).thenReturn(args);
-
-	return { commandLine, app };
-}
-
-function assertOutput(commandLine, expectedOutput) {
-	td.verify(commandLine.writeOutput(expectedOutput));
-}
