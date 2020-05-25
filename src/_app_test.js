@@ -32,7 +32,7 @@ describe("App", function() {
 
 
 function setup(args) {
-	const commandLine = td.object(CommandLine.create());
+	const commandLine = new (td.constructor(CommandLine));
 	const app = App.create(commandLine);
 
 	td.when(commandLine.args()).thenReturn(args);
