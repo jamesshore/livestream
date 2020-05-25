@@ -2,11 +2,9 @@
 "use strict";
 
 const assert = require("../util/assert");
-const Rot13 = require("./rot13");
+const rot13 = require("./rot13");
 
 describe("ROT-13", function() {
-
-	const rot13 = Rot13.create();
 
 	it("does nothing when input is empty", function() {
 		assert.equal(rot13.transform(""), "");
