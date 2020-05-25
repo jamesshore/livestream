@@ -8,10 +8,11 @@ const App = require("./app");
 
 describe("App", function() {
 
-	it("read command-line argument, transform it with ROT-13, and write result", function() {
-		const { commandLine, app } = setup(["my input"]);
-		const expectedOutput = rot13.transform("my input");
+	it("reads command-line argument, transform it with ROT-13, and write result", function() {
+		const input = "my input";
+		const expectedOutput = rot13.transform(input);
 
+		const { commandLine, app } = setup([ input ]);
 		app.run();
 		assertOutput(commandLine, expectedOutput);
 	});
