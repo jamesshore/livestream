@@ -1,7 +1,6 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const td = require("testdouble");
 const assert = require("./util/assert");
 const CommandLine = require("./infrastructure/command_line");
 const rot13 = require("./logic/rot13");
@@ -13,33 +12,26 @@ describe("App", function() {
 		const input = "my input";
 		const expectedOutput = rot13.transform(input);
 
-		const commandLine = new (td.constructor(CommandLine));
+		const commandLine = CommandLine.createNull({ args: [ input ]});
 		const app = App.create(commandLine);
-
-		td.when(commandLine.args()).thenReturn([ input ]);
-
 		app.run();
-		td.verify(commandLine.writeOutput(expectedOutput));
+		assert.equal(commandLine.getLastOutput(), expectedOutput + "\n");
 	});
 
 	it("writes usage to command-line when no argument provided", function() {
-		const commandLine = new (td.constructor(CommandLine));
+		const commandLine = CommandLine.createNull({ args: []});
 		const app = App.create(commandLine);
 
-		td.when(commandLine.args()).thenReturn([]);
-
 		app.run();
-		td.verify(commandLine.writeOutput("Usage: run text_to_transform"));
+		assert.equal(commandLine.getLastOutput(), "Usage: run text_to_transform\n");
 	});
 
 	it("complains when too many command-line arguments provided", function() {
-		const commandLine = new (td.constructor(CommandLine));
+		const commandLine = CommandLine.createNull({ args: [ "a", "b" ]});
 		const app = App.create(commandLine);
 
-		td.when(commandLine.args()).thenReturn([ "a", "b" ]);
-
 		app.run();
-		td.verify(commandLine.writeOutput("too many arguments"));
+		assert.equal(commandLine.getLastOutput(), "too many arguments\n");
 	});
 
 });
