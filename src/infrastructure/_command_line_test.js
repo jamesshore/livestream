@@ -16,13 +16,13 @@ describe("CommandLine", function() {
 
 	it("writes output", async function() {
 		const stdout = await runModuleAsync("./_command_line_test_output_runner.js");
-		assert.equal(stdout, "my output\n");
+		assert.equal(stdout, "my output");
 	});
 
 	it("remembers last output", function() {
 		const commandLine = CommandLine.createNull();
 		commandLine.writeOutput("my last output");
-		assert.equal(commandLine.getLastOutput(), "my last output\n");
+		assert.equal(commandLine.getLastOutput(), "my last output");
 	});
 
 	it("last output is undefined when nothing has been output yet", function() {

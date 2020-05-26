@@ -20,9 +20,8 @@ module.exports = class CommandLine {
 	}
 
 	writeOutput(text) {
-		let output = text + "\n";
-		this._process.stdout.write(output);
-		this._lastOutput = output;
+		this._process.stdout.write(text);
+		this._lastOutput = text;
 	}
 
 	getLastOutput() {
