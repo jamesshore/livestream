@@ -4,48 +4,32 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (19 May 2020)
+This Week's Challenge (26 May 2020)
 -----------------------------------
 
-Re-implement the top-level command-line processor using test-driven development and mocks or spies. Add support for these cases:
-
-1. When no parameter is provided, output `Usage: run text_to_transform`.
-2. When more than one parameter is provided, output `too many arguments`.
-
-The `run.js` script already has a bare-bones command-line interface, but it should be reimplemented in `app.js`. Remove the existing implementation in `run.js` and have it call `app.js` instead.
-
-Already provided:
-
-* The ROT-13 algorithm is provided in `src/logic/rot13.js`. Instantiate it with `create()` and call `transform(string)` to encode a string.
-* A Command-line infrastructure wrapper is provided in `src/infrastructure/command_line.js`. Instantiate it with `create()`, then call `args()` to get an array of command-line arguments and `writeOutput()` to write out a string.
+Reimplement `_app_test.js` without using mocks, spies, or integration tests.
 
 
 The Thinking Framework
 ----------------------
 
-Mocks make it possible to test code in isolation by taking the place of real dependencies. They were developed as a tool for testing how objects interact. These are two excellent resources for learning more about how mocks are intended to be used:
+Although mocks (and spies) are useful for testing interactions and isolating code, that isolation comes at a cost. Changes in dependencies semantics won't cause the tests to fail. As a result, mock-based tests must be supplemented with integration tests.
 
-* [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/) by Steve Freeman and Nat Pryce. This is the definitive resource about designing code with mocks, written by the inventors of the technique.
+You can avoid these problems by not using mocks in your tests. James Shore's [Testing Without Mocks pattern language](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html) has the details. Two key pieces are Overlapping Sociable Tests and Nullable Infrastructure.
 
-* [Please Don't Mock Me](https://www.youtube.com/watch?v=Af4M8GMoxi4) by Justin Searls. A fast and fun conference talk about how to use mocks well.
+**1. Overlapping Sociable Tests**
 
-Unfortunately, in common practice, mock-based tests have several problems:
+When testing the interactions between a unit and its dependencies, inject real dependency instances, not test doubles, into the unit under test. Don't test the dependencies' behavior itself, but do test that the unit under test uses the dependencies correctly.
 
-1. Tests are hard to understand. They execute out of order, have complicated setup, and assertions talk about method calls rather than outcomes.
-2. Code is harder to refactor. Assumptions about the implementation of the code under test is spread throughout all the tests.
-3. Integration tests are required. The behavior defined in the tests doesn't always match the real world.
+This will create a strong linked chain of tests. Each test will check the unit under test *and* its usage of its dependencies. The test suite as a whole will cover your whole application in a fine overlapping mesh, giving you the coverage of integration tests without needing to write them.
 
-The third problem is unavoidable with mock-based tests, but the other issues can be mitigated.
+**2. Nullable Infrastructure**
 
-1. To prevent out-of-order execution, use spies instead of mocks. Unlike mocks, which require you to declare your test assertions in advance, spies allow you to make assertions after running the code under test.
+Program your infrastructure wrappers so they can be "turned off" by instantiating "null" versions, such as by calling `Wrapper.createNull()`. These null instances should behave identically to the real thing—by running the exact same code as the real thing—except for the very minimum necessary to turn off their interactions with infrastructure. As this code will be part of your production infrastructure wrapper, it should be written as production-grade code, including tests.
 
-2. To simplify setup, don't mock everything. Call simple logic dependencies for real rather than using mocks. This often leads to duplicate assertions in your tests. You can eliminate the duplication by calling the logic dependency in your test code, too.
+To make it possible to test your infrastructure, add methods to reveal how the infrastructure has been used. In your `createNull()` factory, provide the ability to configure method return values.
 
-3. To further simplify setup, use factory methods and other helpers to hide setup behind a small, self-documenting interface.
-
-4. To make assertions easier to understand, create custom outcome-oriented assertions that wrap the implementation-specific mock/spy code.
-
-The final two solutions—factory methods and custom assertions—will reduce the duplicated implementation assumptions, which will make refactoring easier.
+Implement this cleanly by writing small stubs of the third-party infrastructure you're using. (See the video or [Testing Without Mocks](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html) article for details.)
 
 
 Running the Code
