@@ -4,6 +4,7 @@
 const assert = require("../util/assert");
 const childProcess = require("child_process");
 const path = require("path");
+const CommandLine = require("./command_line");
 
 describe("CommandLine", function() {
 
@@ -16,6 +17,37 @@ describe("CommandLine", function() {
 	it("writes output", async function() {
 		const stdout = await runModuleAsync("./_command_line_test_output_runner.js");
 		assert.equal(stdout, "my output\n");
+	});
+
+	it("remembers last output", function() {
+		const commandLine = CommandLine.createNull();
+		commandLine.writeOutput("my last output");
+		assert.equal(commandLine.getLastOutput(), "my last output\n");
+	});
+
+	it("last output is undefined when nothing has been output yet", function() {
+		const commandLine = CommandLine.createNull();
+		assert.isUndefined(commandLine.getLastOutput());
+	});
+
+
+	describe("Nullability", function() {
+
+		it("defaults to no arguments", function() {
+			const commandLine = CommandLine.createNull();
+			assert.deepEqual(commandLine.args(), []);
+		});
+
+		it("allows arguments to be configured", function() {
+			const commandLine = CommandLine.createNull({ args: [ "one", "two" ]});
+			assert.deepEqual(commandLine.args(), [ "one", "two" ]);
+		});
+
+		it("doesn't write output to command line", async function() {
+			const stdout = await runModuleAsync("./_command_line_test_null_output_runner.js");
+			assert.equal(stdout, "");
+		});
+
 	});
 
 });
