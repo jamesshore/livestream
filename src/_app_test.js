@@ -2,6 +2,7 @@
 "use strict";
 
 const td = require("testdouble");
+const assert = require("./util/assert");
 const CommandLine = require("./infrastructure/command_line");
 const rot13 = require("./logic/rot13");
 const App = require("./app");
