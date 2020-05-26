@@ -9,18 +9,18 @@ describe("CommandLine", function() {
 
 	it("provides command-line arguments", async function() {
 		const args = [ "my arg 1", "my arg 2" ];
-		const stdout = await runModule("./_command_line_test_args_runner.js", args);
+		const stdout = await runModuleAsync("./_command_line_test_args_runner.js", args);
 		assert.equal(stdout, '["my arg 1","my arg 2"]');
 	});
 
 	it("writes output", async function() {
-		const stdout = await runModule("./_command_line_test_output_runner.js");
+		const stdout = await runModuleAsync("./_command_line_test_output_runner.js");
 		assert.equal(stdout, "my output\n");
 	});
 
 });
 
-function runModule(relativeModulePath, args) {
+function runModuleAsync(relativeModulePath, args) {
 	return new Promise((resolve, reject) => {
 		const absolutePath = path.resolve(__dirname, relativeModulePath);
 		const options = {
