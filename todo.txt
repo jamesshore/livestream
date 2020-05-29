@@ -1,6 +1,5 @@
 Scoring To Do:
 
-* Score straights
 * Score flushes
 * Score 15s
 

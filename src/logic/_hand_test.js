@@ -64,6 +64,46 @@ describe("Hand", function() {
 	});
 
 
+	describe("Straights", function() {
+
+		it("not a straight", function() {
+			const hand = createHand("2H", "JD", "4S", "JD", "6D");
+			assert.equal(hand.countStraightCards(), 0);
+		});
+
+		it("two cards don't make a straight", function() {
+			const hand = createHand("2H", "3D", "6S", "JD", "6D");
+			assert.equal(hand.countStraightCards(), 0);
+		});
+
+		it("three cards do make a straight", function() {
+			const hand = createHand("2H", "3D", "4S", "JD", "6D");
+			assert.equal(hand.countStraightCards(), 3);
+		});
+
+		it("doesn't count cards in a straight more than once", function() {
+			const hand = createHand("2H", "3D", "4S", "5D", "QD");
+			assert.equal(hand.countStraightCards(), 4);
+		});
+
+		it("is a straight when non-numeric cards are included", function() {
+			assert.equal(createHand("AD", "2C", "3D", "4S", "5D").countStraightCards(), 5);
+			assert.equal(createHand("9C", "0D", "JS", "QD", "KH").countStraightCards(), 5);
+		});
+
+		it("is a straight when not in order", function() {
+			const hand = createHand("2C", "5D", "4S", "6D", "3D");
+			assert.equal(hand.countStraightCards(), 5);
+		});
+
+		it("counts multiple straights", function() {
+			const hand = createHand("2C", "3D", "3S", "3D", "4D");
+			assert.equal(hand.countStraightCards(), 9);
+		});
+
+	});
+
+
 	describe("Card combinations", function() {
 
 		it("provides all combinations of cards", function() {
