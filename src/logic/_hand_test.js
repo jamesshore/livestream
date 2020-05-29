@@ -46,16 +46,6 @@ describe("Hand", function() {
 			assert.equal(hand.scorePairs(), 2);
 		});
 
-		it("scores pairs when they're not next to each other", function() {
-			const hand = createHand("AC", "QS", "AC", "3H", "0C");
-			assert.equal(hand.scorePairs(), 2);
-		});
-
-		it("scores pairs when the first card isn't in the pair", function() {
-			const hand = createHand("QS", "AC", "3H", "AC", "0C");
-			assert.equal(hand.scorePairs(), 2);
-		});
-
 		it("scores pairs when one of the cards is the starter card", function() {
 			const hand = createHand("QS", "AC", "3H", "0C", "AC");
 			assert.equal(hand.scorePairs(), 2);
@@ -69,11 +59,6 @@ describe("Hand", function() {
 		it("scores triple", function() {
 			const hand = createHand("QS", "AC", "3H", "AH", "AD");
 			assert.equal(hand.scorePairs(), 6);
-		});
-
-		it("scores quadruple", function() {
-			const hand = createHand("AC", "AH", "AD", "AS", "QS");
-			assert.equal(hand.scorePairs(), 12);
 		});
 
 	});
