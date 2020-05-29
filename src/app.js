@@ -23,18 +23,18 @@ module.exports = class App {
 		const args = this._commandLine.args();
 
 		if (args.length !== 1) {
-			this._commandLine.writeError(`Usage: ${this._commandLine.invokedCommand()} hand\n`);
+			this._commandLine.writeStderr(`Usage: ${this._commandLine.invokedCommand()} hand\n`);
 			return EXIT_CODE.BAD_COMMAND_LINE;
 		}
 
 		const arg = args[0];
 
 		try {
-			this._commandLine.writeOutput(score.analyze(arg) + "\n");
+			this._commandLine.writeStdout(score.analyze(arg) + "\n");
 			return EXIT_CODE.OK;
 		}
 		catch (err) {
-			this._commandLine.writeError(err.message + "\n");
+			this._commandLine.writeStderr(err.message + "\n");
 			return EXIT_CODE.BAD_COMMAND_LINE;
 		}
 	}

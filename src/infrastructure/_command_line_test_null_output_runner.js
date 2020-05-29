@@ -5,5 +5,5 @@ const CommandLine = require("./command_line.js");
 
 const commandLine = CommandLine.createNull();
 
-commandLine.writeOutput("stdout should not be output");
-commandLine.writeError("stderr should not be output");
+commandLine.writeStdout("stdout should not be output");
+commandLine.writeStderr("stderr should not be output");

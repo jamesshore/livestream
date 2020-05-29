@@ -18,41 +18,41 @@ describe("CommandLine", function() {
 		assert.equal(stdout, "node _command_line_test_name_runner.js");
 	});
 
-	it("writes output", async function() {
+	it("writes stdout", async function() {
 		const { stdout, stderr } = await runModuleAsync("./_command_line_test_output_runner.js");
 		assert.equal(stdout, "my output", "stdout");
 		assert.equal(stderr, "", "stderr");
 	});
 
-	it("writes error output", async function() {
+	it("writes stderr", async function() {
 		const { stdout, stderr } = await runModuleAsync("./_command_line_test_output_error_runner.js", { failOnError: false });
 		assert.equal(stderr, "my error output", "stderr");
 		assert.equal(stdout, "", "stdout");
 	});
 
-	it("remembers last output", function() {
+	it("allows stdout to be tracked", function() {
 		const commandLine = CommandLine.createNull();
 
-		const output = commandLine.trackOutput();
+		const output = commandLine.trackStdout();
 		assert.deepEqual(output, [], "no output");
 
-		commandLine.writeOutput("my output 1");
+		commandLine.writeStdout("my output 1");
 		assert.deepEqual(output, [ "my output 1" ], "one output");
 
-		commandLine.writeOutput("my output 2");
+		commandLine.writeStdout("my output 2");
 		assert.deepEqual(output, [ "my output 1", "my output 2" ], "two outputs");
 	});
 
-	it("remembers last error output", function() {
+	it("allows stderr to be tracked", function() {
 		const commandLine = CommandLine.createNull();
 
-		const output = commandLine.trackErrorOutput();
+		const output = commandLine.trackStderr();
 		assert.deepEqual(output, [], "no output");
 
-		commandLine.writeError("my output 1");
+		commandLine.writeStderr("my output 1");
 		assert.deepEqual(output, [ "my output 1" ], "one output");
 
-		commandLine.writeError("my output 2");
+		commandLine.writeStderr("my output 2");
 		assert.deepEqual(output, [ "my output 1", "my output 2" ], "two outputs");
 	});
 
@@ -91,7 +91,7 @@ describe("CommandLine", function() {
 			}
 		});
 
-		it("does not write output to stdout", async function() {
+		it("does not write stdout", async function() {
 			const { stdout, stderr } = await runModuleAsync(
 				"./_command_line_test_null_output_runner.js", { failOnError: false   }
 			);

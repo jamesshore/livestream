@@ -77,9 +77,9 @@ function setup({ args, invokedCommand = "irrelevant_invoked_command" }) {
 }
 
 function assertStdout(commandLine, expectedOutput) {
-	td.verify(commandLine.writeOutput(expectedOutput), "stdout");
+	td.verify(commandLine.writeStdout(expectedOutput), "stdout");
 }
 
 function assertStderr(commandLine, expectedError) {
-	td.verify(commandLine.writeError(expectedError), "stderr");
+	td.verify(commandLine.writeStderr(expectedError), "stderr");
 }

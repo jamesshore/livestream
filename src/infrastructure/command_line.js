@@ -35,22 +35,22 @@ const CommandLine = module.exports = class CommandLine {
 		return `${node} ${script}`;
 	}
 
-	writeOutput(text) {
+	writeStdout(text) {
 		this._process.stdout.write(text);
 		this._lastOutput = text;
 		this._outputEmitter.emit(STDOUT_EVENT, text);
 	}
 
-	writeError(text) {
+	writeStderr(text) {
 		this._process.stderr.write(text);
 		this._outputEmitter.emit(STDERR_EVENT, text);
 	}
 
-	trackOutput() {
+	trackStdout() {
 		return track(this, STDOUT_EVENT);
 	}
 
-	trackErrorOutput() {
+	trackStderr() {
 		return track(this, STDERR_EVENT);
 	}
 

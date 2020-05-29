@@ -3,4 +3,4 @@
 
 const commandLine = require("./command_line").create();
 
-commandLine.writeError("my error output");
+commandLine.writeStderr("my error output");
