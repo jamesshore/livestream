@@ -8,85 +8,108 @@ const parser = require("./parser.js");
 
 describe("Hand", function() {
 
+
+	describe("Pairs", function() {
+
+		it("no pairs", function() {
+			const hand = createHand("AC", "2C", "QS", "3H", "0C");
+			assert.equal(hand.countPairs(), 0);
+		});
+
+		it("one pair", function() {
+			const hand = createHand("AC", "AC", "QS", "3H", "0C");
+			assert.equal(hand.countPairs(), 1);
+		});
+
+		it("pair with starter card", function() {
+			const hand = createHand("QS", "AC", "3H", "0C", "AC");
+			assert.equal(hand.countPairs(), 1);
+		});
+
+		it("multiple pairs", function() {
+			const hand = createHand("QS", "AC", "QH", "AH", "5D");
+			assert.equal(hand.countPairs(), 2);
+		});
+
+		it("triple", function() {
+			const hand = createHand("QS", "AC", "3H", "AH", "AD");
+			assert.equal(hand.countPairs(), 3);
+		});
+
+	});
+
+
+	describe("His Nibs", function() {
+
+		it("no jacks", function() {
+			const hand = createHand("2H", "3C", "4S", "5D", "6H");
+			assert.equal(hand.countHisNibs(), 0);
+		});
+
+		it("jack that doesn't match starter card suit", function() {
+			const hand = createHand("2H", "JC", "4S", "5D", "6H");
+			assert.equal(hand.countHisNibs(), 0);
+		});
+
+		it("jack that matches starter card suit", function() {
+			const hand = createHand("2H", "JH", "4S", "JD", "6D");
+			assert.equal(hand.countHisNibs(), 1);
+		});
+
+		it("multiple matching jacks (we don't care about cheating)", function() {
+			const hand = createHand("2H", "JD", "4S", "JD", "6D");
+			assert.equal(hand.countHisNibs(), 2);
+		});
+
+	});
+
+
 	describe("Card combinations", function() {
 
 		it("provides all combinations of cards", function() {
-			assert.deepEqual(allCombinations("AC", "2C", "3C"), [
-				[ "AC" ],
-				[ "AC", "2C" ],
-				[ "AC", "2C", "3C" ],
-				[ "AC", "3C" ],
-				[ "2C" ],
-				[ "2C", "3C" ],
-				[ "3C" ],
+			const hand = createHand("AC", "2C", "3C", "4C", "5C");
+			assert.deepEqual(allCombinations(hand), [
+				['AC'],
+				['AC', '2C'],
+				['AC', '2C', '3C'],
+				['AC', '2C', '3C', '4C'],
+				['AC', '2C', '3C', '4C', '5C'],
+				['AC', '2C', '3C', '5C'],
+				['AC', '2C', '4C'],
+				['AC', '2C', '4C', '5C'],
+				['AC', '2C', '5C'],
+				['AC', '3C'],
+				['AC', '3C', '4C'],
+				['AC', '3C', '4C', '5C'],
+				['AC', '3C', '5C'],
+				['AC', '4C'],
+				['AC', '4C', '5C'],
+				['AC', '5C'],
+				['2C'],
+				['2C', '3C'],
+				['2C', '3C', '4C'],
+				['2C', '3C', '4C', '5C'],
+				['2C', '3C', '5C'],
+				['2C', '4C'],
+				['2C', '4C', '5C'],
+				['2C', '5C'],
+				['3C'],
+				['3C', '4C'],
+				['3C', '4C', '5C'],
+				['3C', '5C'],
+				['4C'],
+				['4C', '5C'],
+				['5C']
 			]);
 
 		});
 
-		function allCombinations(...cardStrings) {
-			const cards = cardStrings.map((cardString) => parser.parseCard(cardString));
-			const allCombos = Hand.allCombinations(cards);
-
+		function allCombinations(hand) {
+			const allCombos = hand.allCombinations();
 			return allCombos.map((combo) => {
 				return combo.map((card) => card.toString());
 			});
 		}
-
-	});
-
-	describe("Pairs", function() {
-
-		it("doesn't score hands with no pairs", function() {
-			const hand = createHand("AC", "2C", "QS", "3H", "0C");
-			assert.equal(hand.scorePairs(), 0);
-		});
-
-		it("scores pairs", function() {
-			const hand = createHand("AC", "AC", "QS", "3H", "0C");
-			assert.equal(hand.scorePairs(), 2);
-		});
-
-		it("scores pairs when one of the cards is the starter card", function() {
-			const hand = createHand("QS", "AC", "3H", "0C", "AC");
-			assert.equal(hand.scorePairs(), 2);
-		});
-
-		it("scores multiple pairs", function() {
-			const hand = createHand("QS", "AC", "QH", "AH", "5D");
-			assert.equal(hand.scorePairs(), 4);
-		});
-
-		it("scores triple", function() {
-			const hand = createHand("QS", "AC", "3H", "AH", "AD");
-			assert.equal(hand.scorePairs(), 6);
-		});
-
-	});
-
-	describe("His Nibs", function() {
-
-		it("hands without jacks score 0", function() {
-			const hand = createHand("2H", "3C", "4S", "5D", "6H");
-			assert.equal(hand.scoreHisNibs(), 0);
-		});
-
-		it("hands with jacks that don't match starter card suit score 0", function() {
-			const hand = createHand("2H", "JC", "4S", "5D", "6H");
-			assert.equal(hand.scoreHisNibs(), 0);
-		});
-
-		it("hands with a jack that matches starter card suit score 1", function() {
-			const hand = createHand("2H", "JH", "4S", "JD", "6D");
-			assert.equal(hand.scoreHisNibs(), 1);
-		});
-
-		it("fails fast if there are multiple matching jacks", function() {
-			const hand = createHand("2H", "JD", "4S", "JD", "6D");
-			assert.throws(
-				() => hand.scoreHisNibs(),
-				"too many nibs: 2H, JD, 4S, JD matching 6D"
-			);
-		});
 
 	});
 
