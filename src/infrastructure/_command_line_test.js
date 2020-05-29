@@ -30,6 +30,12 @@ describe("CommandLine", function() {
 		assert.equal(stdout, "", "stdout");
 	});
 
+	it("remembers last output", function() {
+		const commandLine = CommandLine.createNull();
+		commandLine.writeOutput("my output");
+		assert.equal(commandLine.getLastOutput(), "my output");
+	});
+
 
 	describe("Nullability", function() {
 

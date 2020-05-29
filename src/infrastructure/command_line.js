@@ -32,6 +32,11 @@ const CommandLine = module.exports = class CommandLine {
 
 	writeOutput(text) {
 		this._process.stdout.write(text);
+		this._lastOutput = text;
+	}
+
+	getLastOutput() {
+		return this._lastOutput;
 	}
 
 	writeError(text) {
