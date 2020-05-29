@@ -1,8 +1,4 @@
 Scoring To Do:
 
-* Score flushes
-* Score 15s
-
-* Fail illegal hands, e.g., two of the same card
-
-* Score crib (it has slightly different rules)?
+* Count flushes
+* Score

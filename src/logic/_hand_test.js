@@ -104,6 +104,26 @@ describe("Hand", function() {
 	});
 
 
+	describe("Fifteens", function() {
+
+		it("no fifteens", function() {
+			const hand = createHand("2C", "AD", "9S", "KD", "QD");
+			assert.equal(hand.countFifteens(), 0);
+		});
+
+		it("one fifteen", function() {
+			const hand = createHand("2C", "6D", "AS", "3D", "3D");
+			assert.equal(hand.countFifteens(), 1);
+		});
+
+		it("multiple fifteen", function() {
+			const hand = createHand("QC", "KD", "5S", "5D", "5D");
+			assert.equal(hand.countFifteens(), 7);
+		});
+
+	});
+
+
 	describe("Card combinations", function() {
 
 		it("provides all combinations of cards", function() {

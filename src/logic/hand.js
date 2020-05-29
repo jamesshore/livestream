@@ -42,6 +42,16 @@ module.exports = class Hand {
 		}
 	}
 
+	countFifteens() {
+		const fifteens = this.allCombinations().filter((cards) => isFifteen(cards));
+		return fifteens.length;
+
+		function isFifteen(cards) {
+			const score = cards.reduce((score, card) => score + card.value, 0);
+			return score === 15;
+		}
+	}
+
 	allCombinations(cards) {
 		const allCards = [ ...this._hand, this._starterCard ];
 		return allCombinations(allCards);
