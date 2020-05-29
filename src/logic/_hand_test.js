@@ -124,6 +124,31 @@ describe("Hand", function() {
 	});
 
 
+	describe("Flushes", function() {
+
+		it("no flush", function() {
+			const hand = createHand("QC", "KD", "5S", "5D", "5D");
+			assert.equal(hand.countFlushCards(), 0);
+		});
+
+		it("must have at least four cards", function() {
+			const hand = createHand("QC", "KC", "5C", "5S", "5D");
+			assert.equal(hand.countFlushCards(), 0);
+		});
+
+		it("all cards in hand must be same suit", function() {
+			const hand = createHand("QC", "KC", "5C", "6C", "5D");
+			assert.equal(hand.countFlushCards(), 4);
+		});
+
+		it("can include starter card", function() {
+			const hand = createHand("QC", "KC", "5C", "6C", "7C");
+			assert.equal(hand.countFlushCards(), 5);
+		});
+
+	});
+
+
 	describe("Card combinations", function() {
 
 		it("provides all combinations of cards", function() {

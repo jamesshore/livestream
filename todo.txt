@@ -1,4 +1,3 @@
 Scoring To Do:
 
-* Count flushes
 * Score

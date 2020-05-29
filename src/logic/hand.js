@@ -52,6 +52,15 @@ module.exports = class Hand {
 		}
 	}
 
+	countFlushCards() {
+		const targetSuit = this._hand[0].suit;
+		const isFlush = this._hand.every((card) => card.suit === targetSuit);
+		if (!isFlush) return 0;
+
+		const starterMatches = this._starterCard.suit === targetSuit;
+		return starterMatches ? 5 : 4;
+	}
+
 	allCombinations(cards) {
 		const allCards = [ ...this._hand, this._starterCard ];
 		return allCombinations(allCards);
