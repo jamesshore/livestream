@@ -2,7 +2,6 @@
 "use strict";
 
 const assert = require("./util/assert");
-const td = require("testdouble");
 const score = require("./logic/score");
 const CommandLine = require("./infrastructure/command_line");
 const App = require("./app");
@@ -12,38 +11,32 @@ const USAGE = "Usage: node program.js hand\n";
 describe("Run", function() {
 
 	it("Analyzes hand, writes output, and exits without error", function() {
-		const arg = "JH5D5S5C5H";
-		const expectedOutput = score.analyze(arg) + "\n";
-		const { commandLine, app } = setup({ args: [ arg ] });
+		const input = "JH5D5S5C5H";
+		const expectedOutput = score.analyze(input) + "\n";
 
-		const exitCode = app.run();
-
-		assertStdout(commandLine, expectedOutput);
+		const { exitCode, stdout } = runApp({ args: [ input ] });
 		assert.equal(exitCode, 0, "exit code");
+		assert.deepEqual(stdout, [ expectedOutput ]);
 	});
 
 	it("Provides usage and exits with error when no command-line arguments provided", function() {
-		const { commandLine, app } = setup({
+		const { exitCode, stderr } = runApp({
 			args: [],
 			invokedCommand: "node program.js"
 		});
 
-		const exitCode = app.run();
-
-		assertStderr(commandLine, USAGE);
 		assert.equal(exitCode, 1, "exit code");
+		assert.deepEqual(stderr, [ USAGE ]);
 	});
 
 	it("Provides usage and exits with error when too many command-line arguments provided", function() {
-		const { commandLine, app } = setup({
+		const { exitCode, stderr } = runApp({
 			args: [ "too", "many" ],
 			invokedCommand: "node program.js"
 		});
 
-		const exitCode = app.run();
-
-		assertStderr(commandLine, USAGE);
 		assert.equal(exitCode, 1, "exit code");
+		assert.deepEqual(stderr, [ USAGE ]);
 	});
 
 	it("Exits with error when bad hand provided", function() {
@@ -56,30 +49,19 @@ describe("Run", function() {
 			expectedError = err.message + "\n";
 		}
 
-		const { commandLine, app } = setup({ args: [ arg ] });
-
-		const exitCode = app.run();
-
-		assertStderr(commandLine, expectedError);
+		const { exitCode, stderr } = runApp({ args: [ arg ] });
 		assert.equal(exitCode, 1, "exit code");
+		assert.deepEqual(stderr, [ expectedError ]);
 	});
 
 });
 
-function setup({ args, invokedCommand = "irrelevant_invoked_command" }) {
-	const commandLine = new (td.constructor(CommandLine));
+function runApp({ args, invokedCommand }) {
+	const commandLine = CommandLine.createNull({ args, invokedCommand });
 	const app = App.create(commandLine);
+	const stdout = commandLine.trackStdout();
+	const stderr = commandLine.trackStderr();
 
-	td.when(commandLine.args()).thenReturn(args);
-	td.when(commandLine.invokedCommand()).thenReturn(invokedCommand);
-
-	return { commandLine, app };
-}
-
-function assertStdout(commandLine, expectedOutput) {
-	td.verify(commandLine.writeStdout(expectedOutput), "stdout");
-}
-
-function assertStderr(commandLine, expectedError) {
-	td.verify(commandLine.writeStderr(expectedError), "stderr");
+	const exitCode = app.run();
+	return { exitCode, stdout, stderr };
 }
