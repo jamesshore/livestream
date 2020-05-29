@@ -11,6 +11,15 @@ describe("Card", function() {
 		assert.equal(card.rank, "3");
 	});
 
+	it("has a numeric rank", function() {
+		assert.equal(new Card("A", "C").numericRank, 1);
+		assert.equal(new Card("3", "C").numericRank, 3);
+		assert.equal(new Card("0", "C").numericRank, 10);
+		assert.equal(new Card("J", "C").numericRank, 11);
+		assert.equal(new Card("Q", "C").numericRank, 12);
+		assert.equal(new Card("K", "C").numericRank, 13);
+	});
+
 	it("has a suit", function() {
 		const card = new Card("3", "C");
 		assert.equal(card.suit, "C");
