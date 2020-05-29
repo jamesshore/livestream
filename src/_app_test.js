@@ -67,7 +67,7 @@ describe("Run", function() {
 });
 
 function setup({ args, invokedCommand = "irrelevant_invoked_command" }) {
-	const commandLine = td.object(CommandLine.create());
+	const commandLine = new (td.constructor(CommandLine));
 	const app = App.create(commandLine);
 
 	td.when(commandLine.args()).thenReturn(args);
