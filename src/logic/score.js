@@ -4,6 +4,11 @@
 const parser = require("./parser");
 
 exports.analyze = function(cardsString) {
-	parser.parseHand(cardsString);
-	return 19;
+	const hand = parser.parseHand(cardsString);
+
+	return hand.countPairs() * 2 +
+		hand.countHisNibs() +
+		hand.countStraightCards() +
+		hand.countFifteens() * 2 +
+		hand.countFlushCards();
 };
