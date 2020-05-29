@@ -8,7 +8,7 @@ const App = require("./app");
 
 const USAGE = "Usage: node program.js hand\n";
 
-describe("Run", function() {
+describe("App", function() {
 
 	it("Analyzes hand, writes output, and exits without error", function() {
 		const input = "JH5D5S5C5H";
