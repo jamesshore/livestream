@@ -25,6 +25,15 @@ describe("Card", function() {
 		assert.equal(card.suit, "C");
 	});
 
+	it("has a value", function() {
+		assert.equal(new Card("A", "C").value, 1);
+		assert.equal(new Card("3", "C").value, 3);
+		assert.equal(new Card("0", "C").value, 10);
+		assert.equal(new Card("J", "C").value, 10);
+		assert.equal(new Card("Q", "C").value, 10);
+		assert.equal(new Card("K", "C").value, 10);
+	});
+
 	it("converts to string", function() {
 		const card = new Card("3", "C");
 		assert.equal(card.toString(), "3C");

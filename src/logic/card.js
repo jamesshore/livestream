@@ -1,6 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
+const COURT = [ "J", "Q", "K" ];
 const NUMERIC_RANKS = {
 	"A": 1,
 	"2": 2,
@@ -34,6 +35,11 @@ module.exports = class Card {
 
 	get suit() {
 		return this._suit;
+	}
+
+	get value() {
+		if (COURT.includes(this.rank)) return 10;
+		else return this.numericRank;
 	}
 
 	toString() {
