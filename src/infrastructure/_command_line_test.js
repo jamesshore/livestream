@@ -32,8 +32,28 @@ describe("CommandLine", function() {
 
 	it("remembers last output", function() {
 		const commandLine = CommandLine.createNull();
-		commandLine.writeOutput("my output");
-		assert.equal(commandLine.getLastOutput(), "my output");
+
+		const output = commandLine.trackOutput();
+		assert.deepEqual(output, [], "no output");
+
+		commandLine.writeOutput("my output 1");
+		assert.deepEqual(output, [ "my output 1" ], "one output");
+
+		commandLine.writeOutput("my output 2");
+		assert.deepEqual(output, [ "my output 1", "my output 2" ], "two outputs");
+	});
+
+	it("remembers last error output", function() {
+		const commandLine = CommandLine.createNull();
+
+		const output = commandLine.trackErrorOutput();
+		assert.deepEqual(output, [], "no output");
+
+		commandLine.writeError("my output 1");
+		assert.deepEqual(output, [ "my output 1" ], "one output");
+
+		commandLine.writeError("my output 2");
+		assert.deepEqual(output, [ "my output 1", "my output 2" ], "two outputs");
 	});
 
 

@@ -2,6 +2,10 @@
 "use strict";
 
 const path = require("path");
+const EventEmitter = require("events");
+
+const STDOUT_EVENT = "stdout";
+const STDERR_EVENT = "stderr";
 
 const CommandLine = module.exports = class CommandLine {
 
@@ -18,6 +22,7 @@ const CommandLine = module.exports = class CommandLine {
 
 	constructor(proc) {
 		this._process = proc;
+		this._outputEmitter = new EventEmitter();
 	}
 
 	args() {
@@ -33,17 +38,31 @@ const CommandLine = module.exports = class CommandLine {
 	writeOutput(text) {
 		this._process.stdout.write(text);
 		this._lastOutput = text;
-	}
-
-	getLastOutput() {
-		return this._lastOutput;
+		this._outputEmitter.emit(STDOUT_EVENT, text);
 	}
 
 	writeError(text) {
 		this._process.stderr.write(text);
+		this._outputEmitter.emit(STDERR_EVENT, text);
+	}
+
+	trackOutput() {
+		return track(this, STDOUT_EVENT);
+	}
+
+	trackErrorOutput() {
+		return track(this, STDERR_EVENT);
 	}
 
 };
+
+function track(self, event) {
+	const output = [];
+	self._outputEmitter.on(event, (text) => {
+		output.push(text);
+	});
+	return output;
+}
 
 
 function nullProcess(args, invokedCommand) {
