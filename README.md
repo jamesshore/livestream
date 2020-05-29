@@ -4,14 +4,14 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (22 May 2020)
+This Week's Challenge (29 May 2020)
 ---------------------
 
 This branch contains an incomplete [Cribbage](http://www.cribbage.org/NewSite/rules/rule1.asp) scoring tool. See below for details.
 
-The challenge: Replace the end-to-end application runner tests with mock- or spy-based unit tests, and do so in a way that's clean and readable. Add additional tests and behavior as desired to improve command-line processing.
+The challenge: Replace the spy-based application runner tests with overlapping sociable tests using a nullable infrastructure wrapper. For details, see [this week’s Lunch & Learn](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html) or the [Testing Without Mocks paper](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html).
 
-The current end-to-end tests are in `src/_score_test.js`. The current application runner is in `src/score.js`.
+The tests to replace are in `src/_app_test.js`. The application runner is in `src/app.js`. The infrastructure wrapper and its tests is in `src/infrastructure`.
 
 
 About the Application
