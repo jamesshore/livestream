@@ -91,7 +91,7 @@ describe("CommandLine", function() {
 			}
 		});
 
-		it("does not write stdout", async function() {
+		it("does not write any output", async function() {
 			const { stdout, stderr } = await runModuleAsync(
 				"./_command_line_test_null_output_runner.js", { failOnError: false   }
 			);
