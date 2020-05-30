@@ -4,10 +4,10 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (26 May 2020)
------------------------------------
+This Week's Challenge (2 June 2020): Microservices Without Mocks
+---------------------
 
-Reimplement `_app_test.js` without using mocks, spies, or integration tests.
+Create a microservice that serves the lucrative new ROT13-as-a-Service (RaaS) industry. Test-drive it, but don't use mocks (or spies) or broad integration tests. The API is up to you.
 
 
 The Thinking Framework
