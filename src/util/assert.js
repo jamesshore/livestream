@@ -9,8 +9,22 @@ const assert = require("chai").assert;
 // 'module.exports = assert' doesn't work because it's a reference copy. Any changes (such as when we
 // overwrite exports.fail) changes Chai's functions. In the case of exports.fail, it causes an infinite
 // loop. Oops. So we use {...} to do a shallow copy instead.
-module.exports = { ...assert };
+module.exports = exports = { ...assert };
 
-exports.fail = function(message) {
-	assert.fail(null, null, message);
+exports.throwsAsync = async function(fn, expectedRegexOrExactString, message) {
+	message = message ? `${message}: ` : "";
+	try {
+		await fn();
+	}
+	catch (err) {
+		if (expectedRegexOrExactString === undefined) return;
+		if (typeof expectedRegexOrExactString === "string") {
+			exports.equal(err.message, expectedRegexOrExactString, message);
+		}
+		else {
+			exports.match(err.message, expectedRegexOrExactString, message);
+		}
+		return;
+	}
+	exports.fail(`${message}Expected exception: ${expectedRegexOrExactString}`);
 };
