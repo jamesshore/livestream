@@ -11,6 +11,8 @@ const assert = require("chai").assert;
 // loop. Oops. So we use {...} to do a shallow copy instead.
 module.exports = exports = { ...assert };
 
+exports.equal = assert.strictEqual;
+
 exports.throwsAsync = async function(fn, expectedRegexOrExactString, message) {
 	message = message ? `${message}: ` : "";
 	try {
