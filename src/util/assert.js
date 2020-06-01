@@ -13,10 +13,10 @@ module.exports = exports = { ...assert };
 
 exports.equal = assert.strictEqual;
 
-exports.throwsAsync = async function(fn, expectedRegexOrExactString, message) {
+exports.throwsAsync = async function(fnAsync, expectedRegexOrExactString, message) {
 	message = message ? `${message}: ` : "";
 	try {
-		await fn();
+		await fnAsync();
 	}
 	catch (err) {
 		if (expectedRegexOrExactString === undefined) return;
@@ -29,4 +29,8 @@ exports.throwsAsync = async function(fn, expectedRegexOrExactString, message) {
 		return;
 	}
 	exports.fail(`${message}Expected exception`);
+};
+
+exports.doesNotThrowAsync = async function(fnAsync) {
+	await fnAsync();
 };
