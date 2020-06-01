@@ -1,13 +1,17 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
+const ensure = require("../util/ensure");
+
 module.exports = class CommandLine {
 
 	static create() {
+		ensure.signature(arguments, []);
 		return new CommandLine(process);
 	}
 
 	static createNull({ args = [] } = {}) {
+		ensure.signature(arguments, [[ undefined, { args: Array } ]]);
 		return new CommandLine(new NullProcess(args));
 	}
 
@@ -18,24 +22,29 @@ module.exports = class CommandLine {
 	}
 
 	args() {
+		ensure.signature(arguments, []);
 		return this._process.argv.slice(2);
 	}
 
 	writeStdout(text) {
+		ensure.signature(arguments, [ String ]);
 		this._process.stdout.write(text);
 		this._lastStdout = text;
 	}
 
 	writeStderr(text) {
+		ensure.signature(arguments, [ String ]);
 		this._process.stderr.write(text);
 		this._lastStderr = text;
 	}
 
 	getLastStdout() {
+		ensure.signature(arguments, []);
 		return this._lastStdout;
 	}
 
 	getLastStderr() {
+		ensure.signature(arguments, []);
 		return this._lastStderr;
 	}
 
