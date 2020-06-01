@@ -1,6 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
+const ensure = require("./util/ensure");
 const CommandLine = require("./infrastructure/command_line");
 
 const EXIT_CODE = {
@@ -11,6 +12,8 @@ const EXIT_CODE = {
 module.exports = class App {
 
 	static create(commandLine) {
+		ensure.signature(arguments, [ CommandLine ]);
+
 		return new App(commandLine);
 	}
 
@@ -19,6 +22,8 @@ module.exports = class App {
 	}
 
 	async startAsync() {
+		ensure.signature(arguments, []);
+
 		const args = this._commandLine.args();
 		if (args.length !== 1) {
 			this._commandLine.writeStderr(`Usage: serve PORT\n`);
