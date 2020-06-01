@@ -28,5 +28,5 @@ exports.throwsAsync = async function(fn, expectedRegexOrExactString, message) {
 		}
 		return;
 	}
-	exports.fail(`${message}Expected exception: ${expectedRegexOrExactString}`);
+	exports.fail(`${message}Expected exception`);
 };
