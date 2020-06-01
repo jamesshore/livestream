@@ -13,6 +13,8 @@ module.exports = class CommandLine {
 
 	constructor(proc) {
 		this._process = proc;
+		this._lastStdout = null;
+		this._lastStderr = null;
 	}
 
 	args() {

@@ -30,10 +30,10 @@ describe("CommandLine", function() {
 		assert.equal(commandLine.getLastStderr(), "my last stderr");
 	});
 
-	it("last output is undefined when nothing has been output yet", function() {
+	it("last output is null when nothing has been output yet", function() {
 		const commandLine = CommandLine.createNull();
-		assert.isUndefined(commandLine.getLastStdout());
-		assert.isUndefined(commandLine.getLastStderr());
+		assert.equal(commandLine.getLastStdout(), null);
+		assert.equal(commandLine.getLastStderr(), null);
 	});
 
 
