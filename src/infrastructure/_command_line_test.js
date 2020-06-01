@@ -10,24 +10,24 @@ describe("CommandLine", function() {
 
 	it("provides command-line arguments", async function() {
 		const args = [ "my arg 1", "my arg 2" ];
-		const stdout = await runModuleAsync("./_command_line_test_args_runner.js", args);
+		const { stdout } = await runModuleAsync("./_command_line_test_args_runner.js", { args });
 		assert.equal(stdout, '["my arg 1","my arg 2"]');
 	});
 
-	it("writes output", async function() {
-		const stdout = await runModuleAsync("./_command_line_test_output_runner.js");
+	it("writes to stdout", async function() {
+		const { stdout } = await runModuleAsync("./_command_line_test_output_runner.js");
 		assert.equal(stdout, "my output");
 	});
 
-	it("remembers last output", function() {
+	it("remembers last write to stdout", function() {
 		const commandLine = CommandLine.createNull();
-		commandLine.writeOutput("my last output");
-		assert.equal(commandLine.getLastOutput(), "my last output");
+		commandLine.writeStdout("my last output");
+		assert.equal(commandLine.getLastStdout(), "my last output");
 	});
 
 	it("last output is undefined when nothing has been output yet", function() {
 		const commandLine = CommandLine.createNull();
-		assert.isUndefined(commandLine.getLastOutput());
+		assert.isUndefined(commandLine.getLastStdout());
 	});
 
 
@@ -44,7 +44,7 @@ describe("CommandLine", function() {
 		});
 
 		it("doesn't write output to command line", async function() {
-			const stdout = await runModuleAsync("./_command_line_test_null_output_runner.js");
+			const { stdout } = await runModuleAsync("./_command_line_test_null_output_runner.js");
 			assert.equal(stdout, "");
 		});
 
@@ -52,7 +52,8 @@ describe("CommandLine", function() {
 
 });
 
-function runModuleAsync(relativeModulePath, args) {
+
+function runModuleAsync(relativeModulePath, { args } = {}) {
 	return new Promise((resolve, reject) => {
 		const absolutePath = path.resolve(__dirname, relativeModulePath);
 		const options = {
@@ -75,7 +76,7 @@ function runModuleAsync(relativeModulePath, args) {
 				return reject(new Error("Runner failed"));
 			}
 			else {
-				return resolve(stdout);
+				return resolve({ stdout });
 			}
 		});
 	});

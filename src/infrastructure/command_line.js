@@ -19,13 +19,13 @@ module.exports = class CommandLine {
 		return this._process.argv.slice(2);
 	}
 
-	writeOutput(text) {
+	writeStdout(text) {
 		this._process.stdout.write(text);
-		this._lastOutput = text;
+		this._lastStdout = text;
 	}
 
-	getLastOutput() {
-		return this._lastOutput;
+	getLastStdout() {
+		return this._lastStdout;
 	}
 
 };

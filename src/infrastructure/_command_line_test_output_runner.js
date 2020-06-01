@@ -3,4 +3,4 @@
 
 const commandLine = require("./command_line").create();
 
-commandLine.writeOutput("my output");
+commandLine.writeStdout("my output");
