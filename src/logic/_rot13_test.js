@@ -34,20 +34,6 @@ describe("ROT-13", function() {
 		assertNoTransform(rot13, "✅🚫🙋");
 	});
 
-	it("fails fast when no parameter provided", function() {
-		assert.throws(
-			() => rot13.transform(),
-			"Expected string parameter"
-		);
-	});
-
-	it("fails fast when wrong parameter type provided", function() {
-		assert.throws(
-			() => rot13.transform(123),
-			"Expected string parameter"
-		);
-	});
-
 });
 
 function assertNoTransform(rot13, input) {

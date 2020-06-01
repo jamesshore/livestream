@@ -1,8 +1,10 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
+const ensure = require("../util/ensure");
+
 exports.transform = function(input) {
-	if (input === undefined || typeof input !== "string") throw new Error("Expected string parameter");
+	ensure.signature(arguments, [ String ]);
 
 	let result = "";
 	for (let i = 0; i < input.length; i++) {
