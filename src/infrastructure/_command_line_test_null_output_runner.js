@@ -1,6 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const CommandLine = require("./command_line");
+const commandLine = require("./command_line").createNull();
 
-CommandLine.createNull().writeStdout("this output should never be seen");
+commandLine.writeStdout("this output should never be seen");
+commandLine.writeStderr("neither should this");

@@ -14,20 +14,26 @@ describe("CommandLine", function() {
 		assert.equal(stdout, '["my arg 1","my arg 2"]');
 	});
 
-	it("writes to stdout", async function() {
-		const { stdout } = await runModuleAsync("./_command_line_test_output_runner.js");
-		assert.equal(stdout, "my output");
+	it("writes to stdout and stderr", async function() {
+		const { stdout, stderr } = await runModuleAsync(
+			"./_command_line_test_output_runner.js", { failOnStderr: false }
+		);
+		assert.equal(stdout, "my stdout", "stdout");
+		assert.equal(stderr, "my stderr", "stderr");
 	});
 
-	it("remembers last write to stdout", function() {
+	it("remembers last write to stdout and stderr", function() {
 		const commandLine = CommandLine.createNull();
-		commandLine.writeStdout("my last output");
-		assert.equal(commandLine.getLastStdout(), "my last output");
+		commandLine.writeStdout("my last stdout");
+		commandLine.writeStderr("my last stderr");
+		assert.equal(commandLine.getLastStdout(), "my last stdout");
+		assert.equal(commandLine.getLastStderr(), "my last stderr");
 	});
 
 	it("last output is undefined when nothing has been output yet", function() {
 		const commandLine = CommandLine.createNull();
 		assert.isUndefined(commandLine.getLastStdout());
+		assert.isUndefined(commandLine.getLastStderr());
 	});
 
 
@@ -44,8 +50,11 @@ describe("CommandLine", function() {
 		});
 
 		it("doesn't write output to command line", async function() {
-			const { stdout } = await runModuleAsync("./_command_line_test_null_output_runner.js");
-			assert.equal(stdout, "");
+			const { stdout, stderr } = await runModuleAsync(
+				"./_command_line_test_null_output_runner.js", { failOnStderr: false }
+				);
+			assert.equal(stdout, "", "stdout");
+			assert.equal(stderr, "", "stderr");
 		});
 
 	});
@@ -53,7 +62,7 @@ describe("CommandLine", function() {
 });
 
 
-function runModuleAsync(relativeModulePath, { args } = {}) {
+function runModuleAsync(relativeModulePath, { args, failOnStderr } = {}) {
 	return new Promise((resolve, reject) => {
 		const absolutePath = path.resolve(__dirname, relativeModulePath);
 		const options = {
@@ -71,12 +80,12 @@ function runModuleAsync(relativeModulePath, { args } = {}) {
 		});
 
 		child.on("exit", () => {
-			if (stderr !== "") {
+			if (failOnStderr && stderr !== "") {
 				console.log(stderr);
 				return reject(new Error("Runner failed"));
 			}
 			else {
-				return resolve({ stdout });
+				return resolve({ stdout, stderr });
 			}
 		});
 	});

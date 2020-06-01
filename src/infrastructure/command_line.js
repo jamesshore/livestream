@@ -24,8 +24,17 @@ module.exports = class CommandLine {
 		this._lastStdout = text;
 	}
 
+	writeStderr(text) {
+		this._process.stderr.write(text);
+		this._lastStderr = text;
+	}
+
 	getLastStdout() {
 		return this._lastStdout;
+	}
+
+	getLastStderr() {
+		return this._lastStderr;
 	}
 
 };
@@ -42,6 +51,12 @@ class NullProcess {
 	}
 
 	get stdout() {
+		return {
+			write() {}
+		};
+	}
+
+	get stderr() {
 		return {
 			write() {}
 		};
