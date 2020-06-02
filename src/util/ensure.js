@@ -21,30 +21,15 @@ exports.todo = function() {
 };
 
 exports.defined = function(variable, variableName) {
-	if (variable === undefined) throw new Error(normalize(variableName) + " was not defined");
+	if (variable === undefined) throw new Error(`${normalize(variableName)} was not defined`);
 };
 
 exports.signature = function(args, signature, names) {
-	signature = signature || [];
-	names = names || [];
-	exports.that(Array.isArray(signature), "ensure.signature(): signature parameter must be an array");
-	exports.that(Array.isArray(names), "ensure.signature(): names parameter must be an array");
-
-	const expectedArgCount = signature.length;
-	const actualArgCount = args.length;
-
-	if (actualArgCount > expectedArgCount) {
-		throw new Error(`Function called with too many arguments: expected ${expectedArgCount} but got ${actualArgCount}`);
-	}
-
-	signature.forEach(function(expectedType, i) {
-		const name = names[i] ? names[i] : "Argument #" + (i + 1);
-		exports.type(args[i], expectedType, name);
-	});
+	checkSignature(false, args, signature, names);
 };
 
 exports.signatureMinimum = function(args, signature, names) {
-	checkSignature(args, signature, names, true);
+	checkSignature(true, args, signature, names);
 };
 
 exports.type = function(variable, expectedType, name) {
@@ -55,19 +40,7 @@ exports.typeMinimum = function(variable, expectedType, name) {
 	checkType(variable, expectedType, true, name);
 };
 
-exports.boolean = checkTypeFn(Boolean);
-exports.string = checkTypeFn(String);
-exports.number = checkTypeFn(Number);
-exports.array = checkTypeFn(Array);
-exports.fn = checkTypeFn(Function);
-exports.object = function(variable, constructor, variableName) {
-	if (constructor === undefined) constructor = Object;
-	exports.type(variable, constructor, variableName);
-};
-
-function checkSignature(args, signature, names, allowExtra) {
-	signature = signature || [];
-	names = names || [];
+function checkSignature(allowExtra, args, signature = [], names = []) {
 	exports.that(Array.isArray(signature), "ensure.signature(): signature parameter must be an array");
 	exports.that(Array.isArray(names), "ensure.signature(): names parameter must be an array");
 
@@ -79,15 +52,13 @@ function checkSignature(args, signature, names, allowExtra) {
 	}
 
 	signature.forEach(function(expectedType, i) {
-		const name = names[i] ? names[i] : "Argument #" + (i + 1);
-		const error = type.check(args[i], expectedType, { name, allowExtraKeys: allowExtra });
-		if (error !== null) throw new Error(error);
+		const name = names[i] ? names[i] : `Argument #${(i + 1)}`;
+		checkType(args[i], expectedType, allowExtra, name);
 	});
 }
 
 function checkType(variable, expectedType, allowExtraKeys, name) {
-	if (name === undefined) name = "variable";
-	const error = type.check(variable, expectedType, { name, allowExtraKeys });
+	const error = type.check(variable, expectedType, { name: normalize(name), allowExtraKeys });
 	if (error !== null) throw new Error(error);
 }
 

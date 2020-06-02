@@ -191,50 +191,12 @@ describe("Ensure", function() {
 		it("checks if variable is a particular type", function() {
 			const type = wrap(ensure.type);
 			assert.throws(type("string", Number, "const name"), /const name must be a number, but it was a string/);
-
-			const number = wrap(ensure.number);
-			const string = wrap(ensure.string);
-			const array = wrap(ensure.array);
-			const fn = wrap(ensure.fn);
-
-			assert.doesNotThrow(number(0));
-			assert.throws(number("foo"), /variable must be a number, but it was a string/);
-			assert.throws(number({}), /variable must be a number, but it was an object/);
-			assert.throws(number([]), /variable must be a number, but it was an array/);
-			assert.throws(number(undefined), /variable must be a number, but it was undefined/);
-			assert.throws(number(null), /variable must be a number, but it was null/);
-			assert.throws(number(NaN), /variable must be a number, but it was NaN/);
-
-			assert.throws(number("foo", "name"), /name must be a number, but it was a string/);
-
-			assert.throws(string(null, "name"), /name must be a string, but it was null/);
-			assert.throws(array(null, "name"), /name must be an array, but it was null/);
-			assert.throws(fn(null, "name"), /name must be a function, but it was null/);
 		});
 
 		it("type checking supports extra keys in object signatures", function() {
 			assert.doesNotThrow(
 				() => ensure.typeMinimum({ requiredParm: true, extraParm: true }, { requiredParm: Boolean })
 			);
-		});
-
-		it("checks if variable is object of specific type", function() {
-			function Example1() {}
-			function Example2() {}
-			const forceAnonymity = {};
-			const Anon = forceAnonymity.whatever = function() {};
-
-			const object = wrap(ensure.object);
-
-			assert.doesNotThrow(object(new Example1()));
-			assert.doesNotThrow(object(new Example1(), Example1));
-
-			assert.throws(object(null, Example1), /variable must be a Example1 instance, but it was null/);
-			assert.throws(object(new Example1(), Example2), /variable must be a Example2 instance, but it was a Example1 instance/);
-			assert.throws(object(new Anon(), Example2), /variable must be a Example2 instance, but it was an <anon> instance/);
-			assert.throws(object(new Example1(), Example2, "name"), /name must be a Example2 instance, but it was a Example1 instance/);
-
-			assert.throws(object(Object.create(null), Example2), /variable must be a Example2 instance, but it was an object/);
 		});
 
 	});
