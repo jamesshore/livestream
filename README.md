@@ -33,7 +33,7 @@ Use "Programming by Intention" to sketch out the code you need. In Programming b
 
 **2. How do we test without launching the server?**
 
-Create an []infrastructure wrapper](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html) for the server, then make it [nullable](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html).
+Create an [infrastructure wrapper](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html) for the server, then make it [nullable](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html).
 
 **3. How do we test that our code responds to HTTP requests?**
 
