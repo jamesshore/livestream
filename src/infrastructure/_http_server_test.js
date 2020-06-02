@@ -58,6 +58,22 @@ describe("HTTP Server", function() {
 		);
 	});
 
+
+	describe("nullability", function() {
+
+		it("doesn't actually start or stop the server", async function() {
+			const server = HttpServer.createNull();
+			const server2 = HttpServer.createNull();
+
+			await startAsync(server);
+			await assert.doesNotThrowAsync(
+				() => startAsync(server2)     // fails if server is real because address is already in use
+			);
+			await stopAsync(server);
+		});
+
+	});
+
 });
 
 

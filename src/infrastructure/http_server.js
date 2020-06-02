@@ -3,15 +3,22 @@
 
 const ensure = require("../util/ensure");
 const http = require("http");
+const EventEmitter = require("events");
 
 module.exports = class HttpServer {
 
 	static create() {
 		ensure.signature(arguments, []);
-		return new HttpServer();
+		return new HttpServer(http);
 	}
 
-	constructor() {
+	static createNull() {
+		ensure.signature(arguments, []);
+		return new HttpServer(nullHttp);
+	}
+
+	constructor(http) {
+		this._http = http;
 		this._server = null;
 	}
 
@@ -24,7 +31,7 @@ module.exports = class HttpServer {
 			ensure.signature(arguments, [{ port: Number }]);
 			if (this._server !== null) throw new Error("Can't start server because it's already running");
 
-			this._server = http.createServer();
+			this._server = this._http.createServer();
 			this._server.on("error", (err) => {
 				reject(new Error(`Couldn't start server due to error: ${err.message}`));
 			});
@@ -47,3 +54,19 @@ module.exports = class HttpServer {
 	}
 
 };
+
+
+const nullHttp = {
+	createServer() {
+		return new NullNodeServer();
+	}
+};
+
+class NullNodeServer extends EventEmitter {
+	listen() {
+		setImmediate(() => this.emit("listening"));
+	}
+	close() {
+		setImmediate(() => this.emit("close"));
+	}
+}
