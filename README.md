@@ -4,32 +4,40 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (2 June 2020): Microservices Without Mocks
+This Week's Challenge (2 June 2020): Microservices Without Mocks (Part I)
 ---------------------
 
 Create a microservice that serves the lucrative new ROT13-as-a-Service (RaaS) industry. Test-drive it, but don't use mocks (or spies) or broad integration tests. The API is up to you.
+
+Part I: Build the server. When the server receives a request, write "Request received" to the command-line.
 
 
 The Thinking Framework
 ----------------------
 
-Although mocks (and spies) are useful for testing interactions and isolating code, that isolation comes at a cost. Changes in dependencies semantics won't cause the tests to fail. As a result, mock-based tests must be supplemented with integration tests.
+In [previous episodes](https://www.jamesshore.com/Blog/Lunch-and-Learn/), we learned how to test code without writing mocks or broad integration tests. Now we'll apply what we've learned to a real-world problem.
 
-You can avoid these problems by not using mocks in your tests. James Shore's [Testing Without Mocks pattern language](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html) has the details. Two key pieces are Overlapping Sociable Tests and Nullable Infrastructure.
+If you need a refresher, these episodes have more:
 
-**1. Overlapping Sociable Tests**
+* [Incremental Test-Driven Development](https://www.jamesshore.com/Blog/Lunch-and-Learn/Incremental-TDD.html). TDD basics.
+* [Application Infrastructure](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html). How to build infrastructure wrappers.
+* [Testing Without Mocks](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html). How to use overlapping sociable tests and nullable infrastructure wrappers to improve tests.
 
-When testing the interactions between a unit and its dependencies, inject real dependency instances, not test doubles, into the unit under test. Don't test the dependencies' behavior itself, but do test that the unit under test uses the dependencies correctly.
+(For more details about testing without mocks, see James Shore's [Testing Without Mocks pattern language](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html).)
 
-This will create a strong linked chain of tests. Each test will check the unit under test *and* its usage of its dependencies. The test suite as a whole will cover your whole application in a fine overlapping mesh, giving you the coverage of integration tests without needing to write them.
+This week's challenge raises several new questions.
 
-**2. Nullable Infrastructure**
+**1. Where do we begin?**
 
-Program your infrastructure wrappers so they can be "turned off" by instantiating "null" versions, such as by calling `Wrapper.createNull()`. These null instances should behave identically to the real thing—by running the exact same code as the real thing—except for the very minimum necessary to turn off their interactions with infrastructure. As this code will be part of your production infrastructure wrapper, it should be written as production-grade code, including tests.
+Use "Programming by Intention" to sketch out the code you need. In Programming by Intention, you write code that calls the functions you *wish* you had available. Focus on making the code readable and clean. (You don't need to make it work, though. It's pseudocode.) Then command it out and implement the missing functions for real. Once they're ready, test, uncomment, and fix up the pseudocode.
 
-To make it possible to test your infrastructure, add methods to reveal how the infrastructure has been used. In your `createNull()` factory, provide the ability to configure method return values.
+**2. How do we test without launching the server?**
 
-Implement this cleanly by writing small stubs of the third-party infrastructure you're using. (See the video or [Testing Without Mocks](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html) article for details.)
+Create an []infrastructure wrapper](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html) for the server, then make it [nullable](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html).
+
+**3. How do we test that our code responds to HTTP requests?**
+
+Build behavior simulation into your server wrapper. "Behavior simulation" is a production method that generates events as if they were real. In this case, you could have a method such as `httpServer.simulateRequest()` method that runs the same code a real request does.
 
 
 Running the Code
