@@ -11,13 +11,12 @@ const EXIT_CODE = {
 
 module.exports = class App {
 
-	static create(commandLine) {
-		ensure.signature(arguments, [ CommandLine ]);
-
+	static create(commandLine = CommandLine.create()) {
 		return new App(commandLine);
 	}
 
 	constructor(commandLine) {
+		ensure.signature(arguments, [ CommandLine ]);
 		this._commandLine = commandLine;
 	}
 
@@ -38,5 +37,5 @@ module.exports = class App {
 
 
 function runServerAsync(port) {
-	// TODO
+	console.log("TO DO");
 }

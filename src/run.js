@@ -1,4 +1,6 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-console.log("TO DO");
+require("./server").create().startAsync().then((exitCode) => {
+	process.exit(exitCode);
+});
