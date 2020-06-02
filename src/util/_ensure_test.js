@@ -7,17 +7,6 @@ const EnsureException = ensure.EnsureException;
 
 describe("Ensure", function() {
 
-	it("uses custom exception", function() {
-		try {
-			throw new EnsureException(function() {}, "foo");
-		}
-		catch(e) {
-			assert.equal(e.name, "EnsureException");
-			assert.equal(e.constructor, EnsureException);
-			assert.equal("" + e, "EnsureException: foo");
-		}
-	});
-
 	describe("condition checking", function() {
 
 		it("checks if condition is true", function() {

@@ -6,14 +6,14 @@ const type = require("./type.js");
 exports.that = function(variable, message) {
 	if (message === undefined) message = "Expected condition to be true";
 
-	if (variable === false) throw new EnsureException(exports.that, message);
-	if (variable !== true) throw new EnsureException(exports.that, "Expected condition to be true or false");
+	if (variable === false) throw new Error(message);
+	if (variable !== true) throw new Error("Expected condition to be true or false");
 };
 
 exports.unreachable = function(message) {
 	if (!message) message = "Unreachable code executed";
 
-	throw new EnsureException(exports.unreachable, message);
+	throw new Error(message);
 };
 
 exports.todo = function() {
@@ -21,7 +21,7 @@ exports.todo = function() {
 };
 
 exports.defined = function(variable, variableName) {
-	if (variable === undefined) throw new EnsureException(exports.defined, normalize(variableName) + " was not defined");
+	if (variable === undefined) throw new Error(normalize(variableName) + " was not defined");
 };
 
 exports.signature = function(args, signature, names) {
@@ -34,10 +34,7 @@ exports.signature = function(args, signature, names) {
 	const actualArgCount = args.length;
 
 	if (actualArgCount > expectedArgCount) {
-		throw new EnsureException(
-			exports.signature,
-			"Function called with too many arguments: expected " + expectedArgCount + " but got " + actualArgCount
-		);
+		throw new Error(`Function called with too many arguments: expected ${expectedArgCount} but got ${actualArgCount}`);
 	}
 
 	signature.forEach(function(expectedType, i) {
@@ -78,23 +75,20 @@ function checkSignature(args, signature, names, allowExtra) {
 	const actualArgCount = args.length;
 
 	if (!allowExtra && (actualArgCount > expectedArgCount)) {
-		throw new EnsureException(
-			exports.signature,
-			"Function called with too many arguments: expected " + expectedArgCount + " but got " + actualArgCount
-		);
+		throw new Error(`Function called with too many arguments: expected ${expectedArgCount} but got ${actualArgCount}`);
 	}
 
 	signature.forEach(function(expectedType, i) {
 		const name = names[i] ? names[i] : "Argument #" + (i + 1);
 		const error = type.check(args[i], expectedType, { name, allowExtraKeys: allowExtra });
-		if (error !== null) throw new EnsureException(checkSignature, error);
+		if (error !== null) throw new Error(error);
 	});
 }
 
 function checkType(variable, expectedType, allowExtraKeys, name) {
 	if (name === undefined) name = "variable";
 	const error = type.check(variable, expectedType, { name, allowExtraKeys });
-	if (error !== null) throw new EnsureException(checkType, error);
+	if (error !== null) throw new Error(error);
 }
 
 function checkTypeFn(type) {
@@ -106,12 +100,3 @@ function checkTypeFn(type) {
 function normalize(variableName) {
 	return variableName ? variableName : "variable";
 }
-
-
-const EnsureException = exports.EnsureException = function(fnToRemoveFromStackTrace, message) {
-	if (Error.captureStackTrace) Error.captureStackTrace(this, fnToRemoveFromStackTrace);
-	this.message = message;
-};
-EnsureException.prototype = Object.create(Error.prototype);
-EnsureException.prototype.constructor = EnsureException;
-EnsureException.prototype.name = "EnsureException";
