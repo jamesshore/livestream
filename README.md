@@ -9,7 +9,7 @@ This Week's Challenge (2 June 2020): Microservices Without Mocks (Part I)
 
 Create a microservice that serves the lucrative new ROT13-as-a-Service (RaaS) industry. Test-drive it, but don't use mocks (or spies) or broad integration tests. The API is up to you.
 
-Part I: Build the server. When the server receives a request, write "Request received" to the command-line.
+Part I: Start the server. When it starts, write "Server started on port XXX" to command line. Don't handle requests yet.
 
 
 The Thinking Framework
