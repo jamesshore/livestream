@@ -5,7 +5,7 @@ const assert = require("./util/assert");
 const CommandLine = require("./infrastructure/command_line");
 const Server = require("./server");
 
-const USAGE = "Usage: serve PORT\n";
+const USAGE = "Usage: run PORT\n";
 
 describe("Server", function() {
 
