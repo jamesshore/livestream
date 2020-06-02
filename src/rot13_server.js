@@ -4,11 +4,6 @@
 const ensure = require("./util/ensure");
 const CommandLine = require("./infrastructure/command_line");
 
-const EXIT_CODE = {
-	OK: 0,
-	BAD_COMMAND_LINE: 1,
-};
-
 module.exports = class App {
 
 	static create(commandLine = CommandLine.create()) {
@@ -26,7 +21,7 @@ module.exports = class App {
 		const args = this._commandLine.args();
 		if (args.length !== 1) {
 			this._commandLine.writeStderr(`Usage: run PORT\n`);
-			return EXIT_CODE.BAD_COMMAND_LINE;
+			return;
 		}
 
 		const port = args[0];
