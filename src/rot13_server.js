@@ -3,16 +3,18 @@
 
 const ensure = require("./util/ensure");
 const CommandLine = require("./infrastructure/command_line");
+const HttpServer = require("./infrastructure/http_server");
 
 module.exports = class App {
 
-	static create(commandLine = CommandLine.create()) {
-		return new App(commandLine);
+	static create(commandLine = CommandLine.create(), httpServer = HttpServer.create()) {
+		return new App(commandLine, httpServer);
 	}
 
-	constructor(commandLine) {
-		ensure.signature(arguments, [ CommandLine ]);
+	constructor(commandLine, httpServer) {
+		ensure.signature(arguments, [ CommandLine, HttpServer ]);
 		this._commandLine = commandLine;
+		this._httpServer = httpServer;
 	}
 
 	async startAsync() {
@@ -24,7 +26,7 @@ module.exports = class App {
 			return;
 		}
 
-		const port = args[0];
+		const port = parseInt(args[0], 10);
 		await runServerAsync(this, port);
 	}
 
@@ -32,6 +34,6 @@ module.exports = class App {
 
 
 async function runServerAsync(self, port) {
-	// await self._httpServer.startAsync(port);
-	// self._commandLine.writeStdout(`Server started on port ${port}\n`);
+	await self._httpServer.startAsync({ port });
+	self._commandLine.writeStdout(`Server started on port ${port}\n`);
 }

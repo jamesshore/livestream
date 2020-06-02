@@ -3,11 +3,19 @@
 
 const assert = require("./util/assert");
 const CommandLine = require("./infrastructure/command_line");
+const HttpServer = require("./infrastructure/http_server");
 const Server = require("./rot13_server");
 
 const USAGE = "Usage: run PORT\n";
 
 describe("ROT-13 Server", function() {
+
+	it("starts server", async function() {
+		const { commandLine, httpServer } = await startServerAsync({ args: [ "5000" ]});
+		assert.equal(httpServer.isStarted, true, "should start server");
+		assert.equal(commandLine.getLastStdout(), "Server started on port 5000\n");
+	});
+
 
 	describe("Command-line processing", function() {
 
@@ -27,11 +35,13 @@ describe("ROT-13 Server", function() {
 
 async function startServerAsync({ args = [ "4242" ] } = {}) {
 	const commandLine = CommandLine.createNull({ args  });
-	const app = Server.create(commandLine);
+	const httpServer = HttpServer.createNull();
+	const app = Server.create(commandLine, httpServer);
 
 	await app.startAsync();
 
 	return {
 		commandLine,
+		httpServer,
 	};
 }
