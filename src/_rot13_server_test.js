@@ -3,11 +3,11 @@
 
 const assert = require("./util/assert");
 const CommandLine = require("./infrastructure/command_line");
-const Server = require("./server");
+const Server = require("./rot13_server");
 
 const USAGE = "Usage: run PORT\n";
 
-describe("Server", function() {
+describe("ROT-13 Server", function() {
 
 	describe("Command-line processing", function() {
 
