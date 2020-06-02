@@ -25,7 +25,7 @@ describe("ROT-13 Server", function() {
 
 });
 
-async function startServerAsync({ args = [ "4242" ] }) {
+async function startServerAsync({ args = [ "4242" ] } = {}) {
 	const commandLine = CommandLine.createNull({ args  });
 	const app = Server.create(commandLine);
 
