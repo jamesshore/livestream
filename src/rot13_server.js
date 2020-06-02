@@ -25,12 +25,13 @@ module.exports = class App {
 		}
 
 		const port = args[0];
-		await runServerAsync(port);
+		await runServerAsync(this, port);
 	}
 
 };
 
 
-function runServerAsync(port) {
-	console.log("TO DO");
+async function runServerAsync(self, port) {
+	// await self._httpServer.startAsync(port);
+	// self._commandLine.writeStdout(`Server started on port ${port}\n`);
 }
