@@ -12,13 +12,13 @@ describe("ROT-13 Server", function() {
 	describe("Command-line processing", function() {
 
 		it("Provides usage and exits with error when no command-line arguments provided", async function() {
-			const { stderr } = await startServerAsync({ args: [] });
-			assert.deepEqual(stderr, USAGE);
+			const { commandLine } = await startServerAsync({ args: [] });
+			assert.deepEqual(commandLine.getLastStderr(), USAGE);
 		});
 
 		it("Provides usage and exits with error when too many command-line arguments provided", async function() {
-			const { stderr } = await startServerAsync({ args: ["too", "many"] });
-			assert.deepEqual(stderr, USAGE);
+			const { commandLine } = await startServerAsync({ args: ["too", "many"] });
+			assert.deepEqual(commandLine.getLastStderr(), USAGE);
 		});
 
 	});
@@ -32,7 +32,6 @@ async function startServerAsync({ args = [ "4242" ] } = {}) {
 	await app.startAsync();
 
 	return {
-		stdout: commandLine.getLastStdout(),
-		stderr: commandLine.getLastStderr(),
+		commandLine,
 	};
 }
