@@ -15,6 +15,10 @@ module.exports = class HttpServer {
 		this._server = null;
 	}
 
+	get isStarted() {
+		return this._server !== null;
+	}
+
 	startAsync({ port }) {
 		return new Promise((resolve, reject) => {
 			ensure.signature(arguments, [{ port: Number }]);

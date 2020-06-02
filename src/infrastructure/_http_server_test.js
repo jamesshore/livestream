@@ -18,6 +18,19 @@ describe("HTTP Server", function() {
 		await stopAsync(server);
 	});
 
+	it("says if the server is started", async function() {
+		const server = HttpServer.create();
+		assert.equal(server.isStarted, false, "before server started");
+		await startAsync(server);
+		try {
+			assert.equal(server.isStarted, true, "after server started");
+		}
+		finally {
+			await stopAsync(server);
+			assert.equal(server.isStarted, false, "after server stopped");
+		}
+	});
+
 	it("fails gracefully if server has startup error", async function() {
 		await startAndStopAsync(async () => {
 			const server = HttpServer.create();
