@@ -9,53 +9,57 @@ const PORT = 5001;
 
 describe("HTTP Server", function() {
 
-	it("starts and stops server (and can do so multiple times)", async function() {
-		const server = HttpServer.create();
+	describe("starting and stopping", function() {
 
-		await startAsync(server);
-		await stopAsync(server);
-		await startAsync(server);
-		await stopAsync(server);
-	});
+		it("starts and stops server (and can do so multiple times)", async function() {
+			const server = HttpServer.create();
 
-	it("says if the server is started", async function() {
-		const server = HttpServer.create();
-		assert.equal(server.isStarted, false, "before server started");
-		await startAsync(server);
-		try {
-			assert.equal(server.isStarted, true, "after server started");
-		}
-		finally {
+			await startAsync(server);
 			await stopAsync(server);
-			assert.equal(server.isStarted, false, "after server stopped");
-		}
-	});
+			await startAsync(server);
+			await stopAsync(server);
+		});
 
-	it("fails gracefully if server has startup error", async function() {
-		await startAndStopAsync(async () => {
+		it("says if the server is started", async function() {
+			const server = HttpServer.create();
+			assert.equal(server.isStarted, false, "before server started");
+			await startAsync(server);
+			try {
+				assert.equal(server.isStarted, true, "after server started");
+			}
+			finally {
+				await stopAsync(server);
+				assert.equal(server.isStarted, false, "after server stopped");
+			}
+		});
+
+		it("fails gracefully if server has startup error", async function() {
+			await startAndStopAsync(async () => {
+				const server = HttpServer.create();
+				await assert.throwsAsync(
+					() => startAsync(server),     // fails because another server is already running
+					/^Couldn't start server due to error:.*?EADDRINUSE/
+				);
+			});
+		});
+
+		it("fails fast if server is started twice", async function() {
+			await startAndStopAsync(async (server) => {
+				await assert.throwsAsync(
+					() => startAsync(server),
+					"Can't start server because it's already running"
+				);
+			});
+		});
+
+		it("fails fast if server is stopped when it isn't running", async function() {
 			const server = HttpServer.create();
 			await assert.throwsAsync(
-				() => startAsync(server),     // fails because another server is already running
-				/^Couldn't start server due to error:.*?EADDRINUSE/
+				() => stopAsync(server),
+				"Can't stop server because it isn't running"
 			);
 		});
-	});
 
-	it("fails fast if server is started twice", async function() {
-		await startAndStopAsync(async (server) => {
-			await assert.throwsAsync(
-				() => startAsync(server),
-				"Can't start server because it's already running"
-			);
-		});
-	});
-
-	it("fails fast if server is stopped when it isn't running", async function() {
-		const server = HttpServer.create();
-		await assert.throwsAsync(
-			() => stopAsync(server),
-			"Can't stop server because it isn't running"
-		);
 	});
 
 
