@@ -29,7 +29,7 @@ module.exports = class HttpServer {
 	startAsync({ port }) {
 		return new Promise((resolve, reject) => {
 			ensure.signature(arguments, [{ port: Number }]);
-			if (this._server !== null) throw new Error("Can't start server because it's already running");
+			if (this.isStarted) throw new Error("Can't start server because it's already running");
 
 			this._server = this._http.createServer();
 			this._server.on("error", (err) => {
@@ -43,7 +43,7 @@ module.exports = class HttpServer {
 	stopAsync() {
 		return new Promise((resolve, reject) => {
 			ensure.signature(arguments, []);
-			if (this._server === null) throw new Error("Can't stop server because it isn't running");
+			if (!this.isStarted) throw new Error("Can't stop server because it isn't running");
 
 			this._server.on("close", () => {
 				this._server = null;
