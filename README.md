@@ -4,12 +4,14 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (2 June 2020): Microservices Without Mocks (Part I)
+This Week's Challenge (9 June 2020): Microservices Without Mocks (Part II)
 ---------------------
 
 Create a microservice that serves the lucrative new ROT13-as-a-Service (RaaS) industry. Test-drive it, but don't use mocks (or spies) or broad integration tests. The API is up to you.
 
-Part I: Start the server. When it starts, write "Server started on port XXX" to command line. Don't handle requests yet.
+Part I (done): Start the server. When it starts, write "Server started on port XXX" to the command line. Don't handle requests yet.
+
+Part II (this week): Respond to requests. When a request is received, write "Request received" to the command line. Respond with status code 501 (Not Implemented) and the text "Not yet implemented".
 
 
 The Thinking Framework
@@ -22,6 +24,7 @@ If you need a refresher, these episodes have more:
 * [Incremental Test-Driven Development](https://www.jamesshore.com/Blog/Lunch-and-Learn/Incremental-TDD.html). TDD basics.
 * [Application Infrastructure](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html). How to build infrastructure wrappers.
 * [Testing Without Mocks](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html). How to use overlapping sociable tests and nullable infrastructure wrappers to improve tests.
+* [Microservices Without Mocks Part 1 - The Server](https://www.jamesshore.com/Blog/Lunch-and-Learn/Microservices-Without-Mocks-Part-1.html). How to build a nullable infrastructure wrapper for an HTTP server.
 
 (For more details about testing without mocks, see James Shore's [Testing Without Mocks pattern language](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html).)
 
