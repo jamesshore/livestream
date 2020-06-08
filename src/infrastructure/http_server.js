@@ -35,7 +35,9 @@ module.exports = class HttpServer {
 			this._server.on("error", (err) => {
 				reject(new Error(`Couldn't start server due to error: ${err.message}`));
 			});
-			this._server.on("listening", resolve);
+			this._server.on("listening", () => {
+				resolve();
+			});
 			this._server.listen(port);
 		});
 	}
