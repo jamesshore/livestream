@@ -77,7 +77,30 @@ describe("HTTP Server", function() {
 			function onRequestAsync() { return expectedResponse; }
 
 			const response = await getAsync({ onRequestAsync });
-			assert.deepEqual(expectedResponse, response);
+			assert.deepEqual(response, expectedResponse);
+		});
+
+		it("simulates requests", async function() {
+			const expectedResponse = {
+				status: 777,
+				headers: { myheader: "myvalue" },
+				body: "my body"
+			};
+			function onRequestAsync() { return expectedResponse; }
+
+			const server = HttpServer.createNull();
+			await startAsync(server, { onRequestAsync });
+
+			const response = await server.simulateRequestAsync();
+			assert.deepEqual(response, expectedResponse);
+		});
+
+		it("simulating requests fails fast when server isn't running", async function() {
+			const server = HttpServer.createNull();
+			await assert.throwsAsync(
+				() => server.simulateRequestAsync(),
+				"Can't simulate request because server isn't running"
+			);
 		});
 
 		it("fails gracefully when request handler throws exception", async function() {
@@ -101,7 +124,6 @@ describe("HTTP Server", function() {
 				body: "Internal Server Error: request handler returned invalid response",
 			});
 		});
-
 
 	});
 

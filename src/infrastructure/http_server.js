@@ -34,6 +34,7 @@ module.exports = class HttpServer {
 			ensure.signature(arguments, [{ port: Number, onRequestAsync: Function }]);
 			if (this.isStarted) throw new Error("Can't start server because it's already running");
 
+			this._onRequestAsync = onRequestAsync;
 			this._server = this._http.createServer();
 			this._server.on("error", (err) => {
 				reject(new Error(`Couldn't start server due to error: ${err.message}`));
@@ -64,6 +65,12 @@ module.exports = class HttpServer {
 			});
 			this._server.close();
 		});
+	}
+
+	async simulateRequestAsync() {
+		ensure.signature(arguments, []);
+		if (!this.isStarted) throw new Error("Can't simulate request because server isn't running");
+		return await handleRequestAsync(this._onRequestAsync);
 	}
 
 };
