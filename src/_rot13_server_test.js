@@ -16,6 +16,19 @@ describe("ROT-13 Server", function() {
 		assert.equal(commandLine.getLastStdout(), "Server started on port 5000\n");
 	});
 
+	it("responds to requests with a placeholder", async function() {
+		const { commandLine, httpServer } = await startServerAsync();
+
+		const response = await httpServer.simulateRequestAsync();
+
+		assert.equal(commandLine.getLastStdout(), "Received request\n");
+		assert.deepEqual(response, {
+			status: 501,
+			headers: { "Content-Type": "text/plain; charset=utf-8" },
+			body: "Not yet implemented",
+		});
+	});
+
 
 	describe("Command-line processing", function() {
 

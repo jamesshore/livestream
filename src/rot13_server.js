@@ -35,11 +35,12 @@ module.exports = class App {
 
 async function runServerAsync(self, port) {
 	function onRequestAsync() {
-	// 	return {
-	// 		status: 501,
-	// 		headers: { "Content-Type": "text/plain; charset=utf-8" },
-	// 		body: "Not yet implemented",
-	// 	};
+		self._commandLine.writeStdout("Received request\n");
+		return {
+			status: 501,
+			headers: { "Content-Type": "text/plain; charset=utf-8" },
+			body: "Not yet implemented",
+		};
 	}
 
 	await self._httpServer.startAsync({ port, onRequestAsync });
