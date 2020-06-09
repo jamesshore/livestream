@@ -34,6 +34,14 @@ module.exports = class App {
 
 
 async function runServerAsync(self, port) {
-	await self._httpServer.startAsync({ port });
+	function onRequestAsync() {
+	// 	return {
+	// 		status: 501,
+	// 		headers: { "Content-Type": "text/plain; charset=utf-8" },
+	// 		body: "Not yet implemented",
+	// 	};
+	}
+
+	await self._httpServer.startAsync({ port, onRequestAsync });
 	self._commandLine.writeStdout(`Server started on port ${port}\n`);
 }

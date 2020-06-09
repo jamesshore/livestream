@@ -34,7 +34,7 @@ describe("HTTP Server", function() {
 		});
 
 		it("fails gracefully if server has startup error", async function() {
-			await startAndStopAsync(async () => {
+			await startAndStopAsync({}, async () => {
 				const server = HttpServer.create();
 				await assert.throwsAsync(
 					() => startAsync(server),     // fails because another server is already running
@@ -44,7 +44,7 @@ describe("HTTP Server", function() {
 		});
 
 		it("fails fast if server is started twice", async function() {
-			await startAndStopAsync(async (server) => {
+			await startAndStopAsync({}, async (server) => {
 				await assert.throwsAsync(
 					() => startAsync(server),
 					"Can't start server because it's already running"
@@ -59,6 +59,49 @@ describe("HTTP Server", function() {
 				"Can't stop server because it isn't running"
 			);
 		});
+
+	});
+
+
+	describe("requests and responses", function() {
+
+		it("runs a function when a request is received and serves the result", async function() {
+			const expectedResponse = {
+				status: 777,
+				headers: {
+					header1: "value1",
+					header2: "value2",
+				},
+				body: "my body",
+			};
+			function onRequestAsync() { return expectedResponse; }
+
+			const response = await getAsync({ onRequestAsync });
+			assert.deepEqual(expectedResponse, response);
+		});
+
+		it("fails gracefully when request handler throws exception", async function() {
+			function onRequestAsync() { throw new Error("onRequestAsync error"); }
+
+			const response = await getAsync({ onRequestAsync });
+			assert.deepEqual(response, {
+				status: 500,
+				headers: { "content-type": "text/plain; charset=utf-8" },
+				body: "Internal Server Error: request handler threw exception",
+			});
+		});
+
+		it("fails gracefully when request handler returns invalid response", async function() {
+			function onRequestAsync() { return "invalid response"; }
+
+			const response = await getAsync({ onRequestAsync });
+			assert.deepEqual(response, {
+				status: 500,
+				headers: { "content-type": "text/plain; charset=utf-8" },
+				body: "Internal Server Error: request handler returned invalid response",
+			});
+		});
+
 
 	});
 
@@ -81,19 +124,48 @@ describe("HTTP Server", function() {
 });
 
 
-async function startAndStopAsync(fnAsync) {
+async function getAsync({ onRequestAsync }) {
+	return await startAndStopAsync({ onRequestAsync }, async () => {
+		return await new Promise((resolve, reject) => {
+			const request = http.get({ port: PORT });
+			request.on("response", (response) => {
+				let body = "";
+				response.on("data", (chunk) => {
+					body += chunk;
+				});
+				response.on("error", (err) => reject(err));
+				response.on("end", () => {
+					const headers = response.headers;
+					delete headers.connection;
+					delete headers["content-length"];
+					delete headers.date;
+
+					resolve({
+						status: response.statusCode,
+						headers: response.headers,
+						body,
+					});
+				});
+			});
+		});
+	});
+}
+
+async function startAndStopAsync(options, fnAsync) {
 	const server = HttpServer.create();
-	await startAsync(server);
+	await startAsync(server, options);
 	try {
-		await fnAsync(server);
+		return await fnAsync(server);
 	}
 	finally {
 		await stopAsync(server);
 	}
 }
 
-async function startAsync(server) {
-	await server.startAsync({ port: PORT });
+async function startAsync(server, {
+	onRequestAsync = () => {},
+} = {}) {
+	await server.startAsync({ port: PORT, onRequestAsync });
 }
 
 async function stopAsync(server) {
