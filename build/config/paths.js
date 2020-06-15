@@ -16,18 +16,6 @@ exports.lintFiles = memoize(() => {
 	]);
 });
 
-exports.lintOutput = memoize(() => {
-	return exports.lintFiles().map(function(pathname) {
-		return `${exports.incrementalDir}/lint/${pathname}.lint`;
-	});
-});
-
-exports.lintDirectories = memoize(() => {
-	return exports.lintOutput().map(function(lintDependency) {
-		return path.dirname(lintDependency);
-	});
-});
-
 exports.testFiles = memoize(() => {
 	return deglob([
 		"src/**/_*_test.js",
