@@ -4,14 +4,16 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (9 June 2020): Microservices Without Mocks (Part II)
+This Week's Challenge (16 June 2020): Microservices Without Mocks (Part III)
 ---------------------
 
 Create a microservice that serves the lucrative new ROT13-as-a-Service (RaaS) industry. Test-drive it, but don't use mocks (or spies) or broad integration tests. The API is up to you.
 
 Part I (done): Start the server. When it starts, write "Server started on port XXX" to the command line. Don't handle requests yet.
 
-Part II (this week): Respond to requests. When a request is received, write "Request received" to the command line. Respond with status code 501 (Not Implemented) and the text "Not yet implemented".
+Part II (done): Respond to requests. When a request is received, write "Request received" to the command line. Respond with status code 501 (Not Implemented) and the text "Not yet implemented".
+
+Part III (this week): Encode requests. When a request is received, read the request body and encode it using `rot13.transform()` (in `src/logic/rot_13.js`). Respond with status code 200 (OK) and the transformed text.
 
 
 The Thinking Framework
@@ -24,23 +26,20 @@ If you need a refresher, these episodes have more:
 * [Incremental Test-Driven Development](https://www.jamesshore.com/Blog/Lunch-and-Learn/Incremental-TDD.html). TDD basics.
 * [Application Infrastructure](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html). How to build infrastructure wrappers.
 * [Testing Without Mocks](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html). How to use overlapping sociable tests and nullable infrastructure wrappers to improve tests.
-* [Microservices Without Mocks Part 1 - The Server](https://www.jamesshore.com/Blog/Lunch-and-Learn/Microservices-Without-Mocks-Part-1.html). How to build a nullable infrastructure wrapper for an HTTP server.
+* [Microservices Without Mocks, Part 1: The Server](https://www.jamesshore.com/Blog/Lunch-and-Learn/Microservices-Without-Mocks-Part-1.html). How to build a nullable infrastructure wrapper for an HTTP server.
+* [Microservices Without Mocks, Part 2: Robust Responses](https://www.jamesshore.com/Blog/Lunch-and-Learn/Microservices-Without-Mocks-Part-2.html). How to respond to HTTP requests for real and also test those requests without running a real server.
 
 (For more details about testing without mocks, see James Shore's [Testing Without Mocks pattern language](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html).)
 
-This week's challenge raises several new questions.
+This week's challenge raises a new question:
 
-**1. Where do we begin?**
+**1. How do we make requests testable?**
 
-Use "Programming by Intention" to sketch out the code you need. In Programming by Intention, you write code that calls the functions you *wish* you had available. Focus on making the code readable and clean. (You don't need to make it work, though. It's pseudocode.) Then command it out and implement the missing functions for real. Once they're ready, test, uncomment, and fix up the pseudocode.
+Create an [infrastructure wrapper](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html) for Node's request objects, then make it [nullable](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html).
 
-**2. How do we test without launching the server?**
+**2. How do we control the values returned by the request?**
 
-Create an [infrastructure wrapper](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html) for the server, then make it [nullable](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html).
-
-**3. How do we test that our code responds to HTTP requests?**
-
-Build behavior simulation into your server wrapper. "Behavior simulation" is a production method that generates events as if they were real. In this case, you could have a method such as `httpServer.simulateRequest()` method that runs the same code a real request does.
+Use the "Configurable Responses" pattern. In your request wrapper's `createNull()` factory method, take an `options` parameter that defines the wrapper's values. Pass the options to your embedded stub. In the embedded stub, use the options to return the correct results.
 
 
 Running the Code
