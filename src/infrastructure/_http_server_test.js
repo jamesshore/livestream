@@ -93,17 +93,24 @@ describe("HTTP Server", function() {
 		});
 
 		it("simulates requests", async function() {
+			let actualRequest;
 			const expectedResponse = {
 				status: 777,
 				headers: { myheader: "myvalue" },
 				body: "my body"
 			};
-			function onRequestAsync() { return expectedResponse; }
+			function onRequestAsync(request) {
+				actualRequest = request;
+				return expectedResponse;
+			}
 
 			const server = HttpServer.createNull();
 			await startAsync(server, { onRequestAsync });
 
-			const response = await server.simulateRequestAsync();
+			const expectedRequest = HttpRequest.createNull();
+			const response = await server.simulateRequestAsync(expectedRequest);
+
+			assert.equal(actualRequest, expectedRequest);
 			assert.deepEqual(response, expectedResponse);
 		});
 

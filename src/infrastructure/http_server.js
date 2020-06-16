@@ -68,10 +68,10 @@ module.exports = class HttpServer {
 		});
 	}
 
-	async simulateRequestAsync() {
-		ensure.signature(arguments, []);
+	async simulateRequestAsync(httpRequest = HttpRequest.createNull()) {
+		ensure.signature(arguments, [[ undefined, HttpRequest ]]);
 		if (!this.isStarted) throw new Error("Can't simulate request because server isn't running");
-		return await handleRequestAsync(null, this._onRequestAsync);
+		return await handleRequestAsync(httpRequest, this._onRequestAsync);
 	}
 
 };
