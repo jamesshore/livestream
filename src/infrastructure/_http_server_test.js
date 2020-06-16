@@ -4,6 +4,7 @@
 const assert = require("../util/assert");
 const http = require("http");
 const HttpServer = require("./http_server");
+const testHelper = require("../util/test_helper");
 
 const PORT = 5001;
 
@@ -148,28 +149,7 @@ describe("HTTP Server", function() {
 
 async function getAsync({ onRequestAsync }) {
 	return await startAndStopAsync({ onRequestAsync }, async () => {
-		return await new Promise((resolve, reject) => {
-			const request = http.get({ port: PORT });
-			request.on("response", (response) => {
-				let body = "";
-				response.on("data", (chunk) => {
-					body += chunk;
-				});
-				response.on("error", (err) => reject(err));
-				response.on("end", () => {
-					const headers = response.headers;
-					delete headers.connection;
-					delete headers["content-length"];
-					delete headers.date;
-
-					resolve({
-						status: response.statusCode,
-						headers: response.headers,
-						body,
-					});
-				});
-			});
-		});
+		return await testHelper.requestAsync({ port: PORT });
 	});
 }
 
