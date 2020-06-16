@@ -5,6 +5,7 @@ const assert = require("../util/assert");
 const http = require("http");
 const HttpServer = require("./http_server");
 const testHelper = require("../util/test_helper");
+const HttpRequest = require("./http_request");
 
 const PORT = 5001;
 
@@ -79,6 +80,16 @@ describe("HTTP Server", function() {
 
 			const response = await getAsync({ onRequestAsync });
 			assert.deepEqual(response, expectedResponse);
+		});
+
+		it("provides request object to request handler", async function() {
+			let actualRequest;
+			function onRequestAsync(request) {
+				actualRequest = request;
+			}
+
+			const response = await getAsync({ onRequestAsync });
+			assert.instanceOf(actualRequest, HttpRequest);
 		});
 
 		it("simulates requests", async function() {

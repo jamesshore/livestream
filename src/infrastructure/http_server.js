@@ -5,6 +5,7 @@ const ensure = require("../util/ensure");
 const type = require("../util/type");
 const http = require("http");
 const EventEmitter = require("events");
+const HttpRequest = require("./http_request");
 
 const RESPONSE_TYPE = { status: Number, headers: Object, body: String };
 
@@ -40,7 +41,7 @@ module.exports = class HttpServer {
 				reject(new Error(`Couldn't start server due to error: ${err.message}`));
 			});
 			this._server.on("request", async (nodeRequest, nodeResponse) => {
-				const { status, headers, body } = await handleRequestAsync(onRequestAsync);
+				const { status, headers, body } = await handleRequestAsync(HttpRequest.create(nodeRequest), onRequestAsync);
 
 				nodeResponse.statusCode = status;
 				Object.entries(headers).forEach(([ name, value ]) => nodeResponse.setHeader(name, value));
@@ -70,14 +71,14 @@ module.exports = class HttpServer {
 	async simulateRequestAsync() {
 		ensure.signature(arguments, []);
 		if (!this.isStarted) throw new Error("Can't simulate request because server isn't running");
-		return await handleRequestAsync(this._onRequestAsync);
+		return await handleRequestAsync(null, this._onRequestAsync);
 	}
 
 };
 
-async function handleRequestAsync(onRequestAsync) {
+async function handleRequestAsync(httpRequest, onRequestAsync) {
 	try {
-		const response = await onRequestAsync();
+		const response = await onRequestAsync(httpRequest);
 		const typeError = type.check(response, RESPONSE_TYPE);
 		if (typeError !== null) {
 			return internalServerError("request handler returned invalid response");
