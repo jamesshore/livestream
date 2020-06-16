@@ -4,6 +4,7 @@
 const ensure = require("./util/ensure");
 const CommandLine = require("./infrastructure/command_line");
 const HttpServer = require("./infrastructure/http_server");
+const rot13 = require("./logic/rot13");
 
 module.exports = class App {
 
@@ -51,12 +52,16 @@ async function runServerAsync(self, port) {
 	// 	};
 	// }
 
-	function onRequestAsync() {
+	async function onRequestAsync(request) {
 		self._commandLine.writeStdout("Received request\n");
+
+		const input = await request.readBodyAsync();
+		const output = rot13.transform(input);
+
 		return {
-			status: 501,
+			status: 200,
 			headers: { "Content-Type": "text/plain; charset=utf-8" },
-			body: "Not yet implemented",
+			body: output,
 		};
 	}
 
