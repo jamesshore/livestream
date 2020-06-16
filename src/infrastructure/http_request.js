@@ -2,12 +2,17 @@
 "use strict";
 
 const ensure = require("../util/ensure");
+const EventEmitter = require("events");
 
 module.exports = class HttpRequest {
 
 	static create(nodeRequest) {
 		ensure.signature(arguments, [ Object ]);
 		return new HttpRequest(nodeRequest);
+	}
+
+	static createNull(options) {
+		return new HttpRequest(new NullNodeRequest(options));
 	}
 
 	constructor(nodeRequest) {
@@ -43,3 +48,45 @@ module.exports = class HttpRequest {
 	}
 
 };
+
+
+class NullNodeRequest extends EventEmitter {
+
+	constructor({
+		url = "/null-request-url",
+		method = "GET",
+		headers = {},
+		body = "",
+	} = {}) {
+		ensure.signature(arguments, [[ undefined, {
+			url: [ undefined, String ],
+			method: [ undefined, String ],
+			headers: [ undefined, Object ],
+			body: [ undefined, String ],
+		}]]);
+
+		super();
+		this.url = url;
+		this.method = method.toUpperCase();
+		this.headers = normalizeHeaders(headers);
+		this._body = body;
+		this.readableEnded = false;
+	}
+
+	on(event, fn) {
+		super.on(event, fn);
+		if (event === "end") {
+			setImmediate(() => {
+				this.emit("data", this._body);
+				this.emit("end");
+				this.readableEnded = true;
+			});
+		}
+	}
+
+}
+
+function normalizeHeaders(headers) {
+	const normalizedEntries = Object.entries(headers).map(([ name, value ]) => [ name.toLowerCase(), value ]);
+	return Object.fromEntries(normalizedEntries);
+}
