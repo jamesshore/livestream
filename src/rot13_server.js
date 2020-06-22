@@ -35,25 +35,13 @@ module.exports = class App {
 
 
 async function runServerAsync(self, port) {
-	// function onRequestAsync(request) {
-	// 	self._commandLine.writeStdout("Received request\n");
-	//
-	// 	if (request.url !== "/something") return notFound;
-	// 	if (request.method !== "POST") return methodNotAllowed;
-	// 	if (request.headers["content-type"] !== "application/json") return badRequest;
-	//
-	// 	const input = await request.readBodyAsync();
-	// 	const output = rot13.transform(input);
-	//
-	// 	return {
-	// 		status: 200,
-	// 		headers: { "Content-Type": "text/plain; charset=utf-8" },
-	// 		body: output,
-	// 	};
-	// }
 
 	async function onRequestAsync(request) {
 		self._commandLine.writeStdout("Received request\n");
+
+		// 	if (request.url !== "/something") return notFound;
+		// 	if (request.method !== "POST") return methodNotAllowed;
+		// 	if (request.headers["content-type"] !== "application/json") return badRequest;
 
 		const input = await request.readBodyAsync();
 		const output = rot13.transform(input);
