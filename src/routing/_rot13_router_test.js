@@ -63,7 +63,7 @@ describe("ROT-13 Router", function() {
 		it("returns 'bad request' when JSON doesn't have text field", async function() {
 			const body = { wrongField: "foo" };
 			const response = await simulateRequestAsync({ body });
-			assert.deepEqual(response, rot13Response.badRequest("response.text must be a string, but it was undefined"));
+			assert.deepEqual(response, rot13Response.badRequest("request.text must be a string, but it was undefined"));
 		});
 
 		it("ignores extraneous fields", async function() {

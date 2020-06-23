@@ -21,7 +21,7 @@ exports.routeAsync = async function(request) {
 	let json;
 	try {
 		json = JSON.parse(jsonString);
-		ensure.typeMinimum(json, REQUEST_TYPE, "response");
+		ensure.typeMinimum(json, REQUEST_TYPE, "request");
 	}
 	catch (err) {
 		return rot13Response.badRequest(err.message);
