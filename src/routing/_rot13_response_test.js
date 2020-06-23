@@ -4,10 +4,6 @@
 const assert = require("../util/assert");
 const rot13Response = require("./rot13_response");
 
-const VALID_URL = "/rot13/transform";
-const VALID_METHOD = "POST";
-const VALID_HEADERS = { "content-type": "application/json" };
-
 describe("ROT-13 Response", function() {
 
 	it("ok", function() {
