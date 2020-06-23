@@ -44,6 +44,12 @@ describe("ROT-13 Router", function() {
 			assert.deepEqual(response, rot13Response.badRequest("invalid content-type header"));
 		});
 
+		it("returns 'bad request' when content-type header is missing", async function() {
+			const headers = {};
+			const response = await simulateRequestAsync({ headers });
+			assert.deepEqual(response, rot13Response.badRequest("invalid content-type header"));
+		});
+
 	});
 
 
