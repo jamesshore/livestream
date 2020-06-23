@@ -5,6 +5,8 @@ const ensure = require("./util/ensure");
 const CommandLine = require("./infrastructure/command_line");
 const HttpServer = require("./infrastructure/http_server");
 const rot13 = require("./logic/rot13");
+const rot13Response = require("./routing/rot13_response");
+const rot13Router = require("./routing/rot13_router");
 
 module.exports = class App {
 
@@ -28,31 +30,13 @@ module.exports = class App {
 		}
 
 		const port = parseInt(args[0], 10);
-		await runServerAsync(this, port);
+		await this._httpServer.startAsync({ port, onRequestAsync: onRequestAsync.bind(null, this) });
+		await this._commandLine.writeStdout(`Server started on port ${port}\n`);
 	}
 
 };
 
-
-async function runServerAsync(self, port) {
-
-	async function onRequestAsync(request) {
-		self._commandLine.writeStdout("Received request\n");
-
-		// 	if (request.url !== "/something") return notFound;
-		// 	if (request.method !== "POST") return methodNotAllowed;
-		// 	if (request.headers["content-type"] !== "application/json") return badRequest;
-
-		const input = await request.readBodyAsync();
-		const output = rot13.transform(input);
-
-		return {
-			status: 200,
-			headers: { "Content-Type": "text/plain; charset=utf-8" },
-			body: output,
-		};
-	}
-
-	await self._httpServer.startAsync({ port, onRequestAsync });
-	self._commandLine.writeStdout(`Server started on port ${port}\n`);
+async function onRequestAsync(self, request) {
+	self._commandLine.writeStdout("Received request\n");
+	return await rot13Router.routeAsync(request);
 }
