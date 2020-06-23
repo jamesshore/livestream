@@ -38,7 +38,7 @@ In this week’s challenge, all our HTTP infrastructure is complete. We just nee
 
 **How can we best design our code?**
 
-There are two parts to the answer, which some people call (somewhat tongue in cheek) "code whispering." It's also known as "evolutionray design."
+There are two parts to the answer, which some people call (somewhat tongue in cheek) "code whispering." It's also known as "evolutionary design."
 
 *First,* a good design sense is critical. If you don't know the difference between good design and bad design, no technique can guarantee success. An excellent resource for honing your design sense is Martin Fowler’s [Refactoring](https://refactoring.com/) book.
 
