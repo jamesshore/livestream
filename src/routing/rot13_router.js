@@ -13,8 +13,9 @@ exports.routeAsync = async function(request) {
 
 	if (request.url !== "/rot13/transform") return rot13Response.notFound();
 	if (request.method !== "POST") return rot13Response.methodNotAllowed();
-	if (request.headers["content-type"] !== "application/json") return rot13Response.badRequest(
-		"invalid content-type header");
+	if (request.headers["content-type"] !== "application/json") {
+		return rot13Response.badRequest("invalid content-type header");
+	}
 
 	const jsonString = await request.readBodyAsync();
 	let json;
