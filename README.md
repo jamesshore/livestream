@@ -4,55 +4,70 @@ James Shore Live
 This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
-This Week's Challenge (23 June 2020): Microservices Without Mocks (Part IV)
+This Week's Challenge (30 June 2020): How to Add a Feature
 ---------------------
 
-Create a microservice that serves the lucrative new ROT13-as-a-Service (RaaS) industry. Test-drive it, but don't use mocks (or spies) or broad integration tests. The API is up to you.
+This repository contains a simple HTTP server that implements a ROT-13 microservice. See "How the Microservice Works", below, for details.
 
-Part I (done): Start the server. When it starts, write "Server started on port XXX" to the command line. Don't handle requests yet.
+Currently, the service expects a `content-type` header containing the exact string `application/json`. However, that's not the only legal way to specify the content type. Update the code so that it works properly with any legal header.
 
-Part II (done): Respond to requests. When a request is received, write "Request received" to the command line. Respond with status code 501 (Not Implemented) and the text "Not yet implemented".
+When adding this new feature, take care that the new code is designed well.
 
-Part III (done): Encode requests. When a request is received, read the request body and encode it using `rot13.transform()` (in `src/logic/rot_13.js`). Respond with status code 200 (OK) and the transformed text.
-
-Part IV (this week): Route requests. When a request is received, validate the URL, method, and headers, then parse the body as JSON and respond with a JSON payload. Respond with appropriate errors if the validation or parsing fails. The challenge is to do so in a way that is well designed.
+Hints:
+* [RFC 7231](https://tools.ietf.org/html/rfc7231) specifies the `content-type` header.
+	* It says that the header consists of a media type (`application/json`) followed by any number of semicolon-separated parameters (such as `application/json; charset=utf-8`).
+	* The media type and the character set are case-insensitive.
+	* There can be whitespace around the semicolons, but not in the media type or parameters.
+* [RFC 8259](https://tools.ietf.org/html/rfc8259) defines the `application/json` media type.
+	* It says that JSON must be encoded with UTF-8.
+	* It also says no `charset` parameter is defined, and adding one has no effect.
 
 
 The Thinking Framework
 ----------------------
 
-In [previous episodes](https://www.jamesshore.com/Blog/Lunch-and-Learn/), we learned how to test code without writing mocks or broad integration tests. Now we'll apply what we've learned to a real-world problem.
+(Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).)
 
-If you need a refresher, these episodes have more:
+When adding a new feature, follow these steps:
 
-* [Incremental Test-Driven Development](https://www.jamesshore.com/Blog/Lunch-and-Learn/Incremental-TDD.html). TDD basics.
-* [Application Infrastructure](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html). How to build infrastructure wrappers.
-* [Testing Without Mocks](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html). How to use overlapping sociable tests and nullable infrastructure wrappers to improve tests.
-* [Microservices Without Mocks, Part 1: The Server](https://www.jamesshore.com/Blog/Lunch-and-Learn/Microservices-Without-Mocks-Part-1.html). How to build a nullable infrastructure wrapper for an HTTP server.
-* [Microservices Without Mocks, Part 2: Robust Responses](https://www.jamesshore.com/Blog/Lunch-and-Learn/Microservices-Without-Mocks-Part-2.html). How to respond to HTTP requests for real and also test those requests without running a real server.
-* [Microservices Without Mocks, Part 3: Reliable Requests](https://www.jamesshore.com/Blog/Lunch-and-Learn/Microservices-Without-Mocks-Part-3.html). How to buid a nullable infrastructure wrapper for HTTP requests.
+1. Understand the feature. What needs to be done, exactly?
+	1. How is this different than the way the code works today?
+	2. What parts of the new feature are important?
+	3. What parts can be safely ignored? DTSTTCPW: Do the simplest thing that could possibly work.
 
-(For more details about testing without mocks, see James Shore's [Testing Without Mocks pattern language](https://www.jamesshore.com/Blog/Testing-Without-Mocks.html).)
+2. Skim the existing design.
+	1. Look at folder and file names, not details.
+	2. Based on their names, make an educated guess: what are their one-sentence responsibilities?
+	3. Look at function/method names inside files, if it helps, but avoid looking at every file.
 
-In this week’s challenge, all our HTTP infrastructure is complete. We just need to design and implement the routing code.
+3. Find the current implementation.
+	1. Start with your review of file responsibilities.
+	2. Make an educated guess, then read the code and tests to confirm.
+	3. When you find the spot, try changing the code. If you're right, the behavior should change.
 
-**How can we best design our code?**
+4. Find the file whose responsibilities best align with the new behavior.
+	1. This isn't necessarily the code that implements the current behavior.
+	2. Start with your review of file responsibilities.
+	3. Think about information flows. Where is the data most relevant to the new behavior located?
+	4. When you think of a likely spot, read the code to confirm. You may need to look at its dependencies instead.
 
-There are two parts to the answer, which some people call (somewhat tongue in cheek) "code whispering." It's also known as "evolutionary design."
+5. Does the current implementation (step 3) connect to the place that is most responsible for the new behavior (step 4)?
+	1. If not, is that a design flaw?
+	2. If it is a design flaw, should you fix it?
+	3. If it isn't a design flaw, go back to step 4. Find the part of the code that's next-most responsible for the new behavior.
 
-*First,* a good design sense is critical. If you don't know the difference between good design and bad design, no technique can guarantee success. An excellent resource for honing your design sense is Martin Fowler’s [Refactoring](https://refactoring.com/) book.
+6. Based on your analysis in step 5, decide how you're going to change the design of the code.
+  1. How will you change the code that implements the current behavior? Programming by intention can help.
+  2. How will you change the code that is going to be responsible for the new behavior?
+  3. Programming by intention (pseudocoding calls to desired functions) inside current implementation can help.
 
-*Second,* if you have a good design sense, you'll be tempted to start designing early. Restrain that urge! Designing too early leads to over-complicated flights of fancy. Instead, listen to the code.
+7. Implement the feature.
+	1. Think of your code as a graph of dependencies.
+	2. Your changes are least disruptive if you start depth-first. Change the leaf dependencies first, in isolation.
+	3. Then work your way up, wiring each higher node to the nodes underneath.
+	4. The root node will be the old implementation. When it's been changed and wired up, you're done.
 
-1. Notice poor design. Two easy things to look for:
-	a. Code that's doing too much--look for sets of methods that "clump" together.
-	b. Tests that are overcomplicated--look for tests have more setup than they really need.
-2. When you see poor design, put your feature work on pause and imagine ways to improve it.
-3. If your ideas simplify the code or make it easier to understand, refactor.
-	a. If your code does too much, or your tests are overcomplicated, that's a sign to extract a module or class.
-	b. Refactoring is *moving* code around, not *rewriting* code.
-
-If you're using sociable tests, as we've been doing for this exercise, you can refactor your code without breaking any tests. Once you've refactored your code, take a second look at your tests to see if the new design allows them to be simplified or improved.
+See the episode for details and an example of solving the challenge. After the livestream airs, you may find it in [the archive](https://www.jamesshore.com/Blog/Lunch-and-Learn/) on the following day (July 1st, 2020).
 
 
 Running the Code
@@ -69,6 +84,62 @@ To run the code in this repository, install [Node.js](http://nodejs.org). Then:
 * On Windows, use the .cmd versions: `run` instead of `./run.sh`, `watch` instead of `./watch.sh`, etc. If you are using gitbash, the .sh versions will also work, and they display the output better.
 
 All commands must be run from the repository root.
+
+
+How the Microservice Works
+--------------------------
+
+Start the server using the run command described under "Running the Code." E.g., `./run.sh 5000`.
+
+The microservice transforms text using the ROT-13 encoding. In other words, `hello` becomes `urryb`.
+
+It has one endpoint:
+
+* **URL**: `/rot13/transform`
+* Method: `POST`
+* Headers:
+	* `content-type: application/json`
+* Body: JSON object containing one field:
+  * `text` the text to transform
+  * E.g., `{ "text": "hello" }`
+* Success Response:
+	* Status: 200 OK
+	* Body: JSON object containing one field:
+		* `transformed` the transformed text
+		* E.g., `{ "transformed": "uryyb" }`
+* Failure Response
+	* Status: 4xx (depending on nature of error)
+	* Body: JSON object containing one field:
+		* `error` the error
+		* E.g., `{ "error": "invalid content-type header" }`
+
+Make requests against the server using your favorite HTTP client. For example, [httpie](https://httpie.org/):
+
+```sh
+~ % http post :5000/rot13/transform content-type:application/json text=hello -v
+POST /rot13/transform HTTP/1.1
+Accept: application/json, */*;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Content-Length: 17
+Host: localhost:5000
+User-Agent: HTTPie/2.1.0
+content-type: application/json
+
+{
+    "text": "hello"
+}
+
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 23
+Content-Type: application/json;charset=utf-8
+Date: Tue, 30 Jun 2020 01:14:15 GMT
+
+{
+    "transformed": "uryyb"
+}
+```
 
 
 License
