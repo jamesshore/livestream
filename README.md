@@ -21,6 +21,7 @@ Hints:
 * [RFC 8259](https://tools.ietf.org/html/rfc8259) defines the `application/json` media type.
 	* It says that JSON must be encoded with UTF-8.
 	* It also says no `charset` parameter is defined, and adding one has no effect.
+* Despite the above, the real point of this challenge is the design, not the code.
 
 
 The Thinking Framework
