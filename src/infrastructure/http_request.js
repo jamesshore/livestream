@@ -31,6 +31,16 @@ module.exports = class HttpRequest {
 		return { ...this._request.headers };
 	}
 
+	hasContentType(expectedMediaType) {
+		ensure.signature(arguments, [ String ]);
+
+		const contentType = this.headers["content-type"];
+		if (contentType === undefined) return false;
+
+		const [ mediaType, ignoredParameters ] = contentType.split(";");
+		return mediaType.trim().toLowerCase() === expectedMediaType.trim().toLowerCase();
+	}
+
 	async readBodyAsync() {
 		return await new Promise((resolve, reject) => {
 			ensure.signature(arguments, []);

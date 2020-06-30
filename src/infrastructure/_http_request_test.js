@@ -10,60 +10,89 @@ const PORT = 5001;
 
 describe("HTTP Request", function() {
 
-	it("provides URL", async function() {
-		await createRequestAsync({ url: "/my-url" }, (request) => {
-			assert.equal(request.url, "/my-url");
-		});
-	});
+	describe("raw data", function() {
 
-	it("provides method (and normalizes case)", async function() {
-		await createRequestAsync({ method: "POst" }, (request) => {
-			assert.equal(request.method, "POST");
-		});
-	});
-
-	it("provides headers (and normalizes case)", async function() {
-		const headers = {
-			myHEADER1: "myValue1",
-			MYHeader2: "myValue2",
-		};
-		await createRequestAsync({ headers }, (request) => {
-			assert.deepEqual(request.headers, {
-				connection: "close",
-				host: `localhost:${PORT}`,
-				myheader1: "myValue1",
-				myheader2: "myValue2",
+		it("provides URL", async function() {
+			await createRequestAsync({ url: "/my-url" }, (request) => {
+				assert.equal(request.url, "/my-url");
 			});
 		});
-	});
 
-	it("has immutable headers", async function() {
-		const headers = { header: "value" };
-		await createRequestAsync({ headers }, (request) => {
-			delete request.headers.header;
-			assert.deepEqual(request.headers, {
-				connection: "close",
-				host: `localhost:${PORT}`,
-				header: "value",
+		it("provides method (and normalizes case)", async function() {
+			await createRequestAsync({ method: "POst" }, (request) => {
+				assert.equal(request.method, "POST");
 			});
 		});
+
+		it("provides headers (and normalizes case)", async function() {
+			const headers = {
+				myHEADER1: "myValue1",
+				MYHeader2: "myValue2",
+			};
+			await createRequestAsync({ headers }, (request) => {
+				assert.deepEqual(request.headers, {
+					connection: "close",
+					host: `localhost:${PORT}`,
+					myheader1: "myValue1",
+					myheader2: "myValue2",
+				});
+			});
+		});
+
+		it("has immutable headers", async function() {
+			const headers = { header: "value" };
+			await createRequestAsync({ headers }, (request) => {
+				delete request.headers.header;
+				assert.deepEqual(request.headers, {
+					connection: "close",
+					host: `localhost:${PORT}`,
+					header: "value",
+				});
+			});
+		});
+
+		it("provides body", async function() {
+			const body = ["chunk 1", "chunk 2"];
+			await createRequestAsync({ body }, async (request) => {
+				assert.equal(await request.readBodyAsync(), "chunk 1chunk 2");
+			});
+		});
+
+		it("fails fast if body is read twice", async function() {
+			await createRequestAsync({}, async (request) => {
+				await request.readBodyAsync();
+				await assert.throwsAsync(
+					() => request.readBodyAsync(),
+					"Can't read request body because it's already been read",
+				);
+			});
+		});
+
 	});
 
-	it("provides body", async function() {
-		const body = [ "chunk 1", "chunk 2" ];
-		await createRequestAsync({ body }, async (request) => {
-			assert.equal(await request.readBodyAsync(), "chunk 1chunk 2");
-		});
-	});
 
-	it("fails fast if body is read twice", async function() {
-		await createRequestAsync({}, async (request) => {
-			await request.readBodyAsync();
-			await assert.throwsAsync(
-				() => request.readBodyAsync(),
-				"Can't read request body because it's already been read",
-			);
+	describe("cooked content-type header", function() {
+
+		it("checks if expected media type matches content-type header", function() {
+			check("application/json", "application/json", true, "matches");
+			check("application/json", "text/plain", false, "does not match");
+			check("APPLICATION/json", "application/JSON", true, "should ignore case");
+			check("   application/json   ", "\tapplication/json\t", true, "should ignore whitespace");
+			check("application/json;charset=utf-8;foo=bar", "application/json", true, "should ignore parameters");
+			check("application/json  ;  charset=utf-8", "application/json", true, "should ignore parameters with whitespace");
+
+			function check(contentType, mediaType, expectedResult, message) {
+				const headers = { "content-type": contentType };
+				const request = HttpRequest.createNull({ headers });
+				assert.equal(request.hasContentType(mediaType), expectedResult, message);
+			}
 		});
+
+		it("still works when content-type header doesn't exist", function() {
+			const request = HttpRequest.createNull();
+			assert.equal(request.hasContentType("application/json"), false);
+		});
+
 	});
 
 
