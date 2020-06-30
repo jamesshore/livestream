@@ -58,15 +58,15 @@ When adding a new feature, follow these steps:
 	3. If it isn't a design flaw, go back to step 4. Find the part of the code that's next-most responsible for the new behavior.
 
 6. Based on your analysis in step 5, decide how you're going to change the design of the code.
-	1. How will you change the code that implements the current behavior? Programming by intention can help.
+	1. How will you change the code that implements the current behavior?
 	2. How will you change the code that is going to be responsible for the new behavior?
 	3. Programming by intention (pseudocoding calls to desired functions) inside current implementation can help.
 
 7. Implement the feature.
-	1. Think of your code as a graph of dependencies.
+	1. Think of your code as a tree of dependencies.
 	2. Your changes are least disruptive if you start depth-first. Change the leaf dependencies first, in isolation.
 	3. Then work your way up, wiring each higher node to the nodes underneath.
-	4. The root node will be the old implementation. When it's been changed and wired up, you're done.
+	4. Your root node will be the old implementation. When it's been changed and wired up, you're done.
 
 See the episode for details and an example of solving the challenge. After the livestream airs, you may find it in [the archive](https://www.jamesshore.com/Blog/Lunch-and-Learn/) on the following day (July 1st, 2020).
 
@@ -92,7 +92,7 @@ How the Microservice Works
 
 Start the server using the run command described under "Running the Code." E.g., `./run.sh 5000`.
 
-The service transforms text using ROT-13 encoding. In other words, `hello` becomes `urryb`.
+The service transforms text using ROT-13 encoding. In other words, `hello` becomes `uryyb`.
 
 It has one endpoint:
 
