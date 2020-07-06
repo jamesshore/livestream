@@ -115,7 +115,7 @@ content-type: application/json
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 23
-Content-Type: application/json;charset=utf-8
+Content-Type: application/json
 Date: Tue, 30 Jun 2020 01:14:15 GMT
 
 {
