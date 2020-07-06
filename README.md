@@ -1,7 +1,7 @@
 James Shore Live
 ================
 
-This example code is used in my [Twitch.tv livestream](https://www.twitch.tv/jamesshorelive). See the individual episodes for more information. The episode archive is [available here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
+This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/Blog/Lunch-and-Learn/) series. See that link for for more information and an archive of past episodes, or [watch live on Twitch](https://www.twitch.tv/jamesshorelive).
 
 
 This Week's Challenge (7 July 2020): How to Fix a Bug
@@ -12,6 +12,8 @@ This repository contains a simple HTTP server that implements a ROT-13 microserv
 The service has a bug: it fails with a 404 (not found) error if the URL has a query string. In other words, if you POST to `/rot13/transform?my_query` instead of `/rot13/transform`, the service will return a 404 error. But it should just ignore the query string and work normally.
 
 Your challenge is to fix the code so that the query string is ignored, and to do so in a way that prevents this sort of bug from happening again.
+
+Tune in on July 7th at noon Pacific to see my solution. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/Blog/Lunch-and-Learn/).
 
 
 The Thinking Framework
