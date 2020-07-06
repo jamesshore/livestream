@@ -27,6 +27,5 @@ exports.routeAsync = async function(request) {
 
 	const input = json.text;
 	const output = rot13.transform(input);
-
 	return rot13Response.ok(output);
 };

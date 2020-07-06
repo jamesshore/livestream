@@ -10,17 +10,20 @@ const HttpRequest = require("../infrastructure/http_request");
 const VALID_URL = "/rot13/transform";
 const VALID_METHOD = "POST";
 const VALID_HEADERS = { "content-type": "application/json" };
+function validBody(text) { return { text }; }
 
 describe("ROT-13 Router", function() {
 
 	describe("happy path", function() {
 
 		it("transforms requests", async function() {
-			const body = { text: "hello" };
-			const response = await simulateRequestAsync(
-				{ url: VALID_URL, method: VALID_METHOD, headers: VALID_HEADERS, body }
-			);
-			assert.deepEqual(response, rot13Response.ok(rot13.transform("hello")));
+			const response = await simulateRequestAsync({
+				url: VALID_URL,
+				method: VALID_METHOD,
+				headers: VALID_HEADERS,
+				body: validBody("hello")
+			});
+			assertOkResponse(response, "hello");
 		});
 
 	});
@@ -44,16 +47,10 @@ describe("ROT-13 Router", function() {
 			assert.deepEqual(response, rot13Response.badRequest("invalid content-type header"));
 		});
 
-		it("returns 'bad request' when content-type header is missing", async function() {
-			const headers = {};
-			const response = await simulateRequestAsync({ headers });
-			assert.deepEqual(response, rot13Response.badRequest("invalid content-type header"));
-		});
-
 	});
 
 
-	describe("parsing", function() {
+	describe("body parsing", function() {
 
 		it("returns 'bad request' when JSON fails to parse", async function() {
 			const response = await simulateRequestAsync({ body: "not-json" });
@@ -67,9 +64,9 @@ describe("ROT-13 Router", function() {
 		});
 
 		it("ignores extraneous fields", async function() {
-			const body = { wrongField: "foo", text: "right field" };
+			const body = { ignoreMe: "wrong field", text: "right field" };
 			const response = await simulateRequestAsync({ body });
-			assert.deepEqual(response, rot13Response.ok(rot13.transform("right field")));
+			assertOkResponse(response, "right field");
 		});
 
 	});
@@ -87,4 +84,9 @@ async function simulateRequestAsync({
 
 	const request = HttpRequest.createNull({ url, method, headers, body });
 	return await rot13Router.routeAsync(request);
+}
+
+function assertOkResponse(response, originalText) {
+	assert.deepEqual(response, rot13Response.ok(rot13.transform(originalText)));
+
 }
