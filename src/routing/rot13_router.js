@@ -8,6 +8,8 @@ const HttpRequest = require("../infrastructure/http_request");
 
 const REQUEST_TYPE = { text: String };
 
+/** Top-level router for ROT-13 service */
+
 exports.routeAsync = async function(request) {
 	ensure.signature(arguments, [ HttpRequest ]);
 

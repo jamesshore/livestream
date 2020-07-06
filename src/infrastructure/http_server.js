@@ -9,6 +9,7 @@ const HttpRequest = require("./http_request");
 
 const RESPONSE_TYPE = { status: Number, headers: Object, body: String };
 
+/** Wrapper for HTTP server */
 module.exports = class HttpServer {
 
 	static create() {

@@ -3,6 +3,7 @@
 
 const ensure = require("../util/ensure");
 
+/** Wrapper for command-line processing */
 module.exports = class CommandLine {
 
 	static create() {

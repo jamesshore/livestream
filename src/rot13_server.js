@@ -4,14 +4,13 @@
 const ensure = require("./util/ensure");
 const CommandLine = require("./infrastructure/command_line");
 const HttpServer = require("./infrastructure/http_server");
-const rot13 = require("./logic/rot13");
-const rot13Response = require("./routing/rot13_response");
 const rot13Router = require("./routing/rot13_router");
 
-module.exports = class App {
+/** Top-level 'traffic cop' for ROT-13 service */
+module.exports = class Rot13Server {
 
 	static create(commandLine = CommandLine.create(), httpServer = HttpServer.create()) {
-		return new App(commandLine, httpServer);
+		return new Rot13Server(commandLine, httpServer);
 	}
 
 	constructor(commandLine, httpServer) {

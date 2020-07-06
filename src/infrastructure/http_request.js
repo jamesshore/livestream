@@ -4,6 +4,7 @@
 const ensure = require("../util/ensure");
 const EventEmitter = require("events");
 
+/** Wrapper for HTTP requests */
 module.exports = class HttpRequest {
 
 	static create(nodeRequest) {

@@ -3,6 +3,8 @@
 
 const ensure = require("../util/ensure");
 
+/** Functions for generating ROT-13 service's responses */
+
 exports.ok = function(output) {
 	ensure.signature(arguments, [ String ]);
 	return response(200, { transformed: output });
