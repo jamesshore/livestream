@@ -32,7 +32,7 @@ function errorResponse(status, error) {
 function response(status, body) {
 	return {
 		status,
-		headers: { "Content-Type": "application/json;charset=utf-8" },
+		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body),
 	};
 }

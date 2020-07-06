@@ -31,7 +31,7 @@ describe("ROT-13 Response", function() {
 function assertResponseEquals(response, status, body) {
 	assert.deepEqual(response, {
 		status,
-		headers: { "Content-Type": "application/json;charset=utf-8" },
+		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body),
 	});
 }
