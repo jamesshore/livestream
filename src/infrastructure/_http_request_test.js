@@ -12,9 +12,9 @@ describe("HTTP Request", function() {
 
 	describe("raw data", function() {
 
-		it("provides URL", async function() {
-			await createRequestAsync({ url: "/my-url" }, (request) => {
-				assert.equal(request.url, "/my-url");
+		it("provides URL's pathname (which ignores query)", async function() {
+			await createRequestAsync({ url: "/my-url?query" }, (request) => {
+				assert.equal(request.urlPathname, "/my-url");
 			});
 		});
 
@@ -101,7 +101,7 @@ describe("HTTP Request", function() {
 		it("provides defaults", async function() {
 			const request = HttpRequest.createNull();
 
-			assert.equal(request.url, "/null-request-url", "url");
+			assert.equal(request.urlPathname, "/null-request-url", "url");
 			assert.equal(request.method, "GET", "method");
 			assert.deepEqual(request.headers, {});
 			assert.equal(await request.readBodyAsync(), "");
@@ -109,7 +109,7 @@ describe("HTTP Request", function() {
 
 		it("can configure URL", function() {
 			const request = HttpRequest.createNull({ url: "/my-url" });
-			assert.equal(request.url, "/my-url");
+			assert.equal(request.urlPathname, "/my-url");
 		});
 
 		it("can configure method (and normalizes case)", function() {

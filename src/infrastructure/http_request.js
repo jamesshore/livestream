@@ -20,8 +20,9 @@ module.exports = class HttpRequest {
 		this._request = nodeRequest;
 	}
 
-	get url() {
-		return this._request.url;
+	get urlPathname() {
+		const url = new URL(this._request.url, "http://unknown.host");
+		return url.pathname;
 	}
 
 	get method() {

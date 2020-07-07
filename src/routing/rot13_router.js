@@ -13,7 +13,7 @@ const REQUEST_TYPE = { text: String };
 exports.routeAsync = async function(request) {
 	ensure.signature(arguments, [ HttpRequest ]);
 
-	if (request.url !== "/rot13/transform") return rot13Response.notFound();
+	if (request.urlPathname !== "/rot13/transform") return rot13Response.notFound();
 	if (request.method !== "POST") return rot13Response.methodNotAllowed();
 	if (!request.hasContentType("application/json")) return rot13Response.badRequest("invalid content-type header");
 

@@ -26,6 +26,11 @@ describe("ROT-13 Router", function() {
 			assertOkResponse(response, "hello");
 		});
 
+		it("ignores query parameters", async function() {
+			const response = await simulateRequestAsync({ url: VALID_URL + "?query", body: validBody("hello") });
+			assertOkResponse(response, "hello");
+		});
+
 	});
 
 
