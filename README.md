@@ -25,23 +25,23 @@ When fixing a bug, many people think this way:
 
 1. What is the bug? (Reproduce the bug.)
 2. Where is the bug? (Find the code that has the bug.)
-3. Fix the bug.
+3. Test and Fix the bug.
 
 But this is incomplete. A better approach is as follows:
 
 1. What is the bug?
 2. Where is the bug?
 3. **Why is there a bug?**
-4. Test, fix, and prevent **this entire category** of bugs.
+4. Text, Fix, and **Prevent future bugs** like this one.
 
-Fixing an entire category of bugs may seem like a lot to ask, but it's not as hard as it sounds. Step 3 hold the key. When you find the bug, take a moment to consider what allowed it to be introduced. This will tell you how you can prevent this type of bug in the future.
+Preventing future bugs may seem like a lot to ask, but it's not as hard as it sounds. Step 3 hold the key. When you find the bug, take a moment to consider what allowed it to be introduced. This will tell you how you can prevent this type of bug in the future.
 
-In my experience, bugs can be divided into four types of errors:
+In my experience, bugs can be divided into four categories of errors:
 
 * Programmer errors: The code doesn't do what the programmer intended it to do.
-* Design errors: The code doesn't do what the programmer intended it to do **and** it's in a part of the codebase that's prone to these sorts of mistakes.
-* Requirements errors: The code did exactly what the programmer intended it to do, but it doesn't match what stakeholders expected.
-* Systemic errors: The code did what the programmer intended and stakeholders got what they expected, but it had a hidden flaw nobody considered.
+* Design errors: The code doesn't do what the programmer intended it to do **and** it's in a part of the codebase that's prone to errors.
+* Requirements errors: The code did exactly what the programmer intended it to do, but it's not what stakeholders expected.
+* Systemic errors: The code has a hidden flaw nobody considered.
 
 After finding a bug, decide which category of error led to the bug. What you do next depends on the category.
 
@@ -49,9 +49,11 @@ After finding a bug, decide which category of error led to the bug. What you do 
 
 **Design errors.** Some parts of the codebase are just more error-prone than others. To reduce these, improve the design. The best way to improve design is to refactor. Automated tests make this easier, and test-driven development makes automated tests easier. To produce higher-quality designs from the beginning, consider evolutionary design, which means starting with a simple design and iteratively revising it as you go. See [this video presentation](https://www.jamesshore.com/In-the-News/Evolutionary-Design-Animated.html) or [this book excerpt](https://www.jamesshore.com/Agile-Book/incremental_design.html) for more about evolutionary design.
 
-**Requirements errors.** Higher quality, more frequent communication with stakeholders is the only way to prevent requirements errors. Although spending more time analyzing and documenting requirements may sound useful, it's usually not; stakeholders have too much trouble understanding what they need until they have something concrete in front of them. Instead, consider techniques such as on-site customers (stakeholder representatives who join your team full-time); monthly or bi-weekly demos of your progress and plans; concrete, stakeholder-written examples of complex business rules; and pairing with stakeholders to iteratively define and refine features.
+**Requirements errors.** Higher quality, more frequent communication with stakeholders is the best way to prevent requirements errors. Although spending more time analyzing and documenting requirements may sound useful, it's usually not; stakeholders have too much trouble understanding what they need until they have something concrete in front of them. Instead, consider techniques such as on-site customers (stakeholder representatives who join your team full-time); monthly or bi-weekly demos of your progress and plans; concrete, stakeholder-written examples of complex business rules; and pairing with stakeholders to iteratively define and refine features.
 
-**Systemetic errors.** Systematic errors are the result of blind spots. By their nature, they're hard to find. Techniques such as exploratory testing can help. Once you've found a systematic error, prevent that type of error from happening again in the future: encoding your new awareness into the system. If you can, modify your design to make that type of error impossible. If that's not possible, add a test or step to your build pipeline that will cause your build to fail if someone accidentally introduces that sort of error again. If that's not possible either, at least modify your process to catch or prevent that sort of error... but only if the cost of additional bugs is less than the overhead of the process changes.
+**Systemic errors.** Systemic errors are the result of blind spots. By their nature, they're hard to find. Techniques such as exploratory testing can help. Once you've found a systemic error, prevent that type of error from happening again in the future by encoding your new awareness into the system. If you can, modify your design to make similar errors impossible. If that's not feasible, add a test or step to your build pipeline that will cause your build to fail if someone accidentally introduces that sort of error again. If that's not feasible either, at least modify your process to catch or prevent that sort of error... but only if the cost of additional bugs is less than the overhead of the process changes.
+
+By thinking of bugs as feedback about your process and opportunities to improve it, rather than just tasks to complete, you’ll steadily raise your quality and decrease your error rate.
 
 
 Running the Code
