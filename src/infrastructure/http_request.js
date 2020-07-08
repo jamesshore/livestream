@@ -22,7 +22,7 @@ module.exports = class HttpRequest {
 
 	get urlPathname() {
 		const url = new URL(this._request.url, "http://unknown.host");
-		return url.pathname;
+		return decodeURIComponent(url.pathname);
 	}
 
 	get method() {

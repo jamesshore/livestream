@@ -18,6 +18,12 @@ describe("HTTP Request", function() {
 			});
 		});
 
+		it("decodes encoded URLs", async function() {
+			await createRequestAsync({ url: "/a%3F%20%26%23b" }, (request) => {
+				assert.equal(request.urlPathname, "/a? &#b");
+			});
+		});
+
 		it("provides method (and normalizes case)", async function() {
 			await createRequestAsync({ method: "POst" }, (request) => {
 				assert.equal(request.method, "POST");
