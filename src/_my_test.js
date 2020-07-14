@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("./assert");
+const assert = require("./util/assert");
 
 describe("Nothing", function() {
 
