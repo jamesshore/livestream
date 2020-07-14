@@ -7,7 +7,7 @@ This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.c
 This Week's Challenge (14 July 2020): No More Flaky Clock Tests
 ---------------------
 
-This week, your task is to implement is a simple countdown. Given an array of strings, `countdown.js` should display one line of the array every second. In other words, given `["3", "2", "1"]`, your code should output "3\n", wait one second, output "2\n", wait one second, and then output "1\n".
+This week, your task is to implement a simple countdown. Given an array of strings, `countdown.js` should display one line of the array every second. In other words, given `["3", "2", "1"]`, your code should output "3\n", wait one second, output "2\n", wait one second, and then output "1\n".
 
 The challenge here isn't the countdown; it's testing the code. Your tests need to be fast and reliable.
 
@@ -15,10 +15,10 @@ Tune in on July 14th at noon Pacific to see my solution. For details, go to the 
 
 Hints:
 
-* `run.js` is the entry point for the code. You won't need to edit this file.
-* `countdown.js` and `_countdown_test.js` are the application code you'll need to edit. They're just stubbed in at the moment.
-* You'll probably want to use `infrastructure/command_line.js` to make it easier to test `stdout`.
-* `util/assert.js` has assertions. It's a wrapper around [Chai's assert module](https://www.chaijs.com/api/assert/).
+* `src/run.js` is the entry point for the code. You won't need to edit this file.
+* `src/countdown.js` and `src/_countdown_test.js` are the application code you'll need to edit. They're just stubbed in at the moment.
+* You'll probably want to use `src/infrastructure/command_line.js` to make it easier to test `stdout`.
+* `src/util/assert.js` has assertions. It's a wrapper around [Chai's assert module](https://www.chaijs.com/api/assert/).
 * The [@sinonjs/fake-timers](https://github.com/sinonjs/fake-timers) npm module is vendored into the repo. You can use it with `require("@sinonjs/fake-timers")`.
 
 
@@ -27,7 +27,7 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/Blog/Lunch-and-Learn/).)
 
-Clock-based tests are often slow and flaky (they fail randomly). This is for several reasons:
+Clock-based tests are often slow and flaky: they fail randomly. This is for several reasons:
 
 1. When testing production code that has timeouts, the tests are written to wait for the timeout. This slows down the test suite.
 2. Computation time is non-deterministic. Sometimes an operation that is supposed to take less than 3ms takes 5ms, or 10ms, resulting in a test failure.
@@ -37,7 +37,7 @@ To prevent these issues, control the clock.
 
 1. Don't wait for timeouts in your tests. Instead, force the timeout to occur when you want it.
 2. Rather than computing elapsed time, tell the clock that a specific amount of time has elapsed.
-3. When testing production code that uses the current time ("now"), predefine "now" so it's always the same.
+3. When testing production code that uses the current time, predefine the time so it's always the same.
 
 To control the clock, first wrap it in an infrastructure wrapper. Then control its behavior by using mocks or nullable infrastructure. These videos have more information:
 
