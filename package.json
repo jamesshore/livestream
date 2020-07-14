@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "12.18.1"
+    "node": "14.5.0"
   },
   "description": "",
   "main": "index.js",
