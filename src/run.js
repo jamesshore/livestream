@@ -12,7 +12,7 @@ const TEXT = [
 	"Violating second law of thermodynamics...",
 	"Reversing entropy...",
 	"Initializing multi-phasic temporal convergence...",
-	"Traversing space-time continuum...",
+	"Pinpointing position in space-time continuum...",
 ];
 
 require("./countdown").countdownAsync(TEXT);
