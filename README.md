@@ -34,7 +34,7 @@ The hard part of this week's challenge is the mismatch between what our tests ne
 
 The solution for this problem is the same as it is for any other external state: [create an infrastructure wrapper](https://www.jamesshore.com/Blog/Lunch-and-Learn/Application-Infrastructure.html). Once you have a wrapper for your time zone and locale, you can either [mock it out in your tests](https://www.jamesshore.com/Blog/Lunch-and-Learn/Mocks-and-Spies.html) or make it [nullable](https://www.jamesshore.com/Blog/Lunch-and-Learn/Testing-Without-Mocks.html). Either way, this allows your tests to control the time zone and locale.
 
-This codebase already has a nullable infrastructure wrapper for the system clock that we build [in our last episode](https://www.jamesshore.com/Blog/Lunch-and-Learn/No-More-Flaky-Clock-Tests.html). It makes sense to extend it to support time zones and locales as well. In a larger, more complicated program, we might make a dedicated infrastructure wrapper just for the time zone and locale.
+This codebase already has a nullable infrastructure wrapper for the system clock that we built [in our last episode](https://www.jamesshore.com/Blog/Lunch-and-Learn/No-More-Flaky-Clock-Tests.html). It makes sense to extend it to support time zones and locales as well. In a larger, more complicated program, we might make a dedicated infrastructure wrapper just for the time zone and locale.
 
 
 Running the Code
