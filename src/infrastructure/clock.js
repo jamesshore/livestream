@@ -25,6 +25,11 @@ module.exports = class Clock {
 		return this._globals.Date.now();
 	}
 
+	toFormattedString(format, locale) {
+		const now = new Date();
+		return now.toLocaleString(locale, format);
+	}
+
 	async advanceNullAsync(milliseconds) {
 		await this._globals.advanceNullAsync(milliseconds);
 	}

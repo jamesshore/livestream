@@ -15,6 +15,33 @@ describe("Clock", function() {
 		assert.isAtLeast(actual, expected);
 	});
 
+	it("outputs current time using computer's language and time zone", function() {
+		const format = {
+			dateStyle: "medium",
+			timeStyle: "short",
+		};
+		checkToFormattedString(format);
+	});
+
+	it("outputs current time using configured time zone and locale", function() {
+		const format = {
+			timeZone: "Europe/Paris",
+			dateStyle: "medium",
+			timeStyle: "short",
+		};
+		const locale = "fr";
+		checkToFormattedString(format, locale);
+	});
+
+	function checkToFormattedString(format, locale) {
+		const clock = Clock.create();
+		let expected = new Date().toLocaleString(locale, format);
+		const actual = clock.toFormattedString(format, locale);
+		if (expected !== actual) expected = new Date().toLocaleString(locale, format);
+
+		assert.equal(actual, expected);
+	}
+
 	it("waits N milliseconds", async function() {
 		const clock = Clock.create();
 
