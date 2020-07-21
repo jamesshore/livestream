@@ -21,7 +21,7 @@ describe("Clock", function() {
 		const start = clock.now();
 		await clock.waitAsync(10);
 		const elapsedTime = clock.now() - start;
-		assert.isAtLeast(elapsedTime, 10);
+		assert.isAtLeast(elapsedTime, 9);
 	});
 
 
