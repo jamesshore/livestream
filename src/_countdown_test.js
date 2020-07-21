@@ -11,7 +11,7 @@ describe("Countdown App", function() {
 	it("writes one line at a time, waiting one second after each line", async function() {
 		const TEXT = [ "3", "2", "1" ];
 		const commandLine = CommandLine.createNull();
-		const clock = Clock.createNull();
+		const clock = Clock.createNull({ now: 0, locale: "uk", timeZone: "America/New_York" });
 
 		countdown.countdownAsync(TEXT, commandLine, clock);
 
@@ -20,6 +20,8 @@ describe("Countdown App", function() {
 		assert.equal(commandLine.getLastStdout(), "2\n");
 		await advanceOneSecondAsync(clock);
 		assert.equal(commandLine.getLastStdout(), "1\n");
+		await advanceOneSecondAsync(clock);
+		assert.equal(commandLine.getLastStdout(), "31 груд. 1969 р., 19:00\n");
 	});
 
 });

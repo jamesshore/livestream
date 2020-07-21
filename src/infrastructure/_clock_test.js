@@ -64,6 +64,30 @@ describe("Clock", function() {
 			assert.equal(clock.now(), 42);
 		});
 
+		it("renders to formatted string", function() {
+			const clock = Clock.createNull({ now: 0 });
+
+			const format = {
+				timeZone: "Europe/Paris",
+				dateStyle: "medium",
+				timeStyle: "short",
+			};
+			assert.equal(clock.toFormattedString(format, "fr"), "1 janv. 1970 à 01:00");
+		});
+
+		it("defaults time zone and locale to UTC and France", function() {
+			const clock = Clock.createNull({ now: 0 });
+			const format = { dateStyle: "medium", timeStyle: "long" };
+			assert.equal(clock.toFormattedString(format), "1 janv. 1970 à 00:00:00 UTC");
+			assert.deepEqual(format, { dateStyle: "medium", timeStyle: "long" }, "should not modify original format object");
+		});
+
+		it("allows local time zone to be configured", function() {
+			const clock = Clock.createNull({ now: 0, timeZone: "America/New_York", locale: "uk" });
+			const format = { dateStyle: "medium", timeStyle: "long" };
+			assert.equal(clock.toFormattedString(format), "31 груд. 1969 р., 19:00:00 GMT-5");
+		});
+
 		it("can advance the clock", async function() {
 			const clock = Clock.createNull();
 			await clock.advanceNullAsync(10);

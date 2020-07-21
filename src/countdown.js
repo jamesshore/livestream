@@ -11,4 +11,7 @@ exports.countdownAsync = async function(text, commandLine = CommandLine.create()
 		commandLine.writeStdout(text[i] + "\n");
 		await clock.waitAsync(ONE_SECOND);
 	}
+
+	const time = clock.toFormattedString({ dateStyle: "medium", timeStyle: "short" });
+	commandLine.writeStdout(time + "\n");
 };

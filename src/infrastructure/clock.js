@@ -8,6 +8,7 @@ module.exports = class Clock {
 	static create() {
 		return new Clock({
 			Date,
+			DateTimeFormat: Intl.DateTimeFormat,
 			setTimeout,
 			advanceNullAsync() { throw new Error("Can't advance the clock because it isn't a null clock"); }
 		});
@@ -26,8 +27,9 @@ module.exports = class Clock {
 	}
 
 	toFormattedString(format, locale) {
-		const now = new Date();
-		return now.toLocaleString(locale, format);
+		const now = new this._globals.Date();
+		const formatter = this._globals.DateTimeFormat(locale, format);
+		return formatter.format(now);
 	}
 
 	async advanceNullAsync(milliseconds) {
@@ -43,11 +45,21 @@ module.exports = class Clock {
 };
 
 
-function nullGlobals({ now = 0 } = {}) {
+function nullGlobals({
+	now = 0,
+	locale = "fr",
+	timeZone = "UTC"
+} = {}) {
 	const fake = FakeTimers.createClock(now);
 
 	return {
 		Date: fake.Date,
+
+		DateTimeFormat(locales, options) {
+			if (locales === undefined) locales = locale;
+			options = { timeZone, ...options };
+			return Intl.DateTimeFormat(locales, options);
+		},
 
 		async advanceNullAsync(milliseconds) {
 			await fake.tickAsync(milliseconds);
