@@ -82,7 +82,7 @@ describe("Clock", function() {
 			assert.deepEqual(format, { dateStyle: "medium", timeStyle: "long" }, "should not modify original format object");
 		});
 
-		it("allows local time zone to be configured", function() {
+		it("allows local time zone and locale to be configured", function() {
 			const clock = Clock.createNull({ now: 0, timeZone: "America/New_York", locale: "uk" });
 			const format = { dateStyle: "medium", timeStyle: "long" };
 			assert.equal(clock.toFormattedString(format), "31 груд. 1969 р., 19:00:00 GMT-5");
