@@ -4,7 +4,6 @@
 require("../util/node_version_checker").check();
 
 const Build = require("../util/build_runner");
-const DependencyAnalysis = require("../util/dependency_analysis");
 const paths = require("../config/paths");
 const lint = require("../util/lint_runner");
 const lintConfig = require("../config/eslint.conf");
@@ -16,7 +15,6 @@ const mochaConfig = require("../config/mocha.conf");
 const rootDir = pathLib.resolve(__dirname, "../..");
 
 const build = new Build({ incrementalDir: `${paths.incrementalDir}/tasks/` });
-const analysis = new DependencyAnalysis(build, rootDir, paths.testDependencies());
 
 exports.runAsync = async function(args) {
 	try {
@@ -67,28 +65,7 @@ build.task("lint", async () => {
 	process.stdout.write(footer);
 });
 
-incrementalTestsTask("test", "Testing", paths.testFiles());
-// allTestsTask("test", "Testing", paths.testFiles(), paths.testDependencies());
-
-
-function incrementalTestsTask(taskName, header, candidateTestFiles) {
-	build.task(taskName, async () => {
-		await analysis.updateAnalysisAsync();
-
-		const testFilePromises = candidateTestFiles.map(async (testFile) => {
-			const dependencyModified = await analysis.isDependencyModifiedAsync(testFile, testDependencyName(testFile));
-			if (dependencyModified) return testFile;
-			else return null;
-		});
-		const testFiles = (await Promise.all(testFilePromises)).filter((testFile) => testFile !== null);
-		if (testFiles.length === 0) return;
-
-		await runTestsAsync(header, testFiles);
-		await Promise.all(testFiles.map(async (testFile) => {
-			await build.writeDirAndFileAsync(testDependencyName(testFile), "test ok");
-		}));
-	});
-}
+allTestsTask("test", "Testing", paths.testFiles(), paths.testDependencies());
 
 function allTestsTask(taskName, header, testFiles, testDependencies) {
 	build.incrementalTask(taskName, testDependencies, async () => {
@@ -106,10 +83,6 @@ async function runTestsAsync(header, testFiles) {
 
 function lintDependencyName(filename) {
 	return dependencyName(filename, "lint");
-}
-
-function testDependencyName(filename) {
-	return dependencyName(filename, "test");
 }
 
 function dependencyName(filename, extension) {
