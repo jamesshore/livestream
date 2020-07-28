@@ -26,9 +26,20 @@ module.exports = class Clock {
 		return this._globals.Date.now();
 	}
 
-	toFormattedString(format, locale) {
+	toFormattedString(intlDateTimeFormatOptions, locale) {
+		if (intlDateTimeFormatOptions.timeZone === undefined) {
+			throw new Error("Must specify options.timeZone (use 'local' for computer's time zone)");
+		}
+		if (locale === undefined) {
+			throw new Error("Must specify locale (use 'local' for computer's default locale)");
+		}
+
+		const options = { ...intlDateTimeFormatOptions };
+		if (options.timeZone === "local") delete options.timeZone;
+		if (locale === "local") locale = undefined;
+
 		const now = new this._globals.Date();
-		const formatter = this._globals.DateTimeFormat(locale, format);
+		const formatter = this._globals.DateTimeFormat(locale, options);
 		return formatter.format(now);
 	}
 
@@ -47,8 +58,8 @@ module.exports = class Clock {
 
 function nullGlobals({
 	now = 0,
-	locale = "fr",
-	timeZone = "UTC"
+	locale = "gv-GB",
+	timeZone = "Australia/Lord_Howe"
 } = {}) {
 	const fake = FakeTimers.createClock(now);
 

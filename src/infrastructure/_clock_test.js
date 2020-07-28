@@ -10,9 +10,10 @@ describe("Clock", function() {
 		const clock = Clock.create();
 
 		// Don't inline because that results in a race condition between actual and expected.
+		let expected = Date.now();
 		const actual = clock.now();
-		const expected = Date.now();
-		assert.isAtLeast(actual, expected);
+		if (actual !== expected) expected = Date.now();
+		assert.equal(actual, expected);
 	});
 
 	it("waits N milliseconds", async function() {
@@ -31,8 +32,16 @@ describe("Clock", function() {
 			const format = {
 				dateStyle: "medium",
 				timeStyle: "short",
+				timeZone: "local",
 			};
-			checkToFormattedString(format, format);
+			const formatCopy = { ...format };
+			const jsFormat = {
+				dateStyle: "medium",
+				timeStyle: "short",
+			};
+
+			checkToFormattedString(format, jsFormat, "local", undefined);
+			assert.deepEqual(format, formatCopy, "should not modify original format object");
 		});
 
 		it("outputs current time using configured time zone and locale", function() {
@@ -43,6 +52,20 @@ describe("Clock", function() {
 			};
 			const locale = "fr";
 			checkToFormattedString(format, format, locale, locale);
+		});
+
+		it("fails fast if time zone isn't specified", function() {
+			assert.throws(
+				() => Clock.create().toFormattedString({}, "en-US"),
+				"Must specify options.timeZone (use 'local' for computer's time zone)"
+			);
+		});
+
+		it("fails fast if locale isn't specified", function() {
+			assert.throws(
+				() => Clock.create().toFormattedString({ timeZone: "UTC" }),
+				"Must specify locale (use 'local' for computer's default locale)"
+			);
 		});
 
 		function checkToFormattedString(ourFormat, jsFormat, ourLocale, jsLocale) {
@@ -80,19 +103,19 @@ describe("Clock", function() {
 			assert.equal(clock.toFormattedString(format, "fr"), "1 janv. 1970 à 01:00");
 		});
 
-		it("defaults time zone and locale to UTC and France", function() {
+		it("defaults time zone and locale to little-used values to prevent false successes", function() {
 			const clock = Clock.createNull({ now: 0 });
-			const format = { dateStyle: "medium", timeStyle: "long" };
+			const format = { dateStyle: "medium", timeStyle: "long", timeZone: "local" };
 			const formatCopy = { ...format };
 
-			assert.equal(clock.toFormattedString(format), "1 janv. 1970 à 00:00:00 UTC");
+			assert.equal(clock.toFormattedString(format, "local"), "1970 J-guer 1 10:00:00 GMT+10");
 			assert.deepEqual(format, formatCopy, "should not modify original format object");
 		});
 
 		it("allows local time zone and locale to be configured", function() {
 			const clock = Clock.createNull({ now: 0, timeZone: "America/New_York", locale: "uk" });
-			const format = { dateStyle: "medium", timeStyle: "long" };
-			assert.equal(clock.toFormattedString(format), "31 груд. 1969 р., 19:00:00 GMT-5");
+			const format = { dateStyle: "medium", timeStyle: "long", timeZone: "local" };
+			assert.equal(clock.toFormattedString(format, "local"), "31 груд. 1969 р., 19:00:00 GMT-5");
 		});
 
 		it("can advance the clock", async function() {
