@@ -18,6 +18,7 @@ const BUILD_FILES = [
 const SOURCE_FILES = [
 	"src/**/*",
 ];
+const RESTART_WHEN_MEMORY_USAGE_EXCEEDS_MIB = 256;
 
 const args = process.argv.slice(2);
 let buildRunning = false;
@@ -61,6 +62,11 @@ async function triggerBuild(event, filepath) {
 }
 
 async function runBuild() {
+	if (process.memoryUsage().rss > RESTART_WHEN_MEMORY_USAGE_EXCEEDS_MIB * 1024 * 1024) {
+		process.stdout.write(`Memory usage exceeds ${RESTART_WHEN_MEMORY_USAGE_EXCEEDS_MIB} MiB: `);
+		restart();
+	}
+
 	do {
 		buildQueued = false;
 		buildRunning = true;
