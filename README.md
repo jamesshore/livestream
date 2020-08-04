@@ -7,15 +7,15 @@ This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.c
 This Week's Challenge (4 Aug 2020): Nullable Output
 ---------------------
 
-This week, we’re looking at nullable output. In the `src/infrastructure` directory, you'll find a CommandLine class. It's a nullable infrastructure wrapper for `stdout`. Briefly, this means that, if you use it to write to stdout in your production code, you can use CommandLine.createNull() in your tests to inject a version that is testable. For details, see the ["Testing Without Mocks" episode](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks).
+This week, we’re looking at nullable output. In the `src/infrastructure` directory, you'll find a CommandLine class. It's a nullable infrastructure wrapper for `stdout`. If you use CommandLine to write to stdout in your production code, you can use CommandLine.createNull() in your tests to inject a version that is testable. For details, see the ["Testing Without Mocks" episode](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks).
 
-You can see an example of CommandLine being used in `src/countdown.js`. When you run the code (see "Running the Code", below), it will write one message per second to stdout. At the end, it will write the current time.
+You can see an example of CommandLine being used in `src/countdown.js`. When the code runs, it writes one message per second to stdout. At the end, it writes the current time.
 
-The tests for this code are in `src/_countdown_test.js`. CommandLine provides a `getLastStdout()` method that allows the tests to check what has been written to stdout. However, it only shows the contents of the last call to `commandLine.writeStdout()`.
+The tests for this code are in `src/_countdown_test.js`. CommandLine provides a `getLastStdout()` method that allows the tests to check what has been written to stdout. However, `getLastStdout()` only shows the contents of the last call to `commandLine.writeStdout()`.
 
 Your challenge this week is to improve CommandLine so that you can test multiple calls to `commandLine.writeStdout()`. Be sure to do so in a way that doesn't result in a memory leak.
 
-To demonstrate that you were successful, modify the countdown code so that it *doesn't* wait one second between writing the last message to stdout and writing the current time. This should require you to update the countdown tests to check the results of multiple calls to `commandLine.writeStdout()`.
+To demonstrate your changes, modify the countdown code so that it *doesn't* wait one second between writing the last message to stdout and writing the current time. This should require you to update the countdown tests to check the results of multiple calls to `commandLine.writeStdout()`.
 
 Hints:
 
@@ -35,11 +35,11 @@ The current code makes `commandLine.writeStdout(text)` testable by storing `text
 
 The naive solution is to change `this._lastStdout` to an array and push `text` onto the array after each call to `writeStdout()`. Although that will appear to work, it leaks memory. It's not a viable solution.
 
-Instead, we need to keep track of calls to `writeStdout()` only when it matters, storing only as much as needed each time. The Observer pattern--events, in other words--is the perfect solution. If we emit an event each time `writeStdout()` is called, only code that needs to track writes will consume memory. The tests will listen for the event, push `text` onto an array, and then assert on the array.
+Instead, we need to keep track of calls to `writeStdout()` only when it matters. The Observer pattern--events, in other words--is the perfect solution. If we emit an event each time `writeStdout()` is called, only code that needs to track writes will consume memory. The tests will listen for the event, push `text` onto an array, and then assert on the array.
 
-To make the code easier to use, the event listening code can be abstracted. It's even possible to move it back into CommandLine without creating a memory leak. Fundamentally, though, the key to solving this week's challenge is to emit events when `writeStdout()` is called.
+To make the code easier to use, the event listening code can be abstracted. With care, it's even possible to move it back into CommandLine. Fundamentally, though, the key to solving this week's challenge is to emit events when `writeStdout()` is called.
 
-Tune in on August 4th at noon Pacific to see how I apply these ideas, including abstracting the tracking code back into CommandLine. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 5th, my solution will be archived on that page.
+Tune in on August 4th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 5th, my solution will be archived on that page.
 
 
 Running the Code
