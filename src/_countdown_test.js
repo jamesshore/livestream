@@ -19,8 +19,9 @@ describe("Countdown App", function() {
 		await advanceOneSecondAsync(clock);
 		assert.equal(commandLine.getLastStdout(), "2\n");
 
-		let output = [];
-		commandLine.onStdout((text) => output.push(text));
+		// let output = [];
+		// commandLine.onStdout((text) => output.push(text));
+		const output = commandLine.trackStdout();
 
 		await advanceOneSecondAsync(clock);
 		assert.deepEqual(output, [

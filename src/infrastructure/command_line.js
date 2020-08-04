@@ -36,6 +36,17 @@ module.exports = class CommandLine {
 		return this._lastStdout;
 	}
 
+	trackStdout() {
+		const output = [];
+		const off = this.onStdout((text) => output.push(text));
+
+		output.off = () => {
+			output.length = 0;
+			off();
+		};
+		return output;
+	}
+
 	onStdout(fn) {
 		this._emitter.on(STDOUT_EVENT, fn);
 		return () => {

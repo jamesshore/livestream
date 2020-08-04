@@ -30,6 +30,18 @@ describe("CommandLine", function() {
 		assert.equal(commandLine.getLastStdout(), null);
 	});
 
+	it("tracks writes to stdout", function() {
+		const commandLine = CommandLine.createNull();
+
+		const output = commandLine.trackStdout();
+		commandLine.writeStdout("A");
+		assert.deepEqual(output, [ "A" ]);
+
+		output.off();
+		commandLine.writeStdout("B");
+		assert.deepEqual(output, []);
+	});
+
 	it("emits an event when output occurs", function() {
 		const commandLine = CommandLine.createNull();
 
@@ -48,13 +60,15 @@ describe("CommandLine", function() {
 
 	it.skip("TEMP: demonstrate memory leak", async function() {
 		this.timeout(25000);
-		const commandLine = CommandLine.createNull();
 
-		await checkForLeakAsync(256, 15, () => {
+		const commandLine = CommandLine.createNull();
+		await checkForLeakAsync(256, 20, () => {
+			const output = commandLine.trackStdout();
 			for (let i = 0; i < 50; i++) {
 				const tenMiB = Buffer.alloc(10 * 1024 * 1024, Math.random());
 				commandLine.writeStdout(tenMiB);
 			}
+			output.off();
 		});
 	});
 
