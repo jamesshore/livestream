@@ -42,6 +42,17 @@ describe("CommandLine", function() {
 		assert.deepEqual(output, []);
 	});
 
+	it("stdout tracker allows output to be consumed", function() {
+		const commandLine = CommandLine.createNull();
+		const output = commandLine.trackStdout();
+
+		commandLine.writeStdout("A");
+		assert.deepEqual(output.consume(), [ "A" ]);
+
+		commandLine.writeStdout("B");
+		assert.deepEqual(output.consume(), [ "B" ]);
+	});
+
 	it("emits an event when output occurs", function() {
 		const commandLine = CommandLine.createNull();
 

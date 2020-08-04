@@ -41,8 +41,13 @@ module.exports = class CommandLine {
 		const off = this.onStdout((text) => output.push(text));
 
 		output.off = () => {
-			output.length = 0;
+			output.consume();
 			off();
+		};
+		output.consume = () => {
+			const result = [ ...output ];
+			output.length = 0;
+			return result;
 		};
 		return output;
 	}

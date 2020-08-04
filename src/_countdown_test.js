@@ -11,17 +11,14 @@ describe("Countdown App", function() {
 	it("writes one line at a time, waiting one second after each line", async function() {
 		const TEXT = [ "3", "2", "1" ];
 		const commandLine = CommandLine.createNull();
+		const output = commandLine.trackStdout();
 		const clock = Clock.createNull({ now: 0, locale: "uk", timeZone: "America/New_York" });
 
 		countdown.countdownAsync(TEXT, commandLine, clock);
 
-		assert.equal(commandLine.getLastStdout(), "3\n");
+		assert.deepEqual(output.consume(), [ "3\n" ]);
 		await advanceOneSecondAsync(clock);
-		assert.equal(commandLine.getLastStdout(), "2\n");
-
-		// let output = [];
-		// commandLine.onStdout((text) => output.push(text));
-		const output = commandLine.trackStdout();
+		assert.deepEqual(output.consume(), [ "2\n" ]);
 
 		await advanceOneSecondAsync(clock);
 		assert.deepEqual(output, [
