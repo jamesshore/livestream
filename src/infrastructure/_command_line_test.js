@@ -53,6 +53,34 @@ describe("CommandLine", function() {
 });
 
 
+async function checkForLeakAsync(minLeakSizeInMiB, secondsToWait, fn) {
+	const before = usage();
+	logUsage("BEFORE");
+	fn();
+	logUsage("AFTER");
+
+	const start = Date.now();
+	await new Promise((resolve) => {
+		const handle = setInterval(() => {
+			logUsage("WAITING");
+			const leaked = usage() - before;
+			if (Date.now() - start > 1000 * secondsToWait || leaked <= minLeakSizeInMiB) {
+				clearInterval(handle);
+				if (leaked > minLeakSizeInMiB) throw new Error("Memory leak!");
+				resolve();
+			}
+		}, 500);
+	});
+
+	function logUsage(name) {
+		console.log(name, usage().toFixed(1) + "MiB");
+	}
+
+	function usage() {
+		return process.memoryUsage().rss / 1024 / 1024;
+	}
+}
+
 function runModuleAsync(relativeModulePath, { args, failOnStderr } = {}) {
 	return new Promise((resolve, reject) => {
 		const absolutePath = path.resolve(__dirname, relativeModulePath);
