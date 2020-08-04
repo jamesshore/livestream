@@ -1,6 +1,10 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
+const EventEmitter = require("events");
+
+const STDOUT_EVENT = "stdout";
+
 /** Wrapper for command-line processing */
 module.exports = class CommandLine {
 
@@ -15,6 +19,7 @@ module.exports = class CommandLine {
 	constructor(proc) {
 		this._process = proc;
 		this._lastStdout = null;
+		this._emitter = new EventEmitter();
 	}
 
 	args() {
@@ -24,10 +29,18 @@ module.exports = class CommandLine {
 	writeStdout(text) {
 		this._process.stdout.write(text);
 		this._lastStdout = text;
+		this._emitter.emit(STDOUT_EVENT, text);
 	}
 
 	getLastStdout() {
 		return this._lastStdout;
+	}
+
+	onStdout(fn) {
+		this._emitter.on(STDOUT_EVENT, fn);
+		return () => {
+			this._emitter.off(STDOUT_EVENT, fn);
+		};
 	}
 
 };

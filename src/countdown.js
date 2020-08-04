@@ -9,7 +9,7 @@ const ONE_SECOND = 1000;
 exports.countdownAsync = async function(text, commandLine = CommandLine.create(), clock = Clock.create()) {
 	for (let i = 0; i < text.length; i++) {
 		commandLine.writeStdout(text[i] + "\n");
-		await clock.waitAsync(ONE_SECOND);
+		if (i < text.length - 1) await clock.waitAsync(ONE_SECOND);
 	}
 
 	const format = { dateStyle: "medium", timeStyle: "short", timeZone: "local" };

@@ -30,6 +30,34 @@ describe("CommandLine", function() {
 		assert.equal(commandLine.getLastStdout(), null);
 	});
 
+	it("emits an event when output occurs", function() {
+		const commandLine = CommandLine.createNull();
+
+		let lastStdout = "none";
+		const off = commandLine.onStdout((text) => {
+			lastStdout = text;
+		});
+
+		commandLine.writeStdout("A");
+		assert.equal(lastStdout, "A");
+
+		off();
+		commandLine.writeStdout("B");
+		assert.equal(lastStdout, "A");
+	});
+
+	it.skip("TEMP: demonstrate memory leak", async function() {
+		this.timeout(25000);
+		const commandLine = CommandLine.createNull();
+
+		await checkForLeakAsync(256, 15, () => {
+			for (let i = 0; i < 50; i++) {
+				const tenMiB = Buffer.alloc(10 * 1024 * 1024, Math.random());
+				commandLine.writeStdout(tenMiB);
+			}
+		});
+	});
+
 
 	describe("Nullability", function() {
 

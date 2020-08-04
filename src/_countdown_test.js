@@ -18,10 +18,15 @@ describe("Countdown App", function() {
 		assert.equal(commandLine.getLastStdout(), "3\n");
 		await advanceOneSecondAsync(clock);
 		assert.equal(commandLine.getLastStdout(), "2\n");
+
+		let output = [];
+		commandLine.onStdout((text) => output.push(text));
+
 		await advanceOneSecondAsync(clock);
-		assert.equal(commandLine.getLastStdout(), "1\n");
-		await advanceOneSecondAsync(clock);
-		assert.equal(commandLine.getLastStdout(), "31 груд. 1969 р., 19:00\n");
+		assert.deepEqual(output, [
+			"1\n",
+			"31 груд. 1969 р., 19:00\n",
+		]);
 	});
 
 });
