@@ -4,21 +4,25 @@ James Shore Live
 This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/v2/projects/lunch-and-learn) series. See that link for for more information and an archive of past episodes, or [watch live on Twitch](https://www.twitch.tv/jamesshorelive).
 
 
-This Week's Challenge (28 July 2020): Idiot-Proof APIs
+This Week's Challenge (4 Aug 2020): Nullable Output
 ---------------------
 
-This codebase includes a "Clock" class that can be used to convert the current time to a string. Your challenge this week is to improve the API for this code so that it's difficult to use incorrectly.
+This week, we’re looking at nullable output. In the `src/infrastructure` directory, you'll find a CommandLine class. It's a nullable infrastructure wrapper for `stdout`. Briefly, this means that, if you use it to write to stdout in your production code, you can use CommandLine.createNull() in your tests to inject a version that is testable. For details, see the ["Testing Without Mocks" episode](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks).
 
-To put it another way: Imagine somebody is building a logging tool. Part of the task is to write the current date and time to stdout, in exactly (and only!) this format: `July 27, 2020, 13:54:14 UTC`. But the Clock class has a few design flaws that makes certain mistakes easy. Which mistakes are they, and how can you prevent them?
+You can see an example of CommandLine being used in `src/countdown.js`. When you run the code (see "Running the Code", below), it will write one message per second to stdout. At the end, it will write the current time.
 
-Start by test-driving some simple code to write out the current date and time. (Use `src/clock_example.js` and `src/_clock_example_test.js` for this purpose.) Make a note of the flaws in Clock, then improve the code to make it easier to use and less error-prone.
+The tests for this code are in `src/_countdown_test.js`. CommandLine provides a `getLastStdout()` method that allows the tests to check what has been written to stdout. However, it only shows the contents of the last call to `commandLine.writeStdout()`.
+
+Your challenge this week is to improve CommandLine so that you can test multiple calls to `commandLine.writeStdout()`. Be sure to do so in a way that doesn't result in a memory leak.
+
+To demonstrate that you were successful, modify the countdown code so that it *doesn't* wait one second between writing the last message to stdout and writing the current time. This should require you to update the countdown tests to check the results of multiple calls to `commandLine.writeStdout()`.
 
 Hints:
 
-* The clock code is in `src/infrastructure/clock.js` and `src/infrastructure/_clock_test.js`.
-* Use `src/infrastructure/command_line.js` to test-drive output to the command line.
-* `Clock` and `CommandLine` are "nullable infrastructure wrappers." You can learn more about this pattern in [the "Testing Without Mocks" episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks).
-* To learn more about how Clock works, see [the "International Dates and Times" episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/international-dates-and-times).
+* The CommandLine code is in `src/infrastructure/command_line.js` and `src/infrastructure/_command_line_test.js`.
+* The CommandLine tests use several helper files. You can safely ignore them.
+* You can check for memory leaks by using the `checkForLeakAsync()` helper in `_command_line_test.js`.
+* The Clock code isn't part of today's exercise, but if you'd like to learn more about how it works, see [the "International Dates and Times" episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/international-dates-and-times).
 * Make sure you're on Node.js version 14 or higher, as previous versions only include support for the US locale.
 
 
@@ -27,24 +31,15 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-The Clock code in this challenge is good code, but it's not *great* code. The difference between "good" and "great" is how well an API guides the programmers who use the API to success. I'll call these people "programmer-users."
+The current code makes `commandLine.writeStdout(text)` testable by storing `text` in `this._lastStdout`. That works, although it's a bit clumsy. However, this approach can only remember the last call to `writeStdout()``. Now we want to keep track of multiple calls.
 
-As the code is currently written, it's easy for programmer-users to make a mistake with time zones and locales. The task at hand (write out the current time in a particular format) requires a specific time zone and locale. But by default, Clock uses the computer's current time zone and locale. This isn't obvious without reading the code or tests.
+The naive solution is to change `this._lastStdout` to an array and push `text` onto the array after each call to `writeStdout()`. Although that will appear to work, it leaks memory. It's not a viable solution.
 
-If the programmer-user's current time zone and locale coincidentally match the time zone and locale needed by the task, it's easy for them to think the code is working correctly when it actually has a bug. The code will work on the programmer-user's machine, and then stop working when it's run in a different time zone or locale.
+Instead, we need to keep track of calls to `writeStdout()` only when it matters, storing only as much as needed each time. The Observer pattern--events, in other words--is the perfect solution. If we emit an event each time `writeStdout()` is called, only code that needs to track writes will consume memory. The tests will listen for the event, push `text` onto an array, and then assert on the array.
 
-To improve APIs, consider the following:
+To make the code easier to use, the event listening code can be abstracted. It's even possible to move it back into CommandLine without creating a memory leak. Fundamentally, though, the key to solving this week's challenge is to emit events when `writeStdout()` is called.
 
-1. People don't read documentation unless they have to. So use method and variable names to help document the code.
-
-2. Sometimes it's better to provide *inconvenient* defaults. Inconvenient defaults make it obvious that you've used something incorrectly. Convenient defaults sometimes make things work by coincidence, only to break later.
-
-3. Not providing defaults at all forces programmer-users to explicitly specify the behavior they want. This prevents their code from working by coincidence.
-
-4. Writing code to fail fast, with hand-crafted error messages, can help programmer-users learn how to use an API correctly.
-
-Tune in on July 28th at noon Pacific to see how I apply these ideas to improve the Clock API. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting July 29th, my solution will be archived on that page.
-
+Tune in on August 4th at noon Pacific to see how I apply these ideas, including abstracting the tracking code back into CommandLine. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 5th, my solution will be archived on that page.
 
 
 Running the Code
