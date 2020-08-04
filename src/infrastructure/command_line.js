@@ -18,7 +18,6 @@ module.exports = class CommandLine {
 
 	constructor(proc) {
 		this._process = proc;
-		this._lastStdout = null;
 		this._emitter = new EventEmitter();
 	}
 
@@ -28,21 +27,17 @@ module.exports = class CommandLine {
 
 	writeStdout(text) {
 		this._process.stdout.write(text);
-		this._lastStdout = text;
 		this._emitter.emit(STDOUT_EVENT, text);
-	}
-
-	getLastStdout() {
-		return this._lastStdout;
 	}
 
 	trackStdout() {
 		const output = [];
-		const off = this.onStdout((text) => output.push(text));
+		const trackerFn = (text) => output.push(text);
+		this._emitter.on(STDOUT_EVENT, trackerFn);
 
 		output.off = () => {
 			output.consume();
-			off();
+			this._emitter.off(STDOUT_EVENT, trackerFn);
 		};
 		output.consume = () => {
 			const result = [ ...output ];
@@ -50,13 +45,6 @@ module.exports = class CommandLine {
 			return result;
 		};
 		return output;
-	}
-
-	onStdout(fn) {
-		this._emitter.on(STDOUT_EVENT, fn);
-		return () => {
-			this._emitter.off(STDOUT_EVENT, fn);
-		};
 	}
 
 };

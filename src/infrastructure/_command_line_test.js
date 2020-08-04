@@ -19,17 +19,6 @@ describe("CommandLine", function() {
 		assert.equal(stdout, "my stdout", "stdout");
 	});
 
-	it("remembers last write to stdout", function() {
-		const commandLine = CommandLine.createNull();
-		commandLine.writeStdout("my last stdout");
-		assert.equal(commandLine.getLastStdout(), "my last stdout");
-	});
-
-	it("last output is null when nothing has been output yet", function() {
-		const commandLine = CommandLine.createNull();
-		assert.equal(commandLine.getLastStdout(), null);
-	});
-
 	it("tracks writes to stdout", function() {
 		const commandLine = CommandLine.createNull();
 
@@ -51,22 +40,6 @@ describe("CommandLine", function() {
 
 		commandLine.writeStdout("B");
 		assert.deepEqual(output.consume(), [ "B" ]);
-	});
-
-	it("emits an event when output occurs", function() {
-		const commandLine = CommandLine.createNull();
-
-		let lastStdout = "none";
-		const off = commandLine.onStdout((text) => {
-			lastStdout = text;
-		});
-
-		commandLine.writeStdout("A");
-		assert.equal(lastStdout, "A");
-
-		off();
-		commandLine.writeStdout("B");
-		assert.equal(lastStdout, "A");
 	});
 
 	it.skip("TEMP: demonstrate memory leak", async function() {
