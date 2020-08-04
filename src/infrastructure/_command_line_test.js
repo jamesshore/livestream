@@ -15,25 +15,19 @@ describe("CommandLine", function() {
 	});
 
 	it("writes to stdout and stderr", async function() {
-		const { stdout, stderr } = await runModuleAsync(
-			"./_command_line_test_output_runner.js", { failOnStderr: false }
-		);
+		const { stdout } = await runModuleAsync("./_command_line_test_output_runner.js");
 		assert.equal(stdout, "my stdout", "stdout");
-		assert.equal(stderr, "my stderr", "stderr");
 	});
 
-	it("remembers last write to stdout and stderr", function() {
+	it("remembers last write to stdout", function() {
 		const commandLine = CommandLine.createNull();
 		commandLine.writeStdout("my last stdout");
-		commandLine.writeStderr("my last stderr");
 		assert.equal(commandLine.getLastStdout(), "my last stdout");
-		assert.equal(commandLine.getLastStderr(), "my last stderr");
 	});
 
 	it("last output is null when nothing has been output yet", function() {
 		const commandLine = CommandLine.createNull();
 		assert.equal(commandLine.getLastStdout(), null);
-		assert.equal(commandLine.getLastStderr(), null);
 	});
 
 
@@ -50,11 +44,8 @@ describe("CommandLine", function() {
 		});
 
 		it("doesn't write output to command line", async function() {
-			const { stdout, stderr } = await runModuleAsync(
-				"./_command_line_test_null_output_runner.js", { failOnStderr: false }
-				);
+			const { stdout } = await runModuleAsync("./_command_line_test_null_output_runner.js");
 			assert.equal(stdout, "", "stdout");
-			assert.equal(stderr, "", "stderr");
 		});
 
 	});
