@@ -2,6 +2,7 @@
 "use strict";
 
 const glob = require("glob");
+const path = require("path");
 
 exports.generatedDir = "generated";
 exports.incrementalDir = `${exports.generatedDir}/incremental`;
