@@ -22,16 +22,24 @@ describe("CommandLine", function() {
 		assert.equal(stderr, "my stderr", "stderr");
 	});
 
-	it("tracks writes to stdout", function() {
+	it("tracks writes to stdout and stderr", function() {
 		const commandLine = CommandLine.createNull();
+		const stdout = commandLine.trackStdout();
+		const stderr = commandLine.trackStderr();
 
-		const output = commandLine.trackStdout();
-		commandLine.writeStdout("A");
-		assert.deepEqual(output, [ "A" ]);
+		commandLine.writeStdout("my stdout");
+		commandLine.writeStderr("my stderr");
+		assert.deepEqual(stdout, ["my stdout"]);
+		assert.deepEqual(stderr, ["my stderr"]);
+	});
 
-		output.off();
+	it("tracker can be turned off", function() {
+		const commandLine = CommandLine.createNull();
+		const stdout = commandLine.trackStdout();
+
+		stdout.off();
 		commandLine.writeStdout("B");
-		assert.deepEqual(output, []);
+		assert.deepEqual(stdout, []);
 	});
 
 	it("tracker allows output to be consumed", function() {

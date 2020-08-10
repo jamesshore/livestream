@@ -5,6 +5,7 @@ const ensure = require("../util/ensure");
 const EventEmitter = require("events");
 
 const STDOUT_EVENT = "stdout";
+const STDERR_EVENT = "stderr";
 
 /** Wrapper for command-line processing */
 module.exports = class CommandLine {
@@ -40,6 +41,7 @@ module.exports = class CommandLine {
 		ensure.signature(arguments, [ String ]);
 		this._process.stderr.write(text);
 		this._lastStderr = text;
+		this._emitter.emit(STDERR_EVENT, text);
 	}
 
 	getLastStdout() {
@@ -53,23 +55,31 @@ module.exports = class CommandLine {
 	}
 
 	trackStdout() {
-		const output = [];
-		const trackerFn = (text) => output.push(text);
-		this._emitter.on(STDOUT_EVENT, trackerFn);
+		return trackOutput(this._emitter, STDOUT_EVENT);
+	}
 
-		output.off = () => {
-			output.consume();
-			this._emitter.off(STDOUT_EVENT, trackerFn);
-		};
-		output.consume = () => {
-			const result = [ ...output ];
-			output.length = 0;
-			return result;
-		};
-		return output;
+	trackStderr() {
+		return trackOutput(this._emitter, STDERR_EVENT);
 	}
 
 };
+
+function trackOutput(emitter, event) {
+	const output = [];
+	const trackerFn = (text) => output.push(text);
+	emitter.on(event, trackerFn);
+
+	output.off = () => {
+		output.consume();
+		emitter.off(event, trackerFn);
+	};
+	output.consume = () => {
+		const result = [ ...output ];
+		output.length = 0;
+		return result;
+	};
+	return output;
+}
 
 
 class NullProcess {
