@@ -13,15 +13,17 @@ const USAGE = "Usage: run PORT\n";
 describe("ROT-13 Server", function() {
 
 	it("starts server", async function() {
-		const { commandLine, httpServer } = await startServerAsync({ args: [ "5000" ]});
+		const { stdout, httpServer } = await startServerAsync({ args: [ "5000" ]});
 		assert.equal(httpServer.isStarted, true, "should start server");
-		assert.equal(commandLine.getLastStdout(), "Server started on port 5000\n");
+		assert.deepEqual(stdout, [ "Server started on port 5000\n" ]);
 	});
 
 	it("logs requests", async function() {
-		const { commandLine, httpServer } = await startServerAsync();
+		const { stdout, httpServer } = await startServerAsync();
+		stdout.consume();
+
 		await httpServer.simulateRequestAsync();
-		assert.equal(commandLine.getLastStdout(), "Received request\n");
+		assert.deepEqual(stdout, [ "Received request\n" ]);
 	});
 
 	it("routes requests", async function() {
@@ -36,13 +38,13 @@ describe("ROT-13 Server", function() {
 	describe("Command-line processing", function() {
 
 		it("Provides usage and exits with error when no command-line arguments provided", async function() {
-			const { commandLine } = await startServerAsync({ args: [] });
-			assert.deepEqual(commandLine.getLastStderr(), USAGE);
+			const { stderr } = await startServerAsync({ args: [] });
+			assert.deepEqual(stderr, [ USAGE ]);
 		});
 
 		it("Provides usage and exits with error when too many command-line arguments provided", async function() {
-			const { commandLine } = await startServerAsync({ args: ["too", "many"] });
-			assert.deepEqual(commandLine.getLastStderr(), USAGE);
+			const { stderr } = await startServerAsync({ args: ["too", "many"] });
+			assert.deepEqual(stderr, [ USAGE ]);
 		});
 
 	});
@@ -54,10 +56,14 @@ async function startServerAsync({ args = [ "4242" ] } = {}) {
 	const httpServer = HttpServer.createNull();
 	const app = Server.create(commandLine, httpServer);
 
+	const stdout = commandLine.trackStdout();
+	const stderr = commandLine.trackStderr();
+
 	await app.startAsync();
 
 	return {
-		commandLine,
 		httpServer,
+		stdout,
+		stderr,
 	};
 }
