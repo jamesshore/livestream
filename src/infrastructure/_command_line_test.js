@@ -5,6 +5,9 @@ const assert = require("../util/assert");
 const childProcess = require("child_process");
 const path = require("path");
 const CommandLine = require("./command_line");
+// dependency_analysis: ./_command_line_test_args_runner
+// dependency_analysis: ./_command_line_test_null_output_runner
+// dependency_analysis: ./_command_line_test_output_runner
 
 describe("CommandLine", function() {
 
