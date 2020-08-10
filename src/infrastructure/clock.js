@@ -2,10 +2,14 @@
 "use strict";
 
 const FakeTimers = require("@sinonjs/fake-timers");
+const ensure = require("../util/ensure");
 
+/** Wrapper for system clock */
 module.exports = class Clock {
 
 	static create() {
+		ensure.signature(arguments, []);
+
 		return new Clock({
 			Date,
 			DateTimeFormat: Intl.DateTimeFormat,
@@ -23,16 +27,18 @@ module.exports = class Clock {
 	}
 
 	now() {
+		ensure.signature(arguments, []);
 		return this._globals.Date.now();
 	}
 
 	toFormattedString(intlDateTimeFormatOptions, locale) {
-		if (intlDateTimeFormatOptions.timeZone === undefined) {
+		if (!intlDateTimeFormatOptions || intlDateTimeFormatOptions.timeZone === undefined) {
 			throw new Error("Must specify options.timeZone (use 'local' for computer's time zone)");
 		}
 		if (locale === undefined) {
 			throw new Error("Must specify locale (use 'local' for computer's default locale)");
 		}
+		ensure.signature(arguments, [ Object, String ]);
 
 		const options = { ...intlDateTimeFormatOptions };
 		if (options.timeZone === "local") delete options.timeZone;
@@ -44,10 +50,12 @@ module.exports = class Clock {
 	}
 
 	async advanceNullAsync(milliseconds) {
+		ensure.signature(arguments, [ Number ]);
 		await this._globals.advanceNullAsync(milliseconds);
 	}
 
 	async waitAsync(milliseconds) {
+		ensure.signature(arguments, [ Number ]);
 		await new Promise((resolve) => {
 			this._globals.setTimeout(() => resolve(), milliseconds);
 		});
@@ -61,6 +69,12 @@ function nullGlobals({
 	locale = "gv-GB",
 	timeZone = "Australia/Lord_Howe"
 } = {}) {
+	ensure.signature(arguments, [[ undefined, {
+		now: [ undefined, Number ],
+		locale: [ undefined, String ],
+		timeZone: [ undefined, String ],
+	}]]);
+
 	const fake = FakeTimers.createClock(now);
 
 	return {
