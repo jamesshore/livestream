@@ -6,6 +6,9 @@ const pathLib = require("path");
 // Matches 'require("file")' and detects if it has '//' in front.
 const REQUIRE_REGEX = /(\/\/)?.*?\brequire\s*?\(["'](.*?)["']/;
 
+// Matches '// dependency_analysis: file'. For manually specifying dependencies that don't need require(). One per line.
+const COMMENT_REGEX = /\/\/?\s*?dependency_analysis:\s*(.*?)\s*$/;
+
 module.exports = class DependencyAnalysis {
 
 	constructor(build, rootDir, eligibleFiles) {
@@ -83,10 +86,9 @@ function analyzeRequireStatements(self, file, fileContents) {
 		.filter((line) => line !== null);
 
 	function analyzeLine(line, index) {
-		const matches = line.match(REQUIRE_REGEX);
-		if (matches === null || matches[1] === "//") return null;
+		const dependency = getLineDependency(line);
+		if (dependency === null) return null;
 
-		const dependency = matches[2];
 		try {
 			const result = self._build.rootRelativePath(self._rootDir, require.resolve(dependency, { paths: [basedir] }));
 			if (!self._eligibleFiles.includes(result)) return null;
@@ -102,5 +104,14 @@ function analyzeRequireStatements(self, file, fileContents) {
 				throw err;
 			}
 		}
+	}
+
+	function getLineDependency(line) {
+		const requireMatch = line.match(REQUIRE_REGEX);
+		const commentMatch = line.match(COMMENT_REGEX);
+
+		if (requireMatch !== null && requireMatch[1] !== "//") return requireMatch[2];
+		else if (commentMatch !== null) return commentMatch[1];
+		else return null;
 	}
 }
