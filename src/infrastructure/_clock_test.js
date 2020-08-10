@@ -9,7 +9,6 @@ describe("Clock", function() {
 	it("provides current timestamp", function() {
 		const clock = Clock.create();
 
-		// Don't inline because that results in a race condition between actual and expected.
 		let expected = Date.now();
 		const actual = clock.now();
 		if (actual !== expected) expected = Date.now();

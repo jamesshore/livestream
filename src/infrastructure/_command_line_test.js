@@ -37,6 +37,7 @@ describe("CommandLine", function() {
 		const commandLine = CommandLine.createNull();
 		const stdout = commandLine.trackStdout();
 
+		commandLine.writeStdout("A");
 		stdout.off();
 		commandLine.writeStdout("B");
 		assert.deepEqual(stdout, []);

@@ -33,25 +33,13 @@ module.exports = class CommandLine {
 	writeStdout(text) {
 		ensure.signature(arguments, [ String ]);
 		this._process.stdout.write(text);
-		this._lastStdout = text;
 		this._emitter.emit(STDOUT_EVENT, text);
 	}
 
 	writeStderr(text) {
 		ensure.signature(arguments, [ String ]);
 		this._process.stderr.write(text);
-		this._lastStderr = text;
 		this._emitter.emit(STDERR_EVENT, text);
-	}
-
-	getLastStdout() {
-		ensure.signature(arguments, []);
-		return this._lastStdout;
-	}
-
-	getLastStderr() {
-		ensure.signature(arguments, []);
-		return this._lastStderr;
 	}
 
 	trackStdout() {
