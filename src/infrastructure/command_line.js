@@ -2,6 +2,9 @@
 "use strict";
 
 const ensure = require("../util/ensure");
+const EventEmitter = require("events");
+
+const STDOUT_EVENT = "stdout";
 
 /** Wrapper for command-line processing */
 module.exports = class CommandLine {
@@ -18,8 +21,7 @@ module.exports = class CommandLine {
 
 	constructor(proc) {
 		this._process = proc;
-		this._lastStdout = null;
-		this._lastStderr = null;
+		this._emitter = new EventEmitter();
 	}
 
 	args() {
@@ -31,6 +33,7 @@ module.exports = class CommandLine {
 		ensure.signature(arguments, [ String ]);
 		this._process.stdout.write(text);
 		this._lastStdout = text;
+		this._emitter.emit(STDOUT_EVENT, text);
 	}
 
 	writeStderr(text) {
@@ -47,6 +50,23 @@ module.exports = class CommandLine {
 	getLastStderr() {
 		ensure.signature(arguments, []);
 		return this._lastStderr;
+	}
+
+	trackStdout() {
+		const output = [];
+		const trackerFn = (text) => output.push(text);
+		this._emitter.on(STDOUT_EVENT, trackerFn);
+
+		output.off = () => {
+			output.consume();
+			this._emitter.off(STDOUT_EVENT, trackerFn);
+		};
+		output.consume = () => {
+			const result = [ ...output ];
+			output.length = 0;
+			return result;
+		};
+		return output;
 	}
 
 };

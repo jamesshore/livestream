@@ -22,18 +22,27 @@ describe("CommandLine", function() {
 		assert.equal(stderr, "my stderr", "stderr");
 	});
 
-	it("remembers last write to stdout and stderr", function() {
+	it("tracks writes to stdout", function() {
 		const commandLine = CommandLine.createNull();
-		commandLine.writeStdout("my last stdout");
-		commandLine.writeStderr("my last stderr");
-		assert.equal(commandLine.getLastStdout(), "my last stdout");
-		assert.equal(commandLine.getLastStderr(), "my last stderr");
+
+		const output = commandLine.trackStdout();
+		commandLine.writeStdout("A");
+		assert.deepEqual(output, [ "A" ]);
+
+		output.off();
+		commandLine.writeStdout("B");
+		assert.deepEqual(output, []);
 	});
 
-	it("last output is null when nothing has been output yet", function() {
+	it("tracker allows output to be consumed", function() {
 		const commandLine = CommandLine.createNull();
-		assert.equal(commandLine.getLastStdout(), null);
-		assert.equal(commandLine.getLastStderr(), null);
+		const output = commandLine.trackStdout();
+
+		commandLine.writeStdout("A");
+		assert.deepEqual(output.consume(), [ "A" ]);
+
+		commandLine.writeStdout("B");
+		assert.deepEqual(output.consume(), [ "B" ]);
 	});
 
 
