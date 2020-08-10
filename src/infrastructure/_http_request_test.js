@@ -163,10 +163,15 @@ async function createRequestAsync(options, fnAsync) {
 			}
 		}
 
-		const server = HttpServer.create();
-		await server.startAsync({ port: PORT, onRequestAsync });
-		await testHelper.requestAsync({ port: PORT, ...options });
-		await server.stopAsync();
-		resolve();
+		try {   // exceptions aren't propagated when Promise's executor is async, so we manually catch and reject here.
+			const server = HttpServer.create();
+			await server.startAsync({ port: PORT, onRequestAsync });
+			await testHelper.requestAsync({ port: PORT, ...options });
+			await server.stopAsync();
+			resolve();
+		}
+		catch (err) {
+			reject(err);
+		}
 	});
 }
