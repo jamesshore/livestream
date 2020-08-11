@@ -16,7 +16,7 @@ describe("Log", function() {
 		assert.match(stdout, / UTC {"alert":"info","output":"my output"}$/);
 	});
 
-	it("outputs current time", function() {
+	it("outputs current time and structured data", function() {
 		const { log, stdout } = createLog();
 
 		const data = {

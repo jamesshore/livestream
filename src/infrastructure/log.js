@@ -51,27 +51,36 @@ function doLog(self, alert, data) {
 	ensure.signature(arguments, [ Log, String, Object ], [ "self", "alert", "data" ]);
 
 	data = { alert, ...data };
+	const { dataToLog, dataToTrack } = normalizeErrors(data);
 
-	const output = {};
-	const emit = {};
+	self._commandLine.writeStdout(`${(currentFormattedTime(self._clock))} ${JSON.stringify(dataToLog)}`);
+	self._emitter.emit(OUTPUT_EVENT, dataToTrack);
+}
+
+function normalizeErrors(data) {
+	const dataToLog = {};
+	const dataToTrack = {};
+
 	Object.entries(data).forEach(([name, value]) => {
-		let outputValue = value;
-		let emitValue = value;
+		let logValue = value;
+		let trackValue = value;
 		if (value instanceof Error) {
-			outputValue = value.stack;
-			emitValue = `${value.name}: ${value.message}`;
+			logValue = value.stack;
+			trackValue = `${value.name}: ${value.message}`;
 		}
-		output[name] = outputValue;
-		emit[name] = emitValue;
+		dataToLog[name] = logValue;
+		dataToTrack[name] = trackValue;
 	});
 
+	return { dataToLog, dataToTrack };
+}
+
+function currentFormattedTime(clock) {
 	const options = {
 		dateStyle: "medium",
 		timeStyle: "long",
 		timeZone: "UTC",
 		hourCycle: "h23",
 	};
-	const time = self._clock.toFormattedString(options, "en-US");
-	self._commandLine.writeStdout(`${time} ${JSON.stringify(output)}`);
-	self._emitter.emit(OUTPUT_EVENT, emit);
+	return clock.toFormattedString(options, "en-US");
 }
