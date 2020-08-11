@@ -4,17 +4,24 @@
 const ensure = require("./util/ensure");
 const CommandLine = require("./infrastructure/command_line");
 const HttpServer = require("./infrastructure/http_server");
+const Log = require("./infrastructure/log");
 const rot13Router = require("./routing/rot13_router");
 
 /** Top-level 'traffic cop' for ROT-13 service */
 module.exports = class Rot13Server {
 
-	static create(commandLine = CommandLine.create(), httpServer = HttpServer.create()) {
-		return new Rot13Server(commandLine, httpServer);
+	static create() {
+		ensure.signature(arguments, []);
+
+		return new Rot13Server(
+			CommandLine.create(),
+			HttpServer.create(Log.create())
+		);
 	}
 
 	constructor(commandLine, httpServer) {
 		ensure.signature(arguments, [ CommandLine, HttpServer ]);
+
 		this._commandLine = commandLine;
 		this._httpServer = httpServer;
 	}

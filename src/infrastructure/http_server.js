@@ -6,24 +6,26 @@ const type = require("../util/type");
 const http = require("http");
 const EventEmitter = require("events");
 const HttpRequest = require("./http_request");
+const Log = require("./log");
 
 const RESPONSE_TYPE = { status: Number, headers: Object, body: String };
 
 /** Wrapper for HTTP server */
 module.exports = class HttpServer {
 
-	static create() {
-		ensure.signature(arguments, []);
-		return new HttpServer(http);
+	static create(log) {
+		ensure.signature(arguments, [ Log ]);
+		return new HttpServer(http, log);
 	}
 
 	static createNull() {
 		ensure.signature(arguments, []);
-		return new HttpServer(nullHttp);
+		return new HttpServer(nullHttp, Log.createNull());
 	}
 
-	constructor(http) {
+	constructor(http, log) {
 		this._http = http;
+		this._log = log;
 		this._server = null;
 	}
 
@@ -42,7 +44,7 @@ module.exports = class HttpServer {
 				reject(new Error(`Couldn't start server due to error: ${err.message}`));
 			});
 			this._server.on("request", async (nodeRequest, nodeResponse) => {
-				const { status, headers, body } = await handleRequestAsync(HttpRequest.create(nodeRequest), onRequestAsync);
+				const { status, headers, body } = await handleRequestAsync(this._log, HttpRequest.create(nodeRequest), onRequestAsync);
 
 				nodeResponse.statusCode = status;
 				Object.entries(headers).forEach(([ name, value ]) => nodeResponse.setHeader(name, value));
@@ -72,12 +74,12 @@ module.exports = class HttpServer {
 	async simulateRequestAsync(httpRequest = HttpRequest.createNull()) {
 		ensure.signature(arguments, [[ undefined, HttpRequest ]]);
 		if (!this.isStarted) throw new Error("Can't simulate request because server isn't running");
-		return await handleRequestAsync(httpRequest, this._onRequestAsync);
+		return await handleRequestAsync(this._log, httpRequest, this._onRequestAsync);
 	}
 
 };
 
-async function handleRequestAsync(httpRequest, onRequestAsync) {
+async function handleRequestAsync(log, httpRequest, onRequestAsync) {
 	try {
 		const response = await onRequestAsync(httpRequest);
 		const typeError = type.check(response, RESPONSE_TYPE);
