@@ -2,6 +2,7 @@
 "use strict";
 
 // dependency_analysis: ./_log_test_output_runner
+// dependency_analysis: ./_log_test_null_output_runner
 const assert = require("../util/assert");
 const Log = require("./log");
 const CommandLine = require("./command_line");

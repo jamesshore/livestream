@@ -1,6 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
+const ensure = require("../util/ensure");
 const infrastructureHelper = require("../util/infrastructure_helper");
 const EventEmitter = require("events");
 const CommandLine = require("./command_line");
@@ -8,13 +9,16 @@ const Clock = require("./clock");
 
 const OUTPUT_EVENT = "output";
 
-module.exports = class Log {
+/** Logging infrastructure */
+const Log = module.exports = class Log {
 
 	static create() {
+		ensure.signature(arguments, []);
 		return new Log(CommandLine.create(), Clock.create());
 	}
 
 	static createNull() {
+		ensure.signature(arguments, []);
 		return new Log(CommandLine.createNull(), Clock.createNull());
 	}
 
@@ -31,6 +35,7 @@ module.exports = class Log {
 	}
 
 	trackOutput() {
+		ensure.signature(arguments, []);
 		return infrastructureHelper.trackOutput(this._emitter, OUTPUT_EVENT);
 	}
 
@@ -43,6 +48,8 @@ function logFn(self, alert) {
 }
 
 function doLog(self, alert, data) {
+	ensure.signature(arguments, [ Log, String, Object ], [ "self", "alert", "data" ]);
+
 	data = { alert, ...data };
 
 	const output = {};

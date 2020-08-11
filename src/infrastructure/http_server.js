@@ -97,7 +97,7 @@ async function handleRequestAsync(log, httpRequest, onRequestAsync) {
 	}
 }
 
-function internalServerError(message) {
+function internalServerError() {
 	return {
 		status: 500,
 		headers: { "content-type": "text/plain; charset=utf-8" },
