@@ -7,26 +7,27 @@ This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.c
 This Week's Challenge (11 Aug 2020): Testable Logs
 ---------------------
 
-This week's challenge: making logging testable. This repo contains a simple microservice. (You can find the details below, under "How the Microservice Works.") The service has good error handling, but it doesn't have any logging. Specifically, if the server code fails for some reason, the server will send an "Internal Server Error" response. But it won't log an error to stdout.
+This repo contains a simple microservice. (You can find the details below, under "How the Microservice Works.") The service has good error handling, but it doesn't have any logging. Specifically, if the server code fails for some reason, the server will send an "Internal Server Error" response. But it won't log an error to stdout.
 
 Your challenge, should you choose to accept it, is to add a small amount of error logging to the HttpServer class and to make sure that it's tested. Specifically, modify the "fails gracefully when request handler throws exception" and "fails gracefully when request handler returns invalid response" HttpServer tests to include logging. They're in `src/infrastructure/_http_server_test.js` on lines 125 and 136. They're already set up to instantiate the Log class and call `trackOutput()`. The result of calling `trackOutput()` is available in the `logOutput` variable on lines 128 and 139.
 
-There's no logging library, so the real challenge here is to write one from scratch. It should be thoroughly tested, of course. Your logs should include the current date and time and they should support structured output. (In other words, they should take arbitrary objects, including errors.)
+The logging library is just a placeholder, so the real challenge here is to write it from scratch. It should be thoroughly tested, of course. Your logs should include the current date and time and they should support structured output. (In other words, they should take arbitrary objects, including errors.)
 
 There are several libraries available to help you. The CommandLine class (`src/infrastructure/command_line.js`) allows you to write to stdout. The Clock class (`src/infrastructure/clock.js`) gives you the ability to write the current date and time. Both of these are [Nullable Infrastructure Wrappers](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks), so they have convenient methods for testing. There's also an infrastructure helper library (`src/util/infrastructure_helper.js`) that implements an [output tracker](https://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output).
 
 
 Hints:
 
-This challenge ties together several concepts from previous Lunch & Learns. Here's where you can find more information:
-
 * There's a placeholder Log class and tests ready for you to modify in `src/infrastructure/log.js` and `src/infrastructure/_log_test.js`. A few methods have been added, but you'll need more. Don't change the names of the methods that are already there because the HttpServer tests depend on them. Specifically, the `logOutput` variable in the tests is the result of calling `trackOutput()` on an instance of Log.
 * After you've built the logging library, the specific HttpServer code you need to modify is in the `handleRequestAsync()` function on line 82 of `src/infrastructure/http_server.js`.
+* Make sure you're on Node.js version 14 or higher, as previous versions only include support for the US locale.
+
+This challenge ties together several concepts from previous episodes. Here's where you can find more information:
+
 * [Testing Without Mocks](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks) describes what Nullable Infrastructure Wrappers are and how they work. It also explains the basics of the CommandLine class.
 * [Microservices Without Mocks, Part 1: The Server](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-1) and [Microservices Without Mocks, Part 2: Robust Responses](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-2) builds the server code you'll be modifying. You don't need to watch them to succeed at this challenge, though.
 * [International Dates and Times](https://www.jamesshore.com/v2/projects/lunch-and-learn/international-dates-and-times) explains how the Clock class works.
 * [Nullable Output](http://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output) shows how to test infrastructure that writes multiple pieces of output, and also explains how the CommandLine class's `trackStdout()` function works.
-* Make sure you're on Node.js version 14 or higher, as previous versions only include support for the US locale.
 
 
 The Thinking Framework
@@ -34,7 +35,7 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-The Log class we're building is high-level infrastructure. High-level infrastructure is just like normal infrastructure, except that it uses infrastructure wrappers we've already written rather than calling to the outside world directly. Specifically, we can build it out of Clock and CommandLine.
+The Log class we're building is high-level infrastructure. High-level infrastructure is just like normal infrastructure, except that it uses infrastructure wrappers we've already written rather than talking directly to the outside world. Specifically, we can build it out of `Clock` and `CommandLine`.
 
 Because Log is high-level infrastructure, we don't need the lots of [focused integration tests](http://www.jamesshore.com/v2/projects/lunch-and-learn/application-infrastructure) like we have before. Instead, we can focus our efforts on the logic.
 
