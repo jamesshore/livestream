@@ -126,21 +126,31 @@ describe("HTTP Server", function() {
 			function onRequestAsync() { throw new Error("onRequestAsync error"); }
 
 			const { response, logOutput } = await getAsync({ onRequestAsync });
+			assert.deepEqual(logOutput, [{
+				alert: "emergency",
+				message: "request handler threw exception",
+				error: "Error: onRequestAsync error",
+			}]);
 			assert.deepEqual(response, {
 				status: 500,
 				headers: { "content-type": "text/plain; charset=utf-8" },
-				body: "Internal Server Error: request handler threw exception",
+				body: "Internal Server Error",
 			});
 		});
 
 		it("fails gracefully when request handler returns invalid response", async function() {
-			function onRequestAsync() { return "invalid response"; }
+			function onRequestAsync() { return "my invalid response"; }
 
 			const { response, logOutput } = await getAsync({ onRequestAsync });
+			assert.deepEqual(logOutput, [{
+				alert: "emergency",
+				message: "request handler returned invalid response",
+				response: "my invalid response",
+			}]);
 			assert.deepEqual(response, {
 				status: 500,
 				headers: { "content-type": "text/plain; charset=utf-8" },
-				body: "Internal Server Error: request handler returned invalid response",
+				body: "Internal Server Error",
 			});
 		});
 

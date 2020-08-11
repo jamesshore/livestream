@@ -84,14 +84,16 @@ async function handleRequestAsync(log, httpRequest, onRequestAsync) {
 		const response = await onRequestAsync(httpRequest);
 		const typeError = type.check(response, RESPONSE_TYPE);
 		if (typeError !== null) {
-			return internalServerError("request handler returned invalid response");
+			log.emergency({ message: "request handler returned invalid response", response });
+			return internalServerError();
 		}
 		else {
 			return response;
 		}
 	}
 	catch (err) {
-		return internalServerError("request handler threw exception");
+		log.emergency({ message: "request handler threw exception", error: err });
+		return internalServerError();
 	}
 }
 
@@ -99,7 +101,7 @@ function internalServerError(message) {
 	return {
 		status: 500,
 		headers: { "content-type": "text/plain; charset=utf-8" },
-		body: "Internal Server Error: " + message,
+		body: "Internal Server Error",
 	};
 }
 
