@@ -22,16 +22,22 @@ const Log = module.exports = class Log {
 		return new Log(CommandLine.createNull(), Clock.createNull());
 	}
 
+	static get DEBUG() { return "debug"; }
+	static get INFO() { return "info"; }
+	static get MONITOR() { return "monitor"; }
+	static get ACTION() { return "action"; }
+	static get EMERGENCY() { return "emergency"; }
+
 	constructor(commandLine, clock) {
 		this._commandLine = commandLine;
 		this._clock = clock;
 		this._emitter = new EventEmitter();
 
-		this.debug = logFn(this, "debug");
-		this.info = logFn(this, "info");
-		this.monitor = logFn(this, "monitor");
-		this.action = logFn(this, "action");
-		this.emergency = logFn(this, "emergency");
+		this.debug = logFn(this, Log.DEBUG);
+		this.info = logFn(this, Log.INFO);
+		this.monitor = logFn(this, Log.MONITOR);
+		this.action = logFn(this, Log.ACTION);
+		this.emergency = logFn(this, Log.EMERGENCY);
 	}
 
 	trackOutput() {

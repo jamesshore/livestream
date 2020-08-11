@@ -127,7 +127,7 @@ describe("HTTP Server", function() {
 
 			const { response, logOutput } = await getAsync({ onRequestAsync });
 			assert.deepEqual(logOutput, [{
-				alert: "emergency",
+				alert: Log.EMERGENCY,
 				message: "request handler threw exception",
 				error: "Error: onRequestAsync error",
 			}]);
@@ -143,7 +143,7 @@ describe("HTTP Server", function() {
 
 			const { response, logOutput } = await getAsync({ onRequestAsync });
 			assert.deepEqual(logOutput, [{
-				alert: "emergency",
+				alert: Log.EMERGENCY,
 				message: "request handler returned invalid response",
 				response: "my invalid response",
 			}]);
