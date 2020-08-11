@@ -3,6 +3,7 @@
 
 const ensure = require("../util/ensure");
 const EventEmitter = require("events");
+const infrastructureHelper = require("../util/infrastructure_helper");
 
 const STDOUT_EVENT = "stdout";
 const STDERR_EVENT = "stderr";
@@ -43,32 +44,14 @@ module.exports = class CommandLine {
 	}
 
 	trackStdout() {
-		return trackOutput(this._emitter, STDOUT_EVENT);
+		return infrastructureHelper.trackOutput(this._emitter, STDOUT_EVENT);
 	}
 
 	trackStderr() {
-		return trackOutput(this._emitter, STDERR_EVENT);
+		return infrastructureHelper.trackOutput(this._emitter, STDERR_EVENT);
 	}
 
 };
-
-function trackOutput(emitter, event) {
-	const output = [];
-	const trackerFn = (text) => output.push(text);
-	emitter.on(event, trackerFn);
-
-	output.off = () => {
-		output.consume();
-		emitter.off(event, trackerFn);
-	};
-	output.consume = () => {
-		const result = [ ...output ];
-		output.length = 0;
-		return result;
-	};
-	return output;
-}
-
 
 class NullProcess {
 

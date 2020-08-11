@@ -37,29 +37,8 @@ describe("CommandLine", function() {
 
 		commandLine.writeStdout("my stdout");
 		commandLine.writeStderr("my stderr");
-		assert.deepEqual(stdout, ["my stdout"]);
-		assert.deepEqual(stderr, ["my stderr"]);
-	});
-
-	it("tracker can be turned off", function() {
-		const commandLine = CommandLine.createNull();
-		const stdout = commandLine.trackStdout();
-
-		commandLine.writeStdout("A");
-		stdout.off();
-		commandLine.writeStdout("B");
-		assert.deepEqual(stdout, []);
-	});
-
-	it("tracker allows output to be consumed", function() {
-		const commandLine = CommandLine.createNull();
-		const output = commandLine.trackStdout();
-
-		commandLine.writeStdout("A");
-		assert.deepEqual(output.consume(), [ "A" ]);
-
-		commandLine.writeStdout("B");
-		assert.deepEqual(output.consume(), [ "B" ]);
+		assert.deepEqual(stdout, [ "my stdout" ]);
+		assert.deepEqual(stderr, [ "my stderr" ]);
 	});
 
 
