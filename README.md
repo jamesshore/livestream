@@ -4,25 +4,28 @@ James Shore Live
 This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/v2/projects/lunch-and-learn) series. See that link for for more information and an archive of past episodes, or [watch live on Twitch](https://www.twitch.tv/jamesshorelive).
 
 
-This Week's Challenge (4 Aug 2020): Nullable Output
+This Week's Challenge (11 Aug 2020): Testable Logs
 ---------------------
 
-This week, we’re looking at nullable output. In the `src/infrastructure` directory, you'll find a CommandLine class. It's a nullable infrastructure wrapper for `stdout`. If you use CommandLine to write to stdout in your production code, you can use CommandLine.createNull() in your tests to inject a version that is testable. For details, see the ["Testing Without Mocks" episode](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks).
+This week's challenge: making logging testable. This repo contains a simple microservice. (You can find the details below, under "How the Microservice Works.") The service has good error handling, but it doesn't have any logging. Specifically, if the server code fails for some reason, the server will send an "Internal Server Error" response. But it won't log an error to stdout.
 
-You can see an example of CommandLine being used in `src/countdown.js`. When the code runs, it writes one message per second to stdout. At the end, it writes the current time.
+Your challenge, should you choose to accept it, is to add a small amount of error logging to the HttpServer class and to make sure that it's tested. Specifically, modify the "fails gracefully when request handler throws exception" and "fails gracefully when request handler returns invalid response" HttpServer tests to include logging. They're in `src/infrastructure/_http_server_test.js` on lines 125 and 136. They're already set up to instantiate the Log class and call `trackOutput()`. The result of calling `trackOutput()` is available in the `logOutput` variable on lines 128 and 139.
 
-The tests for this code are in `src/_countdown_test.js`. CommandLine provides a `getLastStdout()` method that allows the tests to check what has been written to stdout. However, `getLastStdout()` only shows the contents of the last call to `commandLine.writeStdout()`.
+There's no logging library, so the real challenge here is to write one from scratch. It should be thoroughly tested, of course. Your logs should include the current date and time and they should support structured output. (In other words, they should take arbitrary objects, including errors.)
 
-Your challenge this week is to improve CommandLine so that you can test multiple calls to `commandLine.writeStdout()`. Be sure to do so in a way that doesn't result in a memory leak.
+There are several libraries available to help you. The CommandLine class (`src/infrastructure/command_line.js`) allows you to write to stdout. The Clock class (`src/infrastructure/clock.js`) gives you the ability to write the current date and time. Both of these are [Nullable Infrastructure Wrappers](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks), so they have convenient methods for testing. There's also an infrastructure helper library (`src/util/infrastructure_helper.js`) that implements an [output tracker](https://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output).
 
-To demonstrate your changes, modify the countdown code so that it *doesn't* wait one second between writing the last message to stdout and writing the current time. This should require you to update the countdown tests to check the results of multiple calls to `commandLine.writeStdout()`.
 
 Hints:
 
-* The CommandLine code is in `src/infrastructure/command_line.js` and `src/infrastructure/_command_line_test.js`.
-* The CommandLine tests use several helper files. You can safely ignore them.
-* You can check for memory leaks by using the `checkForLeakAsync()` helper in `_command_line_test.js`.
-* The Clock code isn't part of today's exercise, but if you'd like to learn more about how it works, see [the "International Dates and Times" episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/international-dates-and-times).
+This challenge ties together several concepts from previous Lunch & Learns. Here's where you can find more information:
+
+* There's a placeholder Log class and tests ready for you to modify in `src/infrastructure/log.js` and `src/infrastructure/_log_test.js`. A few methods have been added, but you'll need more. Don't change the names of the methods that are already there because the HttpServer tests depend on them. Specifically, the `logOutput` variable in the tests is the result of calling `trackOutput()` on an instance of Log.
+* After you've built the logging library, the specific HttpServer code you need to modify is in the `handleRequestAsync()` function on line 82 of `src/infrastructure/http_server.js`.
+* [Testing Without Mocks](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks) describes what Nullable Infrastructure Wrappers are and how they work. It also explains the basics of the CommandLine class.
+* [Microservices Without Mocks, Part 1: The Server](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-1) and [Microservices Without Mocks, Part 2: Robust Responses](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-2) builds the server code you'll be modifying. You don't need to watch them to succeed at this challenge, though.
+* [International Dates and Times](https://www.jamesshore.com/v2/projects/lunch-and-learn/international-dates-and-times) explains how the Clock class works.
+* [Nullable Output](http://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output) shows how to test infrastructure that writes multiple pieces of output, and also explains how the CommandLine class's `trackStdout()` function works.
 * Make sure you're on Node.js version 14 or higher, as previous versions only include support for the US locale.
 
 
@@ -31,15 +34,15 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-The current code makes `commandLine.writeStdout(text)` testable by storing `text` in `this._lastStdout`. That works, although it's a bit clumsy. However, this approach can only remember the last call to `writeStdout()``. Now we want to keep track of multiple calls.
+The Log class we're building is high-level infrastructure. High-level infrastructure is just like normal infrastructure, except that it uses infrastructure wrappers we've already written rather than calling to the outside world directly. Specifically, we can build it out of Clock and CommandLine.
 
-The naive solution is to change `this._lastStdout` to an array and push `text` onto the array after each call to `writeStdout()`. Although that will appear to work, it leaks memory. It's not a viable solution.
+Because Log is high-level infrastructure, we don't need the lots of [focused integration tests](http://www.jamesshore.com/v2/projects/lunch-and-learn/application-infrastructure) like we have before. Instead, we can focus our efforts on the logic.
 
-Instead, we need to keep track of calls to `writeStdout()` only when it matters. The Observer pattern--events, in other words--is the perfect solution. If we emit an event each time `writeStdout()` is called, only code that needs to track writes will consume memory. The tests will listen for the event, push `text` onto an array, and then assert on the array.
+As with any Nullable Infrastructure Wrapper, Log needs to have convenience methods to make testing easier, such as `trackOutput()`, which will let our tests see what has been written to the log. It's tempting to just return the value of `CommandLine.trackOutput()`, but Log is more powerful and easier to use if we write a new tracker that's custom-built for its needs.
 
-To make the code easier to use, the event listening code can be abstracted. With care, it's even possible to move it back into CommandLine. Fundamentally, though, the key to solving this week's challenge is to emit events when `writeStdout()` is called.
+Other than that, it's just a matter of building Log to work the way we want.
 
-Tune in on August 4th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 5th, my solution will be archived on that page.
+Tune in on August 11th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 12th, a video with my solution will be archived on that page.
 
 
 Running the Code
