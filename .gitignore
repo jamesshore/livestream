@@ -2,6 +2,6 @@
 generated/
 .bin
 node_modules/keygrip/defaultKeys.json
-src/client/.sass-cache/
+rot13-service/client/.sass-cache/
 .sass-cache/
 gem_cache/

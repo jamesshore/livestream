@@ -3,8 +3,8 @@
 
 const HttpRequest = require("./http_request");
 const HttpServer = require("./http_server");
-const testHelper = require("../util/test_helper");
-const assert = require("../util/assert");
+const testHelper = require("util/test_helper");
+const assert = require("util/assert");
 const Log = require("./log");
 
 const PORT = 5001;

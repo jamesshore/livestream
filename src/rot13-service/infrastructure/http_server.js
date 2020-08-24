@@ -1,8 +1,8 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const ensure = require("../util/ensure");
-const type = require("../util/type");
+const ensure = require("util/ensure");
+const type = require("util/type");
 const http = require("http");
 const EventEmitter = require("events");
 const HttpRequest = require("./http_request");

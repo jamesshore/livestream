@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const ensure = require("./util/ensure");
+const ensure = require("util/ensure");
 const CommandLine = require("./infrastructure/command_line");
 const HttpServer = require("./infrastructure/http_server");
 const Log = require("./infrastructure/log");

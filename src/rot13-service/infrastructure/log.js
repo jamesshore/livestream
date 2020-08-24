@@ -1,8 +1,8 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const ensure = require("../util/ensure");
-const infrastructureHelper = require("../util/infrastructure_helper");
+const ensure = require("util/ensure");
+const infrastructureHelper = require("util/infrastructure_helper");
 const EventEmitter = require("events");
 const CommandLine = require("./command_line");
 const Clock = require("./clock");

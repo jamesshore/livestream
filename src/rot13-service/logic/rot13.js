@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const ensure = require("../util/ensure");
+const ensure = require("util/ensure");
 
 exports.transform = function(input) {
 	ensure.signature(arguments, [ String ]);

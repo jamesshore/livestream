@@ -1,9 +1,9 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const ensure = require("../util/ensure");
+const ensure = require("util/ensure");
 const EventEmitter = require("events");
-const infrastructureHelper = require("../util/infrastructure_helper");
+const infrastructureHelper = require("util/infrastructure_helper");
 
 const STDOUT_EVENT = "stdout";
 const STDERR_EVENT = "stderr";

@@ -2,7 +2,7 @@
 "use strict";
 
 const FakeTimers = require("@sinonjs/fake-timers");
-const ensure = require("../util/ensure");
+const ensure = require("util/ensure");
 
 /** Wrapper for system clock */
 module.exports = class Clock {

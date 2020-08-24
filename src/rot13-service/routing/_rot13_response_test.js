@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("../util/assert");
+const assert = require("util/assert");
 const rot13Response = require("./rot13_response");
 
 describe("ROT-13 Response", function() {

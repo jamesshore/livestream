@@ -1,9 +1,9 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("../util/assert");
+const assert = require("util/assert");
 const CommandLine = require("./command_line");
-const testHelper = require("../util/test_helper");
+const testHelper = require("util/test_helper");
 // dependency_analysis: ./_command_line_test_args_runner
 // dependency_analysis: ./_command_line_test_null_output_runner
 // dependency_analysis: ./_command_line_test_output_runner

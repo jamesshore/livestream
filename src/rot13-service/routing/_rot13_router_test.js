@@ -1,7 +1,7 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("../util/assert");
+const assert = require("util/assert");
 const rot13 = require("../logic/rot13");
 const rot13Response = require("./rot13_response");
 const rot13Router = require("./rot13_router");

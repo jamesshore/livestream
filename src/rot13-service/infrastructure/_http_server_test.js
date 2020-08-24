@@ -1,9 +1,9 @@
 // Copyright Titanium I.T. LLC.
 "use strict";
 
-const assert = require("../util/assert");
+const assert = require("util/assert");
 const HttpServer = require("./http_server");
-const testHelper = require("../util/test_helper");
+const testHelper = require("util/test_helper");
 const HttpRequest = require("./http_request");
 const Log = require("./log");
 
