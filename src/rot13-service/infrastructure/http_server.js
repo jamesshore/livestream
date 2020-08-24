@@ -6,7 +6,7 @@ const type = require("util/type");
 const http = require("http");
 const EventEmitter = require("events");
 const HttpRequest = require("./http_request");
-const Log = require("./log");
+const Log = require("infrastructure/log");
 
 const RESPONSE_TYPE = { status: Number, headers: Object, body: String };
 

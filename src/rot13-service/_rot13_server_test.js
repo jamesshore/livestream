@@ -2,7 +2,7 @@
 "use strict";
 
 const assert = require("util/assert");
-const CommandLine = require("./infrastructure/command_line");
+const CommandLine = require("infrastructure/command_line");
 const HttpServer = require("./infrastructure/http_server");
 const HttpRequest = require("./infrastructure/http_request");
 const Server = require("./rot13_server");
