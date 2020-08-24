@@ -8,7 +8,7 @@ const HttpRequest = require("./infrastructure/http_request");
 const Server = require("./rot13_server");
 const rot13Router = require("./routing/rot13_router");
 
-const USAGE = "Usage: run PORT\n";
+const USAGE = "Usage: serve PORT\n";
 
 describe("ROT-13 Server", function() {
 

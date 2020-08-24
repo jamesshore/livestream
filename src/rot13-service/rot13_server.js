@@ -31,7 +31,7 @@ module.exports = class Rot13Server {
 
 		const args = this._commandLine.args();
 		if (args.length !== 1) {
-			this._commandLine.writeStderr(`Usage: run PORT\n`);
+			this._commandLine.writeStderr(`Usage: serve PORT\n`);
 			return;
 		}
 
