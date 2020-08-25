@@ -72,6 +72,67 @@ describe("HTTP Client", function() {
 		});
 	});
 
+
+	describe("nullability", function() {
+
+		const IRRELEVANT_REQUEST = {
+			host: HOST,
+			port: PORT,
+			method: "GET",
+			path: "/irrelevant/path",
+		};
+
+		it("doesn't talk to network", async function() {
+			const client = HttpClient.createNull();
+			await client.requestAsync(IRRELEVANT_REQUEST);
+
+			assert.equal(server.lastRequest, null);
+		});
+
+		it("provides default response", async function() {
+			const client = HttpClient.createNull();
+			const response = await client.requestAsync(IRRELEVANT_REQUEST);
+			assert.deepEqual(response, {
+				status: 503,
+				headers: { "NullHttpClient": "default header"},
+				body: "Null HttpClient default response",
+			});
+		});
+
+		it("provides multiple configured responses for multiple endpoints", async function() {
+			const client = HttpClient.createNull({
+				"/endpoint/1": [
+					{ status: 200, headers: { myHeader: "myValue" }, body: "endpoint 1 body" },
+					{ status: 404 },
+				],
+				"/endpoint/2": [
+					{ status: 301, body: "endpoint 2 body" },
+				],
+			});
+
+			const response1a = await client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/endpoint/1" });
+			const response2 = await client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/endpoint/2" });
+			const response1b = await client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/endpoint/1" });
+
+			assert.deepEqual(response1a, {
+				status: 200,
+				headers: { myHeader: "myValue" },
+				body: "endpoint 1 body",
+			});
+			assert.deepEqual(response2, {
+				status: 301,
+				headers: {},
+				body: "endpoint 2 body",
+			});
+			assert.deepEqual(response1b, {
+				status: 404,
+				headers: {},
+				body: "",
+			});
+		});
+
+	});
+
 });
 
 

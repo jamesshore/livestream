@@ -3,12 +3,21 @@
 
 const ensure = require("util/ensure");
 const http = require("http");
+const EventEmitter = require("events");
 
 /** Generic HTTP client */
 module.exports = class HttpClient {
 
 	static create() {
-		return new HttpClient();
+		return new HttpClient(http);
+	}
+
+	static createNull(responses) {
+		return new HttpClient(new NullHttp(responses));
+	}
+
+	constructor(http) {
+		this._http = http;
 	}
 
 	async requestAsync({ host, port, method, path, headers, body }) {
@@ -22,18 +31,15 @@ module.exports = class HttpClient {
 		}]);
 
 		return await new Promise((resolve, reject) => {
-			const request = http.request({
+			const request = this._http.request({
 				host,
 				port,
 				method,
 				path,
 				headers,
 			});
-			request.end(body);
 
 			request.on("response", (response) => {
-				response.resume();
-
 				const headers = { ...response.headers };
 				delete headers.connection;
 				delete headers["content-length"];
@@ -51,7 +57,64 @@ module.exports = class HttpClient {
 					});
 				});
 			});
+
+			request.end(body);
 		});
 	}
 
 };
+
+
+class NullHttp {
+
+	constructor(responses = {}) {
+		this._responses = responses;
+	}
+
+	request({ path }) {
+		return new NullRequest(this._responses[path]);
+	}
+
+}
+
+class NullRequest extends EventEmitter {
+
+	constructor(endpointResponses = []) {
+		super();
+		this._endpointResponses = endpointResponses;
+	}
+
+	end() {
+		setImmediate(() => {
+			this.emit("response", new NullResponse(this._endpointResponses.shift()));
+		});
+	}
+
+}
+
+class NullResponse extends EventEmitter {
+
+	constructor({ status, headers = {}, body = ""} = {
+		status: 503,
+		headers: { NullHttpClient: "default header" },
+		body: "Null HttpClient default response",
+	}) {
+		super();
+		this._status = status;
+		this._headers = headers;
+
+		setImmediate(() => {
+			this.emit("data", body);
+			this.emit("end");
+		});
+	}
+
+	get statusCode() {
+		return this._status;
+	}
+
+	get headers() {
+		return this._headers;
+	}
+
+}
