@@ -72,6 +72,28 @@ describe("HTTP Client", function() {
 		});
 	});
 
+	it("tracks requests (which normalizes method and header names)", async function() {
+		const client = HttpClient.createNull();
+		const requests = client.trackRequests();
+
+		await client.requestAsync({
+			host: HOST,
+			port: PORT,
+			method: "POST",
+			headers: { myHeader: "myValue" },
+			path: "/my/path",
+			body: "my body",
+		});
+		assert.deepEqual(requests, [{
+			host: HOST,
+			port: PORT,
+			method: "post",
+			headers: { myheader: "myValue" },
+			path: "/my/path",
+			body: "my body",
+		}]);
+	});
+
 
 	describe("nullability", function() {
 

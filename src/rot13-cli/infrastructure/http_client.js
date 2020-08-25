@@ -4,6 +4,9 @@
 const ensure = require("util/ensure");
 const http = require("http");
 const EventEmitter = require("events");
+const infrastructureHelper = require("util/infrastructure_helper");
+
+const REQUEST_EVENT = "request";
 
 /** Generic HTTP client */
 module.exports = class HttpClient {
@@ -18,9 +21,10 @@ module.exports = class HttpClient {
 
 	constructor(http) {
 		this._http = http;
+		this._emitter = new EventEmitter();
 	}
 
-	async requestAsync({ host, port, method, path, headers, body }) {
+	async requestAsync({ host, port, method, path, headers = {}, body = "" }) {
 		ensure.signature(arguments, [{
 			host: String,
 			port: Number,
@@ -31,12 +35,9 @@ module.exports = class HttpClient {
 		}]);
 
 		return await new Promise((resolve, reject) => {
-			const request = this._http.request({
-				host,
-				port,
-				method,
-				path,
-				headers,
+			const request = this._http.request({ host, port, method, path, headers });
+			this._emitter.emit(REQUEST_EVENT, {
+				host, port, method: method.toLowerCase(), path, headers: normalizeHeaders(headers), body
 			});
 
 			request.on("response", (response) => {
@@ -62,7 +63,16 @@ module.exports = class HttpClient {
 		});
 	}
 
+	trackRequests() {
+		return infrastructureHelper.trackOutput(this._emitter, REQUEST_EVENT);
+	}
+
 };
+
+function normalizeHeaders(headers) {
+	const normalized = Object.entries(headers).map(([ key, value ]) => [ key.toLowerCase(), value ]);
+	return Object.fromEntries(normalized);
+}
 
 
 class NullHttp {
