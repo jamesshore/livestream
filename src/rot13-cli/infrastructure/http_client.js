@@ -111,7 +111,7 @@ class NullResponse extends EventEmitter {
 	}) {
 		super();
 		this._status = status;
-		this._headers = headers;
+		this._headers = normalizeHeaders(headers);
 
 		setImmediate(() => {
 			this.emit("data", body);

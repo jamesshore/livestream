@@ -116,12 +116,12 @@ describe("HTTP Client", function() {
 			const response = await client.requestAsync(IRRELEVANT_REQUEST);
 			assert.deepEqual(response, {
 				status: 503,
-				headers: { "NullHttpClient": "default header"},
+				headers: { nullhttpclient: "default header"},
 				body: "Null HttpClient default response",
 			});
 		});
 
-		it("provides multiple configured responses for multiple endpoints", async function() {
+		it("provides multiple responses for multiple endpoints (and normalizes header names)", async function() {
 			const client = HttpClient.createNull({
 				"/endpoint/1": [
 					{ status: 200, headers: { myHeader: "myValue" }, body: "endpoint 1 body" },
@@ -138,7 +138,7 @@ describe("HTTP Client", function() {
 
 			assert.deepEqual(response1a, {
 				status: 200,
-				headers: { myHeader: "myValue" },
+				headers: { myheader: "myValue" },
 				body: "endpoint 1 body",
 			});
 			assert.deepEqual(response2, {
