@@ -7,9 +7,9 @@ This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.c
 This Week's Challenge (25 Aug 2020): Microservice Clients Without Mocks (Part I)
 ---------------------
 
-This repo contains a simple microservice in the `src/rot13-service` folder. It encodes text using ROT-13 encoding. (You can find the details below, under "How the Microservice Works.") Our eventual goal is to create a command-line application, in the `src/rot13-cli` folder, that uses the microservice to encode text provided on the command line.
+This repo contains a simple microservice in the `src/rot13-service` folder. It encodes text using ROT-13 encoding. (You can find the details below, under "How the Microservice Works.") Next week, we'll create a command-line application that uses the microservice to encode text provided on the command line.
 
-Your challenge this week, should you choose to accept it, is to create a generic HTTP client that can be used to build the command-line application in the future. You don't need to build the command-line application or anything specific to the ROT-13 service. The only thing we're doing this week is the generic HTTP client.
+This week, your challenge is to create a generic HTTP client that we'll use to build the command-line application next week. You don't need to build anything specific to the ROT-13 service. The only thing we're doing this week is the generic HTTP client.
 
 The client needs to be testable without mocks. In practice, this means that it should be a [nullable infrastructure wrapper](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks). It also needs to provide the ability to track requests and configure responses.
 
@@ -36,7 +36,7 @@ This week, we're building a new piece of low-level infrastructure. It doesn't ha
 
 There are two main aspects to this challenge:
 
-1) HttpClient is low-level infrastructure, so we need to write focused integration tests to make sure it can talk to a real server. This will require us to write a simple [Spy Server](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#spy-server). You could also use a tool such as [Nock](https://github.com/nock/nock) or [WireMock](http://wiremock.org/), but a simple purpose-built Spy Server is only a few dozen lines of code.
+1) HttpClient is low-level infrastructure, so we need to write focused integration tests to make sure it works. This will require us to write a simple [Spy Server](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#spy-server). You could also use a tool such as [Nock](https://github.com/nock/nock) or [WireMock](http://wiremock.org/), but a simple purpose-built Spy Server is only a few dozen lines of code.
 
 2) Using services can involve complicated series of calls. We need to write our null HttpClient to support sophisticated [Configurable Responses](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#configurable-responses). Specifically, we need to support multiple endpoints, each with multiple different responses.
 
@@ -48,7 +48,7 @@ Tune in on August 25th at noon Pacific to see how I apply these ideas. For detai
 Running the Code
 ----------------
 
-To run the code in this repository, install [Node.js](http://nodejs.org). Then:
+To run the code in this repository, install [Node.js](http://nodejs.org). Make sure you have version 14 or higher. Then:
 
 * Run `./serve.sh` to run the ROT-13 service, then `./run.sh` to run the command-line application.
 
