@@ -4,30 +4,27 @@ James Shore Live
 This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/v2/projects/lunch-and-learn) series. See that link for for more information and an archive of past episodes, or [watch live on Twitch](https://www.twitch.tv/jamesshorelive).
 
 
-This Week's Challenge (11 Aug 2020): Testable Logs
+This Week's Challenge (25 Aug 2020): Microservice Clients Without Mocks (Part I)
 ---------------------
 
-This repo contains a simple microservice. (You can find the details below, under "How the Microservice Works.") The service has good error handling, but it doesn't have any logging. Specifically, if the server code fails for some reason, the server will send an "Internal Server Error" response. But it won't log an error to stdout.
+This repo contains a simple microservice in the `src/rot13-service` folder. It encodes text using ROT-13 encoding. (You can find the details below, under "How the Microservice Works.") Our eventual goal is to create a command-line application, in the `src/rot13-cli` folder, that uses the microservice to encode text provided on the command line.
 
-Your challenge, should you choose to accept it, is to add a small amount of error logging to the HttpServer class and to make sure that it's tested. Specifically, modify the "fails gracefully when request handler throws exception" and "fails gracefully when request handler returns invalid response" HttpServer tests to include logging. They're in `src/infrastructure/_http_server_test.js` on lines 125 and 136. They're already set up to instantiate the Log class and call `trackOutput()`. The result of calling `trackOutput()` is available in the `logOutput` variable on lines 128 and 139.
+Your challenge this week, should you choose to accept it, is to create a generic HTTP client that can be used to build the command-line application in the future. You don't need to build the command-line application or anything specific to the ROT-13 service. The only thing we're doing this week is the generic HTTP client.
 
-The logging library is just a placeholder, so the real challenge here is to write it from scratch. It should be thoroughly tested, of course. Your logs should include the current date and time and they should support structured output. (In other words, they should take arbitrary objects, including errors.)
-
-There are several libraries available to help you. The CommandLine class (`src/infrastructure/command_line.js`) allows you to write to stdout. The Clock class (`src/infrastructure/clock.js`) gives you the ability to write the current date and time. Both of these are [Nullable Infrastructure Wrappers](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks), so they have convenient methods for testing. There's also an infrastructure helper library (`src/util/infrastructure_helper.js`) that implements an [output tracker](https://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output).
-
+The client needs to be testable without mocks. In practice, this means that it should be a [nullable infrastructure wrapper](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks). It also needs to provide the ability to track requests and configure responses.
 
 Hints:
 
-* There's a placeholder Log class and tests ready for you to modify in `src/infrastructure/log.js` and `src/infrastructure/_log_test.js`. A few methods have been added, but you'll need more. Don't change the names of the methods that are already there because the HttpServer tests depend on them. Specifically, the `logOutput` variable in the tests is the result of calling `trackOutput()` on an instance of Log.
-* After you've built the logging library, the specific HttpServer code you need to modify is in the `handleRequestAsync()` function on line 82 of `src/infrastructure/http_server.js`.
-* Make sure you're on Node.js version 14 or higher, as previous versions only include support for the US locale.
+* Make sure you're on Node.js version 14 or higher. Previous versions fail the test suite due to insufficient locale support.
+
+* There's a placeholder HttpClient class and tests ready for you to modify in `src/rot13-cli/infrastructure`. You shouldn't need to modify any other files.
+
+* The infrastructure helper library (`src/util/infrastructure_helper.js`) implements an [output tracker](https://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output) that you can use. See the [Testable Logs episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/testable-logs) for an example.
 
 This challenge ties together several concepts from previous episodes. Here's where you can find more information:
 
 * [Testing Without Mocks](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks) describes what Nullable Infrastructure Wrappers are and how they work. It also explains the basics of the CommandLine class.
-* [Microservices Without Mocks, Part 1: The Server](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-1) and [Microservices Without Mocks, Part 2: Robust Responses](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-2) builds the server code you'll be modifying. You don't need to watch them to succeed at this challenge, though.
-* [International Dates and Times](https://www.jamesshore.com/v2/projects/lunch-and-learn/international-dates-and-times) explains how the Clock class works.
-* [Nullable Output](http://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output) shows how to test infrastructure that writes multiple pieces of output, and also explains how the CommandLine class's `trackStdout()` function works.
+* [Microservices Without Mocks, Part 1: The Server](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-1) and [Microservices Without Mocks, Part 2: Robust Responses](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-2) show how to build an HTTP server, which involves many of the same skills needed for this week's challenge.
 
 
 The Thinking Framework
@@ -35,15 +32,17 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-The Log class we're building is high-level infrastructure. High-level infrastructure is just like normal infrastructure, except that it uses infrastructure wrappers we've already written rather than talking directly to the outside world. Specifically, we can build it out of `Clock` and `CommandLine`.
+This week, we're building a new piece of low-level infrastructure. It doesn't have any use on its own, but in the future, we'll use it to build a high-level ROT-13 service client.
 
-Because Log is high-level infrastructure, we don't need the lots of [focused integration tests](http://www.jamesshore.com/v2/projects/lunch-and-learn/application-infrastructure) like we have before. Instead, we can focus our efforts on the logic.
+There are two main aspects to this challenge:
 
-As with any Nullable Infrastructure Wrapper, Log needs to have convenience methods to make testing easier, such as `trackOutput()`, which will let our tests see what has been written to the log. It's tempting to just return the value of `CommandLine.trackOutput()`, but Log is more powerful and easier to use if we write a new tracker that's custom-built for its needs.
+1) HttpClient is low-level infrastructure, so we need to write focused integration tests to make sure it can talk to a real server. This will require us to write a simple [Spy Server](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#spy-server). You could also use a tool such as [Nock](https://github.com/nock/nock) or [WireMock](http://wiremock.org/), but a simple purpose-built Spy Server is only a few dozen lines of code.
 
-Other than that, it's just a matter of building Log to work the way we want.
+2) Using services can involve complicated series of calls. We need to write our null HttpClient to support sophisticated [Configurable Responses](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#configurable-responses). Specifically, we need to support multiple endpoints, each with multiple different responses.
 
-Tune in on August 11th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 12th, a video with my solution will be archived on that page.
+	To do so, our `responses` variable will be an object, which, in JavaScript, is a set of name-value pairs. The names will correspond to endpoints and the values will be arrays of responses. Each time the null client receives a request, it will shift the next response from the front of the array.
+
+Tune in on August 25th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 26th, a video with my solution will be archived on that page.
 
 
 Running the Code
@@ -51,7 +50,7 @@ Running the Code
 
 To run the code in this repository, install [Node.js](http://nodejs.org). Then:
 
-* Run `./run.sh` to run the code manually.
+* Run `./serve.sh` to run the ROT-13 service, then `./run.sh` to run the command-line application.
 
 * Run `./build.sh` to lint and test the code once, or `./watch.sh` to do so every time a file changes.
 
@@ -65,7 +64,7 @@ All commands must be run from the repository root.
 How the Microservice Works
 --------------------------
 
-Start the server using the run command described under "Running the Code." E.g., `./run.sh 5000`.
+Start the server using the run command described under "Running the Code." E.g., `./serve.sh 5000`.
 
 The service transforms text using ROT-13 encoding. In other words, `hello` becomes `uryyb`.
 
