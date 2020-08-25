@@ -34,6 +34,7 @@ module.exports = class HttpClient {
 			headers: [ undefined, Object ],
 			body: [ undefined, String ],
 		}]);
+		if (method === "GET" && body !== "") throw new Error("Don't include body with GET requests; Node won't send it");
 
 		return await new Promise((resolve, reject) => {
 			const request = this._http.request({ host, port, method, path, headers });

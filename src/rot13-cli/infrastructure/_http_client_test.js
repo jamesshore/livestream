@@ -72,6 +72,14 @@ describe("HTTP Client", function() {
 		});
 	});
 
+	it("fails fast if providing body with GET request (which doesn't allow body)", async function() {
+		const client = HttpClient.createNull();
+		await assert.throwsAsync(
+			() => client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/irrelevant", body: "oops" }),
+			"Don't include body with GET requests; Node won't send it"
+		);
+	});
+
 	it("tracks requests (which normalizes method and header names)", async function() {
 		const client = HttpClient.createNull();
 		const requests = client.trackRequests();
