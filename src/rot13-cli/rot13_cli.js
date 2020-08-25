@@ -5,7 +5,7 @@ const CommandLine = require("infrastructure/command_line");
 const ensure = require("util/ensure");
 
 /** Overall command-line entry point */
-exports.run = function({
+exports.runAsync = function({
 	commandLine = CommandLine.create(),
 } = {}) {
 	ensure.signature(arguments, [[ undefined, {
