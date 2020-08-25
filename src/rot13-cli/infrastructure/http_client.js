@@ -12,6 +12,7 @@ const REQUEST_EVENT = "request";
 module.exports = class HttpClient {
 
 	static create() {
+		ensure.signature(arguments, []);
 		return new HttpClient(http);
 	}
 
@@ -64,6 +65,7 @@ module.exports = class HttpClient {
 	}
 
 	trackRequests() {
+		ensure.signature(arguments, []);
 		return infrastructureHelper.trackOutput(this._emitter, REQUEST_EVENT);
 	}
 
@@ -78,6 +80,8 @@ function normalizeHeaders(headers) {
 class NullHttp {
 
 	constructor(responses = {}) {
+		ensure.signature(responses, [[ undefined, Object ]]);
+
 		this._responses = responses;
 	}
 
@@ -91,6 +95,8 @@ class NullRequest extends EventEmitter {
 
 	constructor(endpointResponses = []) {
 		super();
+		ensure.signature(arguments, [[ undefined, Array ]], [ "endpoint_responses"]);
+
 		this._endpointResponses = endpointResponses;
 	}
 
@@ -110,6 +116,12 @@ class NullResponse extends EventEmitter {
 		body: "Null HttpClient default response",
 	}) {
 		super();
+		ensure.signature(arguments, [[ undefined, {
+			status: Number,
+			headers: [ undefined, Object ],
+			body: [ undefined, String ],
+		}]], [ "response" ]);
+
 		this._status = status;
 		this._headers = normalizeHeaders(headers);
 
