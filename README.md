@@ -79,11 +79,13 @@ It has one endpoint:
   * E.g., `{ "text": "hello" }`
 * Success Response:
 	* Status: 200 OK
+	* Headers: `content-type: application/json`
 	* Body: JSON object containing one field:
 		* `transformed` the transformed text
 		* E.g., `{ "transformed": "uryyb" }`
 * Failure Response
 	* Status: 4xx (depending on nature of error)
+	* Headers: `content-type: application/json`
 	* Body: JSON object containing one field:
 		* `error` the error
 		* E.g., `{ "error": "invalid content-type header" }`
