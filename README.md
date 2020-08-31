@@ -4,27 +4,35 @@ James Shore Live
 This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/v2/projects/lunch-and-learn) series. See that link for for more information and an archive of past episodes, or [watch live on Twitch](https://www.twitch.tv/jamesshorelive).
 
 
-This Week's Challenge (25 Aug 2020): Microservice Clients Without Mocks (Part I)
+This Week's Challenge (1 Sep 2020): Microservice Clients Without Mocks (Part II)
 ---------------------
 
-This repo contains a simple microservice in the `src/rot13-service` folder. It encodes text using ROT-13 encoding. (You can find the details below, under "How the Microservice Works.") Next week, we'll create a command-line application that uses the microservice to encode text provided on the command line.
+This repo contains a simple microservice in the `src/rot13-service` folder. It encodes text using ROT-13 encoding. (You can find the details below, under "How the Microservice Works.") Your challenge is to create a command-line application that uses this microservice.
 
-This week, your challenge is to create a generic HTTP client that we'll use to build the command-line application next week. You don't need to build anything specific to the ROT-13 service. The only thing we're doing this week is the generic HTTP client.
+There are two main parts to this challenge:
 
-The client needs to be testable without mocks. In practice, this means that it should be a [nullable infrastructure wrapper](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks). It also needs to provide the ability to track requests and configure responses.
+1. The command-line application needs to be testable without mocks.
+
+2. It needs to have robust error handling. It should gracefully fail if the service is unavailable or if the service changes its API. You don't need to handle timeouts, though.
 
 Hints:
 
 * Make sure you're on Node.js version 14 or higher. Previous versions fail the test suite due to insufficient locale support.
 
-* There's a placeholder HttpClient class and tests ready for you to modify in `src/rot13-cli/infrastructure`. You shouldn't need to modify any other files.
+* The command-line application is partially implemented for you in `src/rot13-cli/rot13_cli.js` and `_rot13_cli_test.js`.
 
-* The infrastructure helper library (`src/util/infrastructure_helper.js`) implements an [output tracker](https://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output) that you can use. See the [Testable Logs episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/testable-logs) for an example.
+* A generic HTTP client is available for your use in `src/rot13-cli/infrastructure/http_client.js`. See [last week's episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/microservice-clients-without-mocks-part-1) to see how it was created.
+
+* There's a placeholder client for the ROT-13 service in `src/rot13-cli/infrastructure/rot13_client.js` and `_rot13_client_test.js`.
+
+* The rough architecture is that `rot13_cli.js` depends on `rot13_client.js`, and `rot13_client.js` uses `http_client.js` to talk to the ROT-13 service.
+
+* The infrastructure helper library (`src/util/infrastructure_helper.js`) implements an [output tracker](https://www.jamesshore.com/v2/projects/lunch-and-learn/nullable-output) that you can use in `rot13_client.js`. See the [Testable Logs episode](https://www.jamesshore.com/v2/projects/lunch-and-learn/testable-logs) for an example.
 
 This challenge ties together several concepts from previous episodes. Here's where you can find more information:
 
 * [Testing Without Mocks](http://www.jamesshore.com/v2/projects/lunch-and-learn/testing-without-mocks) describes what Nullable Infrastructure Wrappers are and how they work. It also explains the basics of the CommandLine class.
-* [Microservices Without Mocks, Part 1: The Server](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-1) and [Microservices Without Mocks, Part 2: Robust Responses](http://www.jamesshore.com/v2/projects/lunch-and-learn/microservices-without-mocks-part-2) show how to build an HTTP server, which involves many of the same skills needed for this week's challenge.
+* [Testable Logs](https://www.jamesshore.com/v2/projects/lunch-and-learn/testable-logs) shows how to create a high-level infrastructure wrapper that depends on low-level infrastructure. This is similar to how `rot13_client.js` will work.
 
 
 The Thinking Framework
@@ -32,17 +40,21 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-This week, we're building a new piece of low-level infrastructure. It doesn't have any use on its own, but in the future, we'll use it to build a high-level ROT-13 service client.
+You can solve this week's challenge in four steps:
 
-There are two main aspects to this challenge:
+1) **Design the Rot13Client interface.** One way to do so is to use Programming By Intention to decide how Rot13Client will be used. To do so, write Rot13Cli code and tests as if Rot13Client already existed and was complete. Then comment out that code—or stub it out—and write the Rot13Client using the same interface.
 
-1) HttpClient is low-level infrastructure, so we need to write focused integration tests to make sure it works. This will require us to write a simple [Spy Server](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#spy-server). You could also use a tool such as [Nock](https://github.com/nock/nock) or [WireMock](http://wiremock.org/), but a simple purpose-built Spy Server is only a few dozen lines of code.
+2) **Build the Rot13Client with good error handling.** Rot13Client is high-level infrastructure, which means that it can depend on HttpClient for all its networking. Most of your work will involve error-handling logic.
 
-2) Using services can involve complicated series of calls. We need to write our null HttpClient to support sophisticated [Configurable Responses](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#configurable-responses). Specifically, we need to support multiple endpoints, each with multiple different responses.
+Start by implementing a simple request and response. In your tests, use `HttpClient.createNull()` to force the response you want, and `httpClient.trackRequests()` to check that you made the correct requests.
 
-	To do so, our `responses` variable will be an object, which, in JavaScript, is a set of name-value pairs. The names will correspond to endpoints and the values will be arrays of responses. Each time the null client receives a request, it will shift the next response from the front of the array.
+When the happy path is done, handle all the error cases you can think of. Assume that anything the service can do wrong, it will do wrong. This means you'll need to check the status code, headers, and all possible ways the body can be malformed. Don't worry about network delays or timeouts for today's exercise. As with the happy path code, you can test this behavior by using a null HttpClient.
 
-Tune in on August 25th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting August 26th, a video with my solution will be archived on that page.
+3) **Make the Rot13Client Nullable and Trackable.** Add code to Rot13Client to make it easy to write the Rot13Cli tests. Look back at Programming By Intention you did in step 1 for ideas. Don't forget that Rot13Cli needs to test error handling.
+
+4) **Integrate the CLI.** Once the Rot13Client is done, finish up the Rot13Cli and its tests. Double-check it by running the code manually. When the server is running, it should work properly. When the server isn't running, it should fail gracefully. (See below for instructions about running the server and CLI.)
+
+Tune in on September 1st at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 2nd, a video with my solution will be archived on that page.
 
 
 Running the Code
