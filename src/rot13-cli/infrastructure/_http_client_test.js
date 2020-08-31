@@ -72,6 +72,19 @@ describe("HTTP Client", function() {
 		});
 	});
 
+	it("fails gracefully if connection is refused", async function() {
+		const client = HttpClient.create();
+		await assert.throwsAsync(
+			() => client.requestAsync({
+				host: HOST,
+				port: 0,      // port 0 is reserved, so connection shouldl fail
+				method: "GET",
+				path: "/",
+			}),
+			/ECONNREFUSED/
+		);
+	});
+
 	it("fails fast if providing body with GET request (which doesn't allow body)", async function() {
 		const client = HttpClient.createNull();
 		await assert.throwsAsync(

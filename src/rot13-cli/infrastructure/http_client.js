@@ -42,7 +42,8 @@ module.exports = class HttpClient {
 				host, port, method: method.toLowerCase(), path, headers: normalizeHeaders(headers), body
 			});
 
-			request.on("response", (response) => {
+			request.once("error", reject);
+			request.once("response", (response) => {
 				const headers = { ...response.headers };
 				delete headers.connection;
 				delete headers["content-length"];
