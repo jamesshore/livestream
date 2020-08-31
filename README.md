@@ -46,9 +46,9 @@ You can solve this week's challenge in four steps:
 
 2) **Build the Rot13Client with good error handling.** Rot13Client is high-level infrastructure, which means that it can depend on HttpClient for all its networking. Most of your work will involve error-handling logic.
 
-Start by implementing a simple request and response. In your tests, use `HttpClient.createNull()` to force the response you want, and `httpClient.trackRequests()` to check that you made the correct requests.
+	Start by implementing a simple request and response. In your tests, use `HttpClient.createNull()` to force the response you want, and `httpClient.trackRequests()` to check that you made the correct requests.
 
-When the happy path is done, handle all the error cases you can think of. Assume that anything the service can do wrong, it will do wrong. This means you'll need to check the status code, headers, and all possible ways the body can be malformed. Don't worry about network delays or timeouts for today's exercise. As with the happy path code, you can test this behavior by using a null HttpClient.
+	When the happy path is done, handle all the error cases you can think of. Assume that anything the service can do wrong, it will do wrong. This means you'll need to check the status code, headers, and all possible ways the body can be malformed. Don't worry about network delays or timeouts for today's exercise. As with the happy path code, you can test this behavior by using a null HttpClient.
 
 3) **Make the Rot13Client Nullable and Trackable.** Add code to Rot13Client to make it easy to write the Rot13Cli tests. Look back at Programming By Intention you did in step 1 for ideas. Don't forget that Rot13Cli needs to test error handling.
 
