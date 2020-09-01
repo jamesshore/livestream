@@ -6,7 +6,7 @@ const ensure = require("util/ensure");
 const Rot13Client = require("./infrastructure/rot13_client");
 
 /** Overall command-line entry point */
-exports.runAsync = function({
+exports.runAsync = async function({
 	commandLine = CommandLine.create(),
 	rot13Client = Rot13Client.create(),
 } = {}) {
@@ -21,11 +21,15 @@ exports.runAsync = function({
 		return;
 	}
 
-	const port = args[0];
+	const port = parseInt(args[0], 10);
 	const text = args[1];
 
-	// const response = await rot13Client.transformAsync(port, text);
-	// commandLine.writeStdout(response + "\n");
-
-	commandLine.writeStdout("TO DO\n");
+	try {
+		const response = await rot13Client.transformAsync(port, text);
+		commandLine.writeStdout(response + "\n");
+	}
+	catch (err) {
+		commandLine.writeStderr("ROT-13 service failed:\n");
+		commandLine.writeStderr(err.message + "\n");
+	}
 };
