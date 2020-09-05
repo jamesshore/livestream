@@ -8,6 +8,13 @@ const HttpClient = require("./http_client");
 const HOST = "localhost";
 const PORT = 5001;
 
+const IRRELEVANT_REQUEST = {
+	host: HOST,
+	port: PORT,
+	method: "GET",
+	path: "/irrelevant/path",
+};
+
 describe("HTTP Client", function() {
 
 	let server;
@@ -123,13 +130,6 @@ describe("HTTP Client", function() {
 
 
 	describe("nullability", function() {
-
-		const IRRELEVANT_REQUEST = {
-			host: HOST,
-			port: PORT,
-			method: "GET",
-			path: "/irrelevant/path",
-		};
 
 		it("doesn't talk to network", async function() {
 			const client = HttpClient.createNull();
