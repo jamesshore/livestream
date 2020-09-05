@@ -33,7 +33,7 @@ describe("HTTP Client", function() {
 		});
 
 		const client = HttpClient.create();
-		const response = await client.requestAsync({
+		const response = await requestAsync(client, {
 			host: HOST,
 			port: PORT,
 			method: "POST",
@@ -57,7 +57,7 @@ describe("HTTP Client", function() {
 
 	it("headers and body are optional", async function() {
 		const client = HttpClient.create();
-		await client.requestAsync({
+		const response = await requestAsync(client, {
 			host: HOST,
 			port: PORT,
 			method: "GET",
@@ -75,7 +75,7 @@ describe("HTTP Client", function() {
 	it("fails gracefully if connection is refused", async function() {
 		const client = HttpClient.create();
 		await assert.throwsAsync(
-			() => client.requestAsync({
+			() => requestAsync(client, {
 				host: HOST,
 				port: 0,      // port 0 is reserved, so connection shouldl fail
 				method: "GET",
@@ -88,7 +88,13 @@ describe("HTTP Client", function() {
 	it("fails fast if providing body with GET request (which doesn't allow body)", async function() {
 		const client = HttpClient.createNull();
 		await assert.throwsAsync(
-			() => client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/irrelevant", body: "oops" }),
+			() => requestAsync(client, {
+				host: HOST,
+				port: PORT,
+				method: "GET",
+				path: "/irrelevant",
+				body: "oops"
+			}),
 			"Don't include body with GET requests; Node won't send it"
 		);
 	});
@@ -97,7 +103,7 @@ describe("HTTP Client", function() {
 		const client = HttpClient.createNull();
 		const requests = client.trackRequests();
 
-		await client.requestAsync({
+		await requestAsync(client, {
 			host: HOST,
 			port: PORT,
 			method: "POST",
@@ -127,14 +133,14 @@ describe("HTTP Client", function() {
 
 		it("doesn't talk to network", async function() {
 			const client = HttpClient.createNull();
-			await client.requestAsync(IRRELEVANT_REQUEST);
+			await requestAsync(client, IRRELEVANT_REQUEST);
 
 			assert.equal(server.lastRequest, null);
 		});
 
 		it("provides default response", async function() {
 			const client = HttpClient.createNull();
-			const response = await client.requestAsync(IRRELEVANT_REQUEST);
+			const response = await requestAsync(client, IRRELEVANT_REQUEST);
 			assert.deepEqual(response, {
 				status: 503,
 				headers: { nullhttpclient: "default header"},
@@ -153,9 +159,9 @@ describe("HTTP Client", function() {
 				],
 			});
 
-			const response1a = await client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/endpoint/1" });
-			const response2 = await client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/endpoint/2" });
-			const response1b = await client.requestAsync({ host: HOST, port: PORT, method: "GET", path: "/endpoint/1" });
+			const response1a = await requestAsync(client, { host: HOST, port: PORT, method: "GET", path: "/endpoint/1" });
+			const response2 = await requestAsync(client, { host: HOST, port: PORT, method: "GET", path: "/endpoint/2" });
+			const response1b = await requestAsync(client, { host: HOST, port: PORT, method: "GET", path: "/endpoint/1" });
 
 			assert.deepEqual(response1a, {
 				status: 200,
@@ -177,6 +183,10 @@ describe("HTTP Client", function() {
 	});
 
 });
+
+async function requestAsync(client, options) {
+	return await client.requestAsync(options);
+}
 
 
 class SpyServer {
