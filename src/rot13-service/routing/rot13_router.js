@@ -5,13 +5,16 @@ const ensure = require("util/ensure");
 const rot13Response = require("./rot13_response");
 const rot13 = require("../logic/rot13");
 const HttpRequest = require("../infrastructure/http_request");
+const Clock = require("infrastructure/clock");
 
 const REQUEST_TYPE = { text: String };
 
-/** Top-level router for ROT-13 service */
+// when the timestamp is odd, we delay before returning the response.
+const DELAY_IN_MS = 30000;
 
-exports.routeAsync = async function(request) {
-	ensure.signature(arguments, [ HttpRequest ]);
+/** Top-level router for ROT-13 service */
+exports.routeAsync = async function(request, clock) {
+	ensure.signature(arguments, [ HttpRequest, Clock ]);
 
 	if (request.urlPathname !== "/rot13/transform") return rot13Response.notFound();
 	if (request.method !== "POST") return rot13Response.methodNotAllowed();
@@ -27,7 +30,15 @@ exports.routeAsync = async function(request) {
 		return rot13Response.badRequest(err.message);
 	}
 
+	if (timestampIsOdd(clock)) {
+		await clock.waitAsync(DELAY_IN_MS);
+	}
+
 	const input = json.text;
 	const output = rot13.transform(input);
 	return rot13Response.ok(output);
 };
+
+function timestampIsOdd(clock) {
+	return (clock.now() % 2 === 1);
+}
