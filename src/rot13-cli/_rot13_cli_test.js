@@ -47,7 +47,7 @@ async function runAsync({ args, rot13Response, rot13Error }) {
 	const stdout = commandLine.trackStdout();
 	const stderr = commandLine.trackStderr();
 
-	const rot13Client = Rot13Client.createNull({ response: rot13Response, error: rot13Error });
+	const rot13Client = Rot13Client.createNull([{ response: rot13Response, error: rot13Error }]);
 	const rot13Requests = rot13Client.trackRequests();
 
 	await cli.runAsync({ commandLine, rot13Client });
