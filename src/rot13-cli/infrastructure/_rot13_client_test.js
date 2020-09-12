@@ -21,7 +21,7 @@ describe("ROT-13 Service client", function() {
 		it("makes request", async function() {
 			const { httpRequests, rot13Client } = createClient();
 
-			await rot13Client.transformAsync(9999, "text_to_transform");
+			await transformAsync(rot13Client, 9999, "text_to_transform");
 
 			assert.deepEqual(httpRequests, [{
 				host: HOST,
@@ -40,7 +40,7 @@ describe("ROT-13 Service client", function() {
 				body: VALID_BODY,
 			});
 
-			const response = await rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT);
+			const response = await transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT);
 			assert.equal(response, VALID_BODY_TEXT);
 		});
 
@@ -48,7 +48,7 @@ describe("ROT-13 Service client", function() {
 			const { rot13Client } = createClient();
 			const requests = rot13Client.trackRequests();
 
-			await rot13Client.transformAsync(9999, "my text");
+			await transformAsync(rot13Client, 9999, "my text");
 			assert.deepEqual(requests, [{
 				port: 9999,
 				text: "my text",
@@ -93,7 +93,7 @@ describe("ROT-13 Service client", function() {
 				body: JSON.stringify({ transformed: "response", foo: "bar" }),
 			});
 			await assert.doesNotThrowAsync(
-				() => rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT),
+				() => transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT),
 			);
 		});
 
@@ -104,7 +104,7 @@ describe("ROT-13 Service client", function() {
 
 		it("provides default response", async function() {
 			const rot13Client = Rot13Client.createNull();
-			const response = await rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT);
+			const response = await transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT);
 			assert.equal(response, "Null Rot13Client response");
 		});
 
@@ -114,8 +114,8 @@ describe("ROT-13 Service client", function() {
 				{ response: "response 2" },
 			]);
 
-			const response1 = await rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT);
-			const response2 = await rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT);
+			const response1 = await transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT);
+			const response2 = await transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT);
 
 			assert.equal(response1, "response 1");
 			assert.equal(response2, "response 2");
@@ -124,7 +124,7 @@ describe("ROT-13 Service client", function() {
 		it("can force an error", async function() {
 			const rot13Client = Rot13Client.createNull([{ error: "my error" }]);
 			await assert.throwsAsync(
-				() => rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT),
+				() => transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT),
 				/my error/
 			);
 		});
@@ -147,6 +147,10 @@ function createClient({
 	return { httpRequests, rot13Client };
 }
 
+async function transformAsync(rot13Client, port, text) {
+	return await rot13Client.transformAsync(port, text);
+}
+
 async function assertFailureAsync({
 	status = VALID_STATUS,
 	headers = VALID_HEADERS,
@@ -155,7 +159,7 @@ async function assertFailureAsync({
 } = {}) {
 	const { rot13Client } = createClient({ status, headers, body });
 	await assert.throwsAsync(
-		() => rot13Client.transformAsync(9999, IRRELEVANT_TEXT),
+		() => transformAsync(rot13Client, 9999, IRRELEVANT_TEXT),
 		`${message}\n` +
 		`Host: ${HOST}:9999\n` +
 		"Endpoint: /rot13/transform\n" +
