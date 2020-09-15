@@ -98,10 +98,12 @@ function nullHttpResponses(responses = [{}]) {
 function nullHttpResponse({
 	response = "Null Rot13Client response",
 	error,
+	hang = false,
 } = {}) {
 	ensure.signature(arguments, [[ undefined, {
 		response: [ undefined, String ],
 		error: [ undefined, String ],
+		hang: [ undefined, Boolean ],
 	}]]);
 
 	if (error !== undefined) {
@@ -109,6 +111,7 @@ function nullHttpResponse({
 			status: 500,
 			headers: {},
 			body: error,
+			hang,
 		};
 	}
 	else {
@@ -116,6 +119,7 @@ function nullHttpResponse({
 			status: 200,
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({ transformed: response }),
+			hang,
 		};
 	}
 }

@@ -129,6 +129,12 @@ describe("ROT-13 Service client", function() {
 			);
 		});
 
+		it("simulates hangs", async function() {
+			const rot13Client = Rot13Client.createNull([{ hang: true }]);
+			const responsePromise = rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT);
+			await assert.promiseDoesNotResolveAsync(responsePromise);
+		});
+
 	});
 
 });
