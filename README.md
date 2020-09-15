@@ -7,11 +7,11 @@ This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.c
 This Week's Challenge (15 Sep 2020): Request Timeouts
 ---------------------
 
-This repo contains a command-line client/server application. The command-line application calls a small microservice that encodes text using ROT-13 encoding. (You can find the details below, under "Running the Code" and "How the Microservice Works.")
+This repo contains a command-line client/server application. The command-line application calls a small microservice, which encodes text using ROT-13 encoding. (You can find the details below, under "Running the Code" and "How the Microservice Works.")
 
-The client-side code has good error-handling, with one exception: it doesn't have any timeouts. Not-so-coincidentally, the server has been programmed to randomly delay some requests by 30 seconds.
+The client-side code has good error-handling, with one exception: it doesn't have any timeouts. Not so coincidentally, the server has been programmed to randomly delay for 30 seconds before responding to some requests.
 
-Your challenge this week is to update the command-line application to gracefully time out and display an error if the server doesn't respond within a short period of time. (The amount of time is up to you; I suggest five seconds.) You don't need to deal with cancellation this week, so it's okay if the CLI doesn't exit right away.
+Your challenge this week is to update the command-line application to gracefully time out and display an error if the server doesn't respond within a short period of time. (The amount of time is up to you; I suggest five seconds.) You don't need to deal with cancelling requests or timers this week, so it's okay if the CLI doesn't exit right away after displaying the error.
 
 As always, make sure that your code is well tested.
 
@@ -33,13 +33,15 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-Writing the code to time out isn't too difficult, since we're not dealing with cancellation this week. As usual when infrastructure is involved, the main challenge is *testing* the code.
+Writing code to time out isn't too difficult, since we're not dealing with cancellation this week. As usual when infrastructure is involved, the main challenge is *testing* the code.
 
 To test the code, you need to have the ability to simulate a hang. This is the kind of thing we've used the [Nullable Infrastructure Wrapper](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#nullable-infrastructure) and [Embedded Stub](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#embedded-stub) patterns for in the past, and that's a valid approach here, too. Specifically, you can modify `HttpClient.createNull()` to pass a `hang` option to HttpClient's embedded stub. (To see how the embedded stub works, see the [Microservice Clients Without Mocks, Part 1](https://www.jamesshore.com/v2/projects/lunch-and-learn/microservice-clients-without-mocks-part-1) episode.)
 
 Once HttpClient supports hangs, it's fairly easy for Rot13Client to support it too--it just needs to delegate to HttpClient. And once that's done, you're ready to implement the application code.
 
 Testing the application code requires you to control the clock. Fortunately, the Clock class we built in [No More Flaky Clock Tests](https://www.jamesshore.com/v2/projects/lunch-and-learn/no-more-flaky-clock-tests) is still available. You can use that to wait for a timeout. In your production code, JavaScript's [Promise.race()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race) function will allow you to run the timeout and network request side by side.
+
+Tune in on September 15th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 16th, a video with my solution will be archived on that page.
 
 
 Running the Code
@@ -53,7 +55,7 @@ To run the code in this repository, install [Node.js](http://nodejs.org). Make s
 
 * Use `./build.sh quick` or `./watch.sh quick` to perform an incremental build, and `./clean.sh` to reset the incremental build.
 
-* On Windows, use the .cmd versions: `run` instead of `./run.sh`, `watch` instead of `./watch.sh`, etc. If you're using gitbash, the .sh versions will also work, and they display the output better.
+* On Windows, use the .cmd versions: `run` instead of `./run.sh`, `watch` instead of `./watch.sh`, etc. If you are using gitbash, the .sh versions will also work, and they display the output better.
 
 All commands must be run from the repository root.
 
