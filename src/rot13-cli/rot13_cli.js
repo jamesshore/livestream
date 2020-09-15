@@ -4,15 +4,20 @@
 const CommandLine = require("infrastructure/command_line");
 const ensure = require("util/ensure");
 const Rot13Client = require("./infrastructure/rot13_client");
+const Clock = require("infrastructure/clock");
+
+const TIMEOUT_IN_MS = 5000;
 
 /** Overall command-line entry point */
 exports.runAsync = async function({
 	commandLine = CommandLine.create(),
 	rot13Client = Rot13Client.create(),
+	clock = Clock.create(),
 } = {}) {
 	ensure.signature(arguments, [[ undefined, {
 		commandLine: [ undefined, CommandLine ],
 		rot13Client: [ undefined, Rot13Client ],
+		clock: [ undefined, Clock ],
 	}]]);
 
 	const args = commandLine.args();
@@ -25,7 +30,10 @@ exports.runAsync = async function({
 	const text = args[1];
 
 	try {
-		const response = await rot13Client.transformAsync(port, text);
+		const response = await Promise.race([
+			rot13Client.transformAsync(port, text),
+			timeoutAsync(clock),
+		]);
 		commandLine.writeStdout(response + "\n");
 	}
 	catch (err) {
@@ -33,3 +41,8 @@ exports.runAsync = async function({
 		commandLine.writeStderr(err.message + "\n");
 	}
 };
+
+async function timeoutAsync(clock) {
+	await clock.waitAsync(TIMEOUT_IN_MS);
+	throw new Error("Service timed out.");
+}

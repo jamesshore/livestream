@@ -4,11 +4,14 @@
 const assert = require("util/assert");
 const CommandLine = require("infrastructure/command_line");
 const Rot13Client = require("./infrastructure/rot13_client");
+const Clock = require("infrastructure/clock");
 const cli = require("./rot13_cli");
 
 const VALID_PORT = 5000;
 const VALID_TEXT = "my_text";
 const VALID_ARGS = [ VALID_PORT.toString(), VALID_TEXT ];
+
+const TIMEOUT_IN_MS = 5000;
 
 describe("ROT-13 CLI", function() {
 
@@ -35,6 +38,20 @@ describe("ROT-13 CLI", function() {
 		assert.match(stderr[1], /my error/);
 	});
 
+	it("outputs an error when ROT-13 service times out", async function() {
+		const { runPromise, clock, stderr } = run({
+			args: VALID_ARGS,
+			rot13Hang: true,
+		});
+
+		await clock.advanceNullAsync(TIMEOUT_IN_MS);
+		await assert.promiseResolvesAsync(runPromise);
+		assert.deepEqual(stderr, [
+			"ROT-13 service failed:\n",
+			"Service timed out.\n",
+		]);
+	});
+
 	it("writes usage to command-line when arguments not provided", async function() {
 		const { stderr } = await runAsync({ args: [] });
 		assert.deepEqual(stderr, [ "Usage: run PORT TEXT\n" ]);
@@ -42,15 +59,23 @@ describe("ROT-13 CLI", function() {
 
 });
 
-async function runAsync({ args, rot13Response, rot13Error }) {
+async function runAsync(options) {
+	const results = run(options);
+	await results.runPromise;
+	return results;
+}
+
+function run({ args, rot13Response, rot13Error, rot13Hang }) {
 	const commandLine = CommandLine.createNull({ args });
 	const stdout = commandLine.trackStdout();
 	const stderr = commandLine.trackStderr();
 
-	const rot13Client = Rot13Client.createNull([{ response: rot13Response, error: rot13Error }]);
+	const rot13Client = Rot13Client.createNull([{ response: rot13Response, error: rot13Error, hang: rot13Hang }]);
 	const rot13Requests = rot13Client.trackRequests();
 
-	await cli.runAsync({ commandLine, rot13Client });
+	const clock = Clock.createNull();
 
-	return { stdout, stderr, rot13Requests };
+	const runPromise = cli.runAsync({ commandLine, rot13Client, clock });
+
+	return { runPromise, stdout, stderr, rot13Requests, clock };
 }
