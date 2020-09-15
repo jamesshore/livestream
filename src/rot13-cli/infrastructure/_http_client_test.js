@@ -180,6 +180,12 @@ describe("HTTP Client", function() {
 			});
 		});
 
+		it("simulates hangs", async function() {
+			const client = HttpClient.createNull({ "/endpoint": [{ hang: true }]});
+			const responsePromise = requestAsync(client, { host: HOST, port: PORT, method: "GET", path: "/endpoint" });
+			await assert.promiseDoesNotResolveAsync(responsePromise);
+		});
+
 	});
 
 });

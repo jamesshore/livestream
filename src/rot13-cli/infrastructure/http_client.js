@@ -112,16 +112,18 @@ class NullRequest extends EventEmitter {
 
 class NullResponse extends EventEmitter {
 
-	constructor({ status, headers = {}, body = ""} = {
+	constructor({ status = 501, headers = {}, body = "", hang = false} = {
 		status: 503,
 		headers: { NullHttpClient: "default header" },
 		body: "Null HttpClient default response",
+		hang: false,
 	}) {
 		super();
 		ensure.signature(arguments, [[ undefined, {
-			status: Number,
+			status: [ undefined, Number ],
 			headers: [ undefined, Object ],
 			body: [ undefined, String ],
+			hang: [ undefined, Boolean ],
 		}]], [ "response" ]);
 
 		this._status = status;
@@ -129,7 +131,7 @@ class NullResponse extends EventEmitter {
 
 		setImmediate(() => {
 			this.emit("data", body);
-			this.emit("end");
+			if (!hang) this.emit("end");
 		});
 	}
 
