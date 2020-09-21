@@ -240,12 +240,14 @@ class SpyServer {
 						body,
 					};
 
-					response.statusCode = this._nextResponse.status;
-					Object.entries(this._nextResponse.headers).forEach(([ key, value ]) => {
-						response.setHeader(key, value);
-					});
+					if (!this._nextResponse.hang) {
+						response.statusCode = this._nextResponse.status;
+						Object.entries(this._nextResponse.headers).forEach(([key, value]) => {
+							response.setHeader(key, value);
+						});
 
-					response.end(this._nextResponse.body);
+						response.end(this._nextResponse.body);
+					}
 				});
 			});
 
