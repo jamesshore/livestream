@@ -32,100 +32,110 @@ describe("HTTP Client", function() {
 		server.reset();
 	});
 
-	it("performs request and returns response", async function() {
-		server.setResponse({
-			status: 999,
-			headers: { myResponseHeader: "myResponseValue" },
-			body: "my response",
-		});
 
-		const client = HttpClient.create();
-		const response = await requestAsync(client, {
-			host: HOST,
-			port: PORT,
-			method: "POST",
-			path: "/my/path",
-			headers: { myRequestHeader: "myRequestValue" },
-			body: "my request body"
-		});
+	describe("happy path", function() {
 
-		assert.deepEqual(server.lastRequest, {
-			method: "POST",
-			path: "/my/path",
-			headers: { myrequestheader: "myRequestValue" },
-			body: "my request body"
-		}, "request");
-		assert.deepEqual(response, {
-			status: 999,
-			headers: { myresponseheader: "myResponseValue" },
-			body: "my response",
-		}, "response");
-	});
+		it("performs request and returns response", async function() {
+			server.setResponse({
+				status: 999,
+				headers: { myResponseHeader: "myResponseValue" },
+				body: "my response",
+			});
 
-	it("headers and body are optional", async function() {
-		const client = HttpClient.create();
-		const response = await requestAsync(client, {
-			host: HOST,
-			port: PORT,
-			method: "GET",
-			path: "/my/new/path",
-		});
-
-		assert.deepEqual(server.lastRequest, {
-			method: "GET",
-			path: "/my/new/path",
-			headers: {},
-			body: "",
-		});
-	});
-
-	it("fails gracefully if connection is refused", async function() {
-		const client = HttpClient.create();
-		await assert.throwsAsync(
-			() => requestAsync(client, {
+			const client = HttpClient.create();
+			const response = await requestAsync(client, {
 				host: HOST,
-				port: 0,      // port 0 is reserved, so connection shouldl fail
-				method: "GET",
-				path: "/",
-			}),
-			/ECONNREFUSED/
-		);
-	});
+				port: PORT,
+				method: "POST",
+				path: "/my/path",
+				headers: { myRequestHeader: "myRequestValue" },
+				body: "my request body"
+			});
 
-	it("fails fast if providing body with GET request (which doesn't allow body)", async function() {
-		const client = HttpClient.createNull();
-		await assert.throwsAsync(
-			() => requestAsync(client, {
+			assert.deepEqual(server.lastRequest, {
+				method: "POST",
+				path: "/my/path",
+				headers: { myrequestheader: "myRequestValue" },
+				body: "my request body"
+			}, "request");
+			assert.deepEqual(response, {
+				status: 999,
+				headers: { myresponseheader: "myResponseValue" },
+				body: "my response",
+			}, "response");
+		});
+
+		it("headers and body are optional", async function() {
+			const client = HttpClient.create();
+			await requestAsync(client, {
 				host: HOST,
 				port: PORT,
 				method: "GET",
-				path: "/irrelevant",
-				body: "oops"
-			}),
-			"Don't include body with GET requests; Node won't send it"
-		);
+				path: "/my/new/path",
+			});
+
+			assert.deepEqual(server.lastRequest, {
+				method: "GET",
+				path: "/my/new/path",
+				headers: {},
+				body: "",
+			});
+		});
+
+		it("tracks requests (which normalizes method and header names)", async function() {
+			const client = HttpClient.createNull();
+			const requests = client.trackRequests();
+
+			await requestAsync(client, {
+				host: HOST,
+				port: PORT,
+				method: "POST",
+				headers: { myHeader: "myValue" },
+				path: "/my/path",
+				body: "my body",
+			});
+			assert.deepEqual(requests, [{
+				host: HOST,
+				port: PORT,
+				method: "post",
+				headers: { myheader: "myValue" },
+				path: "/my/path",
+				body: "my body",
+			}]);
+		});
+
 	});
 
-	it("tracks requests (which normalizes method and header names)", async function() {
-		const client = HttpClient.createNull();
-		const requests = client.trackRequests();
 
-		await requestAsync(client, {
-			host: HOST,
-			port: PORT,
-			method: "POST",
-			headers: { myHeader: "myValue" },
-			path: "/my/path",
-			body: "my body",
+	describe("failure paths", function() {
+
+		it("fails gracefully if connection is refused", async function() {
+			const client = HttpClient.create();
+			await assert.throwsAsync(
+				() => requestAsync(client, {
+					host: HOST,
+					port: 0,      // port 0 is reserved, so connection shouldl fail
+					method: "GET",
+					path: "/",
+				}),
+				/ECONNREFUSED/
+			);
 		});
-		assert.deepEqual(requests, [{
-			host: HOST,
-			port: PORT,
-			method: "post",
-			headers: { myheader: "myValue" },
-			path: "/my/path",
-			body: "my body",
-		}]);
+
+		it("fails fast if providing body with GET request (which doesn't allow body)", async function() {
+			const client = HttpClient.createNull();
+			await assert.throwsAsync(
+				() => requestAsync(client, {
+					host: HOST,
+					port: PORT,
+					method: "GET",
+					path: "/irrelevant",
+					body: "oops"
+				}),
+				"Don't include body with GET requests; Node won't send it"
+			);
+		});
+
 	});
 
 
