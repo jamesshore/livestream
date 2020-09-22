@@ -31,10 +31,7 @@ exports.runAsync = async function({
 
 	try {
 		const { transformPromise, cancelFn } = rot13Client.transform(port, text);
-		const response = await Promise.race([
-			transformPromise,
-			timeoutAsync(clock, cancelFn),
-		]);
+		const response = await clock.timeoutAsync(TIMEOUT_IN_MS, transformPromise, () => timeout(cancelFn));
 		commandLine.writeStdout(response + "\n");
 	}
 	catch (err) {
@@ -43,8 +40,7 @@ exports.runAsync = async function({
 	}
 };
 
-async function timeoutAsync(clock, cancelFn) {
-	await clock.waitAsync(TIMEOUT_IN_MS);
+function timeout(cancelFn) {
 	cancelFn();
 	throw new Error("Service timed out.");
 }

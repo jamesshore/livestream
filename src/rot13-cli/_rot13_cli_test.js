@@ -16,7 +16,7 @@ const TIMEOUT_IN_MS = 5000;
 describe("ROT-13 CLI", function() {
 
 	it("calls ROT-13 service", async function() {
-		const { rot13Requests, stdout } = await runAsync({
+		const { rot13Requests, clock, stdout } = await runAsync({
 			args: VALID_ARGS,
 			rot13Response: "transformed text",
 		});
@@ -26,6 +26,9 @@ describe("ROT-13 CLI", function() {
 			text: VALID_TEXT,
 		}]);
 		assert.deepEqual(stdout, [ "transformed text\n" ]);
+
+		await clock.advanceNullTimersAsync();
+		assert.equal(clock.now(), 0);
 	});
 
 	it("outputs an error when ROT-13 service fails", async function() {
