@@ -9,11 +9,13 @@ This Week's Challenge (22 Sep 2020): Request Cancellation
 
 This repo contains a command-line client/server application. The command-line application calls a small microservice that encodes text using ROT-13 encoding. (You can find the details below, under "Running the Code" and "How the Microservice Works.")
 
-The server-side code is programmed to randomly delay some requests by 30 seconds. The client-side command-line interface (CLI) times out after five seconds, but it doesn't cancel the request, so the CLI doesn't exit until the server responds.
+The server-side code is programmed to randomly delay some requests by 30 seconds. The client-side command-line interface (CLI) times out after five seconds, but it doesn't cancel the request, so the CLI doesn't exit until the full 30 seconds has elapsed and the server responds.
 
-Your challenge this week is to update the CLI to cancel the network request when it times out, so that the CLI exits after five seconds when the server is slow to respond. (Note that the code will take five seconds to exit even if the server responds right away; you don't have to solve that problem this week.)
+Your challenge this week is to update the CLI to cancel the network request when it times out, so that the CLI exits after five seconds when the server is slow to respond. (The code will take five seconds to exit even if the server responds immediately; this is due to the way JavaScript timers work, and you don't have to solve that problem this week.)
 
-As always, make sure that your code is well tested. This week, also do your best to make sure the cancellation mechanism is well designed.
+The focus of this week's challenge is on the design of the cancellation mechanism. Cancelling a request in Node is fairly straightforward (see the hints below); the challenge is coming up with a clean design.
+
+As always, make sure that your code is well tested.
 
 Hints:
 
@@ -41,7 +43,7 @@ When faced with a thorny design problem, there are two approaches to use, and it
 
 "Programming By Intention" means writing high-level code as if all the low-level code you need already exists. Just imagine what functions or methods would make your life easy, and write your code to use them. It's a good way to design an easy-to-use API.
 
-It's a good idea to use both techniques because, although your research will generally help you understand the scope of the problem, the generic solutions available online are often more complicated than you need. You might be able to come up with a simpler design that fits the narrow parameters of the specific problem you're solving. In design, simpler is almost always better—assuming the solution works!—because lower complexity means easier maintenance and fewer bugs.
+It's a good idea to use both techniques because, although your research will generally help you understand the scope of the problem, the generic solutions available online are often more complicated than you need. You might be able to come up with a simpler design that fits the narrow parameters of the specific problem you're solving. In design, simpler is almost always better—assuming the simpler solution actually works!—because lower complexity means easier maintenance and fewer bugs.
 
 In the case of this week's challenge, a web search will lead you to the idea of "cancellation tokens." In .NET, you use cancellation tokens by instantiating a `CancellationTokenSource` object. Then you pass in `CancellationTokenSource.Token` to the things that you want to cancel, and call `CancellationTokenSource.Cancel()` to cancel them.
 
@@ -77,7 +79,7 @@ async function timeoutAsync(clock, cancellationSource) {
 }
 ```
 
-Cancellation tokens are a well-known idea, and would solve the problem. But they require additional scaffolding (the `CancellationSource` class and everything to make it work) and they're indirect (the connection between the call to cancel() and the thing it cancels is not explicit). Is there a simpler idea that's specific to our needs?
+Cancellation tokens are a well-known idea, and would solve the problem. But they require additional scaffolding (the `CancellationSource` class and everything to make it work) and they're indirect (the connection between the call to cancel() and the thing it cancels is implied, not explicit). Is there a simpler idea that's specific to our needs?
 
 This is where Programming By Intention comes in. Cancellation tokens assume a strongly object-oriented system, but JavaScript is a multi-paradigm language. Could a more functional approach work better? What if `transformAsync` returned a function that could be used to cancel the request?
 
@@ -96,9 +98,9 @@ async function timeoutAsync(clock, cancelFn) {
 }
 ```
 
-At this point, you would weigh the pros and cons of each approach (and try to come up with something better than both), then choose one. In this case, neither is clearly better than the other. The functional approach is more clear, but has some downsides, too. The cancellation token is well-known and is less likely to have hidden flaws, but is more complicated.
+At this point, weigh the pros and cons of each approach (and try to come up with something better than both), then choose one. In this case, neither option is clearly better than the other. The functional approach is more explicit, but has some downsides, too. The cancellation token is well-known and is less likely to have hidden flaws, but has more moving parts.
 
-Tune in on September 22nd at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 23rd, a video with my solution will be archived on that page.
+Tune in on September 22nd at noon Pacific to see how I apply these ideas, including my implementation of the functional cancellation approach. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 23rd, a video with my solution will be archived on that page.
 
 
 Running the Code
