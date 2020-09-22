@@ -38,14 +38,25 @@ describe("ROT-13 CLI", function() {
 		assert.match(stderr[1], /my error/);
 	});
 
-	it("outputs an error when ROT-13 service times out", async function() {
-		const { runPromise, clock, stderr } = run({
+	it("times out ROT-13 service when service responds too slowly", async function() {
+		const { runPromise, rot13Requests, clock, stderr } = run({
 			args: VALID_ARGS,
 			rot13Hang: true,
 		});
 
 		await clock.advanceNullAsync(TIMEOUT_IN_MS);
 		await assert.promiseResolvesAsync(runPromise);
+		assert.deepEqual(rot13Requests, [
+			{
+				port: VALID_PORT,
+				text: VALID_TEXT,
+			},
+			{
+				port: VALID_PORT,
+				text: VALID_TEXT,
+				cancelled: true,
+			},
+		]);
 		assert.deepEqual(stderr, [
 			"ROT-13 service failed:\n",
 			"Service timed out.\n",
