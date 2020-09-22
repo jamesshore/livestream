@@ -36,14 +36,14 @@ module.exports = class Rot13Client {
 
 		this._emitter.emit(REQUEST_EVENT, { port, text });
 
-		const response = await this._httpClient.requestAsync({
+		const response = await this._httpClient.request({
 			host: HOST,
 			port,
 			method: "POST",
 			path: "/rot13/transform",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({ text }),
-		});
+		}).responsePromise;
 
 		let parsedBody = validateAndParseResponse(response, port);
 		return parsedBody.transformed;

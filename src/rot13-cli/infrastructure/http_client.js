@@ -25,7 +25,7 @@ module.exports = class HttpClient {
 		this._emitter = new EventEmitter();
 	}
 
-	async requestAsync({ host, port, method, path, headers = {}, body = "" }) {
+	request({ host, port, method, path, headers = {}, body = "" }) {
 		ensure.signature(arguments, [{
 			host: String,
 			port: Number,
@@ -36,11 +36,21 @@ module.exports = class HttpClient {
 		}]);
 		if (method === "GET" && body !== "") throw new Error("Don't include body with GET requests; Node won't send it");
 
-		return await new Promise((resolve, reject) => {
+		let cancelFn;
+		let cancellable = true;
+		const responsePromise = new Promise((resolve, reject) => {
 			const request = this._http.request({ host, port, method, path, headers });
-			this._emitter.emit(REQUEST_EVENT, {
-				host, port, method: method.toLowerCase(), path, headers: normalizeHeaders(headers), body
-			});
+			const requestData = { host, port, method: method.toLowerCase(), path, headers: normalizeHeaders(headers), body };
+			this._emitter.emit(REQUEST_EVENT, requestData);
+
+			cancelFn = (message) => {
+				if (!cancellable) return false;
+
+				request.destroy(new Error(message));
+				this._emitter.emit(REQUEST_EVENT, { ...requestData, cancelled: true });
+				cancellable = false;
+				return true;
+			};
 
 			request.once("error", reject);
 			request.once("response", (response) => {
@@ -54,6 +64,7 @@ module.exports = class HttpClient {
 					body += chunk;
 				});
 				response.on("end", () => {
+					cancellable = false;
 					resolve({
 						status: response.statusCode,
 						headers,
@@ -64,6 +75,8 @@ module.exports = class HttpClient {
 
 			request.end(body);
 		});
+
+		return { responsePromise, cancelFn };
 	}
 
 	trackRequests() {
@@ -105,6 +118,12 @@ class NullRequest extends EventEmitter {
 	end() {
 		setImmediate(() => {
 			this.emit("response", new NullResponse(this._endpointResponses.shift()));
+		});
+	}
+
+	destroy(error) {
+		setImmediate(() => {
+			this.emit("error", error);
 		});
 	}
 

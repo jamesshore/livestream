@@ -140,6 +140,112 @@ describe("HTTP Client", function() {
 	});
 
 
+	describe("cancellation", function() {
+
+		it("can cancel requests", async function() {
+			server.setResponse({ hang: true });
+
+			const client = HttpClient.create();
+			const { responsePromise, cancelFn } = client.request(IRRELEVANT_REQUEST);
+
+			const cancelled = cancelFn("my cancel message");
+			assert.equal(cancelled, true);
+			await assert.throwsAsync(
+				() => responsePromise,
+				"my cancel message"
+			);
+		});
+
+		it("ignores additional requests to cancel", async function() {
+			server.setResponse({ hang: true });
+
+			const client = HttpClient.create();
+			const { responsePromise, cancelFn } = client.request(IRRELEVANT_REQUEST);
+
+			cancelFn("first cancel");
+			const cancelled = cancelFn("second cancel");
+			assert.equal(cancelled, false);
+			await assert.throwsAsync(
+				() => responsePromise,
+				"first cancel"
+			);
+		});
+
+		it("ignores cancellation that occurs after response has been received", async function() {
+			const client = HttpClient.create();
+			const { responsePromise, cancelFn } = client.request(IRRELEVANT_REQUEST);
+
+			await assert.doesNotThrowAsync(
+				() => responsePromise,
+			);
+			const cancelled = cancelFn("my cancel");
+			assert.equal(cancelled, false);
+		});
+
+		it("tracks requests that are cancelled", async function() {
+			server.setResponse({ hang: true });
+
+			const client = HttpClient.create();
+			const requests = client.trackRequests();
+
+			const { responsePromise, cancelFn } = client.request({
+				host: HOST,
+				port: PORT,
+				method: "POST",
+				path: "/my/path",
+			});
+
+			cancelFn();
+			await testHelper.ignorePromiseErrorAsync(responsePromise);
+			assert.deepEqual(requests, [
+				{
+					host: HOST,
+					port: PORT,
+					method: "post",
+					path: "/my/path",
+					headers: {},
+					body: "",
+				},
+				{
+					host: HOST,
+					port: PORT,
+					method: "post",
+					path: "/my/path",
+					headers: {},
+					body: "",
+					cancelled: true
+				},
+			]);
+		});
+
+		it("doesn't track cancellations that occur after response", async function() {
+			const client = HttpClient.create();
+			const requests = client.trackRequests();
+
+			const { responsePromise, cancelFn } = client.request({
+				host: HOST,
+				port: PORT,
+				method: "POST",
+				path: "/my/path",
+			});
+			await responsePromise;
+			cancelFn();
+
+			assert.deepEqual(requests, [
+				{
+					host: HOST,
+					port: PORT,
+					method: "post",
+					path: "/my/path",
+					headers: {},
+					body: "",
+				},
+			]);
+		});
+
+	});
+
+
 	describe("nullability", function() {
 
 		it("doesn't talk to network", async function() {
@@ -193,8 +299,19 @@ describe("HTTP Client", function() {
 
 		it("simulates hangs", async function() {
 			const client = HttpClient.createNull({ "/endpoint": [{ hang: true }]});
-			const responsePromise = requestAsync(client, { host: HOST, port: PORT, method: "GET", path: "/endpoint" });
+			const { responsePromise } = client.request({ host: HOST, port: PORT, method: "GET", path: "/endpoint" });
 			await assert.promiseDoesNotResolveAsync(responsePromise);
+		});
+
+		it("can cancel requests", async function() {
+			const client = HttpClient.createNull({ "/endpoint": [{ hang: true }]});
+			const { responsePromise, cancelFn } = client.request({ host: HOST, port: PORT, method: "GET", path: "/endpoint" });
+
+			cancelFn("my error");
+			await assert.throwsAsync(
+				() => responsePromise,
+				"my error"
+			);
 		});
 
 	});
@@ -202,7 +319,7 @@ describe("HTTP Client", function() {
 });
 
 async function requestAsync(client, options) {
-	return await client.requestAsync(options);
+	return await client.request(options).responsePromise;
 }
 
 
