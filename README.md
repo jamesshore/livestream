@@ -4,16 +4,16 @@ James Shore Live
 This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/v2/projects/lunch-and-learn) series. See that link for for more information and an archive of past episodes, or [watch live on Twitch](https://www.twitch.tv/jamesshorelive).
 
 
-This Week's Challenge (15 Sep 2020): Request Timeouts
+This Week's Challenge (22 Sep 2020): Request Cancellation
 ---------------------
 
 This repo contains a command-line client/server application. The command-line application calls a small microservice that encodes text using ROT-13 encoding. (You can find the details below, under "Running the Code" and "How the Microservice Works.")
 
-The client-side code has good error-handling, with one exception: it doesn't have any timeouts. Not-so-coincidentally, the server has been programmed to randomly delay some requests by 30 seconds.
+The server-side code is programmed to randomly delay some requests by 30 seconds. The client-side command-line interface (CLI) times out after five seconds, but it doesn't cancel the request, so the CLI doesn't exit until the server responds.
 
-Your challenge this week is to update the command-line application to gracefully time out and display an error if the server doesn't respond within a short period of time. (The amount of time is up to you; I suggest five seconds.) You don't need to deal with cancellation this week, so it's okay if the CLI doesn't exit right away.
+Your challenge this week is to update the CLI to cancel the network request when it times out, so that the CLI exits after five seconds when the server is slow to respond. (Note that the code will take five seconds to exit even if the server responds right away; you don't have to solve that problem this week.)
 
-As always, make sure that your code is well tested.
+As always, make sure that your code is well tested. This week, also do your best to make sure the cancellation mechanism is well designed.
 
 Hints:
 
@@ -21,11 +21,9 @@ Hints:
 
 * The command-line application is implemented in `src/rot13-cli/rot13_cli.js` and `_rot13_cli_test.js`. It depends on `src/rot13-cli/infrastructure/rot13_client.js` to parse the microservice response, and that in turn depends on `src/rot13-cli/infrastructure/http_client.js` to perform the HTTP request.
 
-* The assertion library used by the tests, `/src/node_modules/util/assert.js`, is a thin wrapper over [Chai](https://www.chaijs.com/api/assert/), a JavaScript assertion library. It has a few extra assertions that you might find useful, such as `assert.promiseDoesNotResolveAsync()`, which should tell you if a promise doesn't resolve.
+* To cancel a Node.js request, call `request.destroy(new Error("my error message"));`. That line of code belongs in the `http_client.js` class.
 
-* There's a Nullable Clock class available in `src/node_modules/infrastructure/clock.js`. You can use it to control the current time in your tests. It also has a `waitAsync()` method that will be useful in your production code. For more information about how it works, see its tests, or check out the [No More Flaky Clock Tests](https://www.jamesshore.com/v2/projects/lunch-and-learn/no-more-flaky-clock-tests) episode.
-
-* JavaScript's [Promise.race()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race) function will let you `Clock.waitAsync()` and `Rot13Client.transformAsync()` side-by-side. `Promise.race()` will return the result (or throw the exception) from whichever one finishes first.
+* The assertion library used by the tests, `/src/node_modules/util/assert.js`, is a thin wrapper over [Chai](https://www.chaijs.com/api/assert/), a JavaScript assertion library. It has a few extra assertions that you might find useful, such as `assert.throwsAsync()`, which let you check if an async function throws an exception.
 
 
 The Thinking Framework
@@ -33,15 +31,74 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-Writing the code to time out isn't too difficult, since we're not dealing with cancellation this week. As usual when infrastructure is involved, the main challenge is *testing* the code.
+This week's challenge is a design challenge. The implementation for cancellation is clear (use `request.destroy()` as described above), but it's not clear how to do that *cleanly.*
 
-To test the code, you need to have the ability to simulate a hang. This is the kind of thing we've used the [Nullable Infrastructure Wrapper](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#nullable-infrastructure) and [Embedded Stub](https://www.jamesshore.com/v2/blog/2018/testing-without-mocks#embedded-stub) patterns for in the past, and that's a valid approach here, too. Specifically, you can modify `HttpClient.createNull()` to pass a `hang` option to HttpClient's embedded stub. (To see how the embedded stub works, see the [Microservice Clients Without Mocks, Part 1](https://www.jamesshore.com/v2/projects/lunch-and-learn/microservice-clients-without-mocks-part-1) episode.)
+When faced with a thorny design problem, there are two approaches to use, and it's worth using both of them:
 
-Once HttpClient supports hangs, it's fairly easy for Rot13Client to support it too--it just needs to delegate to HttpClient. And once that's done, you're ready to implement the application code.
+1. How have other people solved this problem? Research the problem on the web.
 
-Testing the application code requires you to control the clock. Fortunately, the Clock class we built in [No More Flaky Clock Tests](https://www.jamesshore.com/v2/projects/lunch-and-learn/no-more-flaky-clock-tests) is still available. You can use that to wait for a timeout. In your production code, JavaScript's [Promise.race()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race) function will allow you to run the timeout and network request side by side.
+2. Ignoring implementation, what's a clean solution to this problem? Use Programming By Intention to prototype an API.
 
-Tune in on September 15th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 16th, a video with my solution will be archived on that page.
+"Programming By Intention" means writing high-level code as if all the low-level code you need already exists. Just imagine what functions or methods would make your life easy, and write your code to use them. It's a good way to design an easy-to-use API.
+
+It's a good idea to use both techniques because, although your research will generally help you understand the scope of the problem, the generic solutions available online are often more complicated than you need. You might be able to come up with a simpler design that fits the narrow parameters of the specific problem you're solving. In design, simpler is almost always better—assuming the solution works!—because lower complexity means easier maintenance and fewer bugs.
+
+In the case of this week's challenge, a web search will lead you to the idea of "cancellation tokens." In .NET, you use cancellation tokens by instantiating a `CancellationTokenSource` object. Then you pass in `CancellationTokenSource.Token` to the things that you want to cancel, and call `CancellationTokenSource.Cancel()` to cancel them.
+
+The code currently looks like this:
+
+```javascript
+const response = await Promise.race([
+	rot13Client.transformAsync(port, text),
+	timeoutAsync(clock),
+]);
+commandLine.writeStdout(response + "\n");
+
+async function timeoutAsync(clock) {
+	await clock.waitAsync(TIMEOUT_IN_MS);
+	throw new Error("Service timed out.");
+}
+```
+
+With the cancellation token idea, the code would look like this:
+
+```javascript
+const cancellationSource = new CancellationTokenSource()
+const response = await Promise.race([
+	rot13Client.transformAsync(port, text, cancellationSource.token),
+	timeoutAsync(clock, cancellationSource),
+]);
+commandLine.writeStdout(response + "\n");
+
+async function timeoutAsync(clock, cancellationSource) {
+	await clock.waitAsync(TIMEOUT_IN_MS);
+	cancellationSource.cancel();
+	throw new Error("Service timed out.");
+}
+```
+
+Cancellation tokens are a well-known idea, and would solve the problem. But they require additional scaffolding (the `CancellationSource` class and everything to make it work) and they're indirect (the connection between the call to cancel() and the thing it cancels is not explicit). Is there a simpler idea that's specific to our needs?
+
+This is where Programming By Intention comes in. Cancellation tokens assume a strongly object-oriented system, but JavaScript is a multi-paradigm language. Could a more functional approach work better? What if `transformAsync` returned a function that could be used to cancel the request?
+
+```javascript
+const { transformPromise, cancelFn } = rot13Client.transform(port, text);
+const response = await Promise.race([
+	transformPromise,
+	timeoutAsync(clock, cancelFn),
+]);
+commandLine.writeStdout(response + "\n");
+
+async function timeoutAsync(clock, cancelFn) {
+	await clock.waitAsync(TIMEOUT_IN_MS);
+	cancelFn();
+	throw new Error("Service timed out.");
+}
+```
+
+At this point, you would weigh the pros and cons of each approach (and try to come up with something better than both), then choose one. In this case, neither is clearly better than the other. The functional approach is more clear, but has some downsides, too. The cancellation token is well-known and is less likely to have hidden flaws, but is more complicated.
+
+Tune in on September 22nd at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 23rd, a video with my solution will be archived on that page.
 
 
 Running the Code
