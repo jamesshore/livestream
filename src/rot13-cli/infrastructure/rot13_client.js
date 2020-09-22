@@ -31,22 +31,31 @@ module.exports = class Rot13Client {
 		this._emitter = new EventEmitter();
 	}
 
-	async transformAsync(port, text) {
+	transform(port, text) {
 		ensure.signature(arguments, [ Number, String ]);
 
-		this._emitter.emit(REQUEST_EVENT, { port, text });
+		const requestData = { port, text };
+		this._emitter.emit(REQUEST_EVENT, requestData);
 
-		const response = await this._httpClient.request({
+		const { responsePromise, cancelFn: httpCancelFn } = this._httpClient.request({
 			host: HOST,
 			port,
 			method: "POST",
 			path: "/rot13/transform",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({ text }),
-		}).responsePromise;
+		});
 
-		let parsedBody = validateAndParseResponse(response, port);
-		return parsedBody.transformed;
+		const cancelFn = () => {
+			const cancelled = httpCancelFn(
+				"ROT-13 service request cancelled\n" +
+				`Host: ${HOST}:${port}\n` +
+				"Endpoint: /rot13/transform"
+			);
+			if (cancelled) this._emitter.emit(REQUEST_EVENT, { ...requestData, cancelled: true });
+		};
+		const transformPromise = validateAndParseResponseAsync(responsePromise, port);
+		return { transformPromise, cancelFn };
 	}
 
 	trackRequests() {
@@ -55,7 +64,8 @@ module.exports = class Rot13Client {
 
 };
 
-function validateAndParseResponse(response, port) {
+async function validateAndParseResponseAsync(responsePromise, port) {
+	const response = await responsePromise;
 	if (response.status !== 200) {
 		throwError("Unexpected status from ROT-13 service", port, response);
 	}
@@ -75,7 +85,7 @@ function validateAndParseResponse(response, port) {
 	if (typeError !== null) {
 		throwError(`Unexpected body from ROT-13 service: ${typeError}`, port, response);
 	}
-	return parsedBody;
+	return parsedBody.transformed;
 }
 
 function throwError(message, port, response) {

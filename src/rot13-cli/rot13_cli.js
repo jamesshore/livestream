@@ -31,7 +31,7 @@ exports.runAsync = async function({
 
 	try {
 		const response = await Promise.race([
-			rot13Client.transformAsync(port, text),
+			rot13Client.transform(port, text).transformPromise,
 			timeoutAsync(clock),
 		]);
 		commandLine.writeStdout(response + "\n");

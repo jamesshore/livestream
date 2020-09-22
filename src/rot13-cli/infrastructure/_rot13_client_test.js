@@ -101,6 +101,81 @@ describe("ROT-13 Service client", function() {
 	});
 
 
+	describe("cancellation", function() {
+
+		it("can cancel requests", async function() {
+			const { rot13Client, httpRequests } = createClient({ hang: true });
+			const { transformPromise, cancelFn } = rot13Client.transform(9999, "text_to_transform");
+
+			cancelFn();
+
+			assert.deepEqual(httpRequests, [
+				{
+					host: HOST,
+					port: 9999,
+					path: "/rot13/transform",
+					method: "post",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({ text: "text_to_transform" }),
+				},
+				{
+					host: HOST,
+					port: 9999,
+					path: "/rot13/transform",
+					method: "post",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({ text: "text_to_transform" }),
+					cancelled: true,
+				},
+			]);
+			await assert.throwsAsync(
+				() => transformPromise,
+				"ROT-13 service request cancelled\n" +
+				`Host: ${HOST}:9999\n` +
+				"Endpoint: /rot13/transform"
+			);
+		});
+
+		it("tracks requests that are cancelled", async function() {
+			const { rot13Client } = createClient({ hang: true });
+			const requests = rot13Client.trackRequests();
+			const { transformPromise, cancelFn } = rot13Client.transform(9999, "my text");
+
+			cancelFn();
+			assert.deepEqual(requests, [
+				{
+					port: 9999,
+					text: "my text",
+				},
+				{
+					port: 9999,
+					text: "my text",
+					cancelled: true,
+				},
+			]);
+
+			await testHelper.ignorePromiseErrorAsync(transformPromise);
+		});
+
+		it("doesn't track cancellations that happen after response received", async function() {
+			const { rot13Client } = createClient();
+			const requests = rot13Client.trackRequests();
+			const { transformPromise, cancelFn } = rot13Client.transform(9999, "my text");
+
+			await transformPromise;
+			cancelFn();
+
+			assert.deepEqual(requests, [
+				{
+					port: 9999,
+					text: "my text",
+				},
+			]);
+		});
+
+	});
+
+
 	describe("nullability", function() {
 
 		it("provides default response", async function() {
@@ -132,8 +207,8 @@ describe("ROT-13 Service client", function() {
 
 		it("simulates hangs", async function() {
 			const rot13Client = Rot13Client.createNull([{ hang: true }]);
-			const responsePromise = rot13Client.transformAsync(IRRELEVANT_PORT, IRRELEVANT_TEXT);
-			await assert.promiseDoesNotResolveAsync(responsePromise);
+			const { transformPromise } = rot13Client.transform(IRRELEVANT_PORT, IRRELEVANT_TEXT);
+			await assert.promiseDoesNotResolveAsync(transformPromise);
 		});
 
 	});
@@ -155,7 +230,7 @@ function createClient({
 }
 
 async function transformAsync(rot13Client, port, text) {
-	return await rot13Client.transformAsync(port, text);
+	return await rot13Client.transform(port, text).transformPromise;
 }
 
 async function assertFailureAsync({
