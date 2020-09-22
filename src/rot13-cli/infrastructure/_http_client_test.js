@@ -4,6 +4,7 @@
 const assert = require("util/assert");
 const http = require("http");
 const HttpClient = require("./http_client");
+const testHelper = require("util/test_helper");
 
 const HOST = "localhost";
 const PORT = 5001;
