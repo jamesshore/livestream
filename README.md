@@ -3,7 +3,7 @@ James Shore Live
 
 This example code was used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/v2/projects/lunch-and-learn) series. See that link for for more information and an archive of past episodes.
 
-Use the tags in this repo to see the code for specific episodes. For example `2020-09-29` has the code for the beginning of the September 29th episode, and `2020-09-29-end` has the code for the end of the episode.
+Use the tags in this repo to see the code for specific episodes. For example, `2020-09-29` has the code for the beginning of the September 29th episode, and `2020-09-29-end` has the code for the end of the episode.
 
 
 Running the Code
