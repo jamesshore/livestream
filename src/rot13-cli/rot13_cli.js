@@ -4,9 +4,6 @@
 const CommandLine = require("infrastructure/command_line");
 const ensure = require("util/ensure");
 const Rot13Client = require("./infrastructure/rot13_client");
-const Clock = require("infrastructure/clock");
-
-const TIMEOUT_IN_MS = 5000;
 
 /** Overall command-line entry point */
 exports.runAsync = async function({
@@ -19,20 +16,13 @@ exports.runAsync = async function({
 	}]]);
 
 	const args = commandLine.args();
-	if (args.length !== 2) {
-		commandLine.writeStderr("Usage: run PORT TEXT\n");
+	if (args.length !== 1) {
+		commandLine.writeStderr("Usage: run TEXT\n");
 		return;
 	}
-	const port = parseInt(args[0], 10);
-	const text = args[1];
+	const text = args[0];
 
-	try {
-		const transformPromise = rot13Client.transformAsync(text);
-		const response = await transformPromise;
-		commandLine.writeStdout(response + "\n");
-	}
-	catch (err) {
-		commandLine.writeStderr("ROT-13 service failed:\n");
-		commandLine.writeStderr(err.message + "\n");
-	}
+	const transformPromise = rot13Client.transformAsync(text);
+	const response = await transformPromise;
+	commandLine.writeStdout(response + "\n");
 };
