@@ -184,21 +184,15 @@ describe("ROT-13 Service client", function() {
 			assert.equal(response, "Null Rot13Client response");
 		});
 
-		it("can configure multiple responses", async function() {
-			const rot13Client = Rot13Client.createNull([
-				{ response: "response 1" },
-				{ response: "response 2" },
-			]);
+		it("can configure response", async function() {
+			const rot13Client = Rot13Client.createNull({ response: "my response" });
 
-			const response1 = await transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT);
-			const response2 = await transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT);
-
-			assert.equal(response1, "response 1");
-			assert.equal(response2, "response 2");
+			const response = await transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT);
+			assert.equal(response, "my response");
 		});
 
 		it("can force an error", async function() {
-			const rot13Client = Rot13Client.createNull([{ error: "my error" }]);
+			const rot13Client = Rot13Client.createNull({ error: "my error" });
 			await assert.throwsAsync(
 				() => transformAsync(rot13Client, IRRELEVANT_PORT, IRRELEVANT_TEXT),
 				/my error/
@@ -206,7 +200,7 @@ describe("ROT-13 Service client", function() {
 		});
 
 		it("simulates hangs", async function() {
-			const rot13Client = Rot13Client.createNull([{ hang: true }]);
+			const rot13Client = Rot13Client.createNull({ hang: true });
 			const { transformPromise } = rot13Client.transform(IRRELEVANT_PORT, IRRELEVANT_TEXT);
 			await assert.promiseDoesNotResolveAsync(transformPromise);
 		});

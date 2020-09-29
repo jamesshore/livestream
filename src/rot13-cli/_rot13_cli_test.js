@@ -84,7 +84,7 @@ function run({ args, rot13Response, rot13Error, rot13Hang }) {
 	const stdout = commandLine.trackStdout();
 	const stderr = commandLine.trackStderr();
 
-	const rot13Client = Rot13Client.createNull([{ response: rot13Response, error: rot13Error, hang: rot13Hang }]);
+	const rot13Client = Rot13Client.createNull({ response: rot13Response, error: rot13Error, hang: rot13Hang });
 	const rot13Requests = rot13Client.trackRequests();
 
 	const clock = Clock.createNull();

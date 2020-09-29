@@ -20,10 +20,7 @@ module.exports = class Rot13Client {
 	}
 
 	static createNull(options) {
-		const httpResponses = nullHttpResponses(options);
-		return new Rot13Client(HttpClient.createNull({
-			"/rot13/transform": httpResponses,
-		}));
+		return new Rot13Client(nullHttpClient(options));
 	}
 
 	constructor(httpClient) {
@@ -100,9 +97,10 @@ Body: ${response.body}`
 }
 
 
-function nullHttpResponses(responses = [{}]) {
-	ensure.signature(arguments, [[ undefined, Array ]]);
-	return responses.map((response) => nullHttpResponse(response));
+function nullHttpClient(options) {
+	return HttpClient.createNull({
+		"/rot13/transform": [ nullHttpResponse(options) ],
+	});
 }
 
 function nullHttpResponse({
