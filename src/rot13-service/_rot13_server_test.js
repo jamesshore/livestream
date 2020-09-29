@@ -8,10 +8,18 @@ const HttpRequest = require("./infrastructure/http_request");
 const Server = require("./rot13_server");
 const rot13Router = require("./routing/rot13_router");
 const Clock = require("infrastructure/clock");
+const rot13 = require("./logic/rot13");
 
 const USAGE = "Usage: serve PORT\n";
 
 describe("ROT-13 Server", function() {
+
+	it("publishes function to transform text via ROT-13", async function() {
+		const expected = rot13.transform("my text");
+		const actual = await Server.transformAsync("my text");
+		assert.equal(actual, expected);
+	});
+
 
 	it("starts server", async function() {
 		const { stdout, httpServer } = await startServerAsync({ args: [ "5000" ]});

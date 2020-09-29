@@ -7,9 +7,15 @@ const HttpServer = require("./infrastructure/http_server");
 const Log = require("infrastructure/log");
 const rot13Router = require("./routing/rot13_router");
 const Clock = require("infrastructure/clock");
+const rot13 = require("./logic/rot13");
 
 /** Top-level 'traffic cop' for ROT-13 service */
 module.exports = class Rot13Server {
+
+	static async transformAsync(text) {
+		ensure.signature(arguments, [ String ]);
+		return await rot13.transform(text);
+	}
 
 	static create() {
 		ensure.signature(arguments, []);

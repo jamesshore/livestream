@@ -6,6 +6,7 @@ const type = require("util/type");
 const HttpClient = require("./http_client");
 const infrastructureHelper = require("util/infrastructure_helper");
 const EventEmitter = require("events");
+const Rot13Server = require("../../rot13-service/rot13_server");
 
 const HOST = "localhost";
 const RESPONSE_TYPE = { transformed: String };
@@ -16,19 +17,26 @@ module.exports = class Rot13Client {
 
 	static create() {
 		ensure.signature(arguments, []);
-		return new Rot13Client(HttpClient.create());
+		return new Rot13Client(Rot13Server, HttpClient.create());
 	}
 
 	static createNull(options) {
-		return new Rot13Client(nullHttpClient(options));
+		return new Rot13Client(nullRot13Server(options), nullHttpClient(options));
 	}
 
-	constructor(httpClient) {
+	constructor(rot13Server, httpClient) {
+		this._rot13Server = rot13Server;
 		this._httpClient = httpClient;
 		this._emitter = new EventEmitter();
 	}
 
-	transform(port, text) {
+	async transformAsync(text) {
+		ensure.signature(arguments, [ String ]);
+		this._emitter.emit(REQUEST_EVENT, { text });
+		return await this._rot13Server.transformAsync(text);
+	}
+
+	oldTransform(port, text) {
 		ensure.signature(arguments, [ Number, String ]);
 
 		const requestData = { port, text };
@@ -94,6 +102,24 @@ Status: ${response.status}
 Headers: ${JSON.stringify(response.headers)}
 Body: ${response.body}`
 	);
+}
+
+
+function nullRot13Server({
+	response = "Null Rot13Client response",
+	error
+} = {}) {
+	ensure.signature(arguments, [[ undefined, {
+		response: [ undefined, String ],
+		error: [ undefined, String ],
+	}]]);
+
+	return {
+		transformAsync() {
+			if (error !== undefined) throw new Error(error);
+			return response;
+		}
+	};
 }
 
 
