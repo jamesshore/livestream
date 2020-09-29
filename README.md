@@ -4,28 +4,29 @@ James Shore Live
 This example code is used in my [Tuesday Lunch & Learn](https://www.jamesshore.com/v2/projects/lunch-and-learn) series. See that link for for more information and an archive of past episodes, or [watch live on Twitch](https://www.twitch.tv/jamesshorelive).
 
 
-This Week's Challenge (22 Sep 2020): Request Cancellation
+This Week's Challenge (29 Sep 2020): Microservice Architecture Without Microservice Overhead
 ---------------------
 
 This repo contains a command-line client/server application. The command-line application calls a small microservice that encodes text using ROT-13 encoding. (You can find the details below, under "Running the Code" and "How the Microservice Works.")
 
-The server-side code is programmed to randomly delay some requests by 30 seconds. The client-side command-line interface (CLI) times out after five seconds, but it doesn't cancel the request, so the CLI doesn't exit until the full 30 seconds has elapsed and the server responds.
+The advantage of microservice architecture in this case is that it enforces a strong boundary between the command-line code and the ROT-13 encoding code. Theoretically, they could be worked on by separate teams without issue.
 
-Your challenge this week is to update the CLI to cancel the network request when it times out, so that the CLI exits after five seconds when the server is slow to respond. (The code will take five seconds to exit even if the server responds immediately; this is due to the way JavaScript timers work, and you don't have to solve that problem this week.)
+However, the microservice architecture also adds a lot of complexity in the form of extra network and error handling code.
 
-The focus of this week's challenge is on the design of the cancellation mechanism. Cancelling a request in Node is fairly straightforward (see the hints below); the challenge is coming up with a clean design.
+Your challenge is to retain the strong separation between client and server code while removing the extra complexity. Specifically:
 
-As always, make sure that your code is well tested.
+* Cut the code size in at least half
+* Cut the number of tests in at least half
+* Improve the run-time performance
+* Improve the test performance
+
+The code is very well tested; as you refactor, ensure that it remains so.
 
 Hints:
 
 * Make sure you're on Node.js version 14 or higher. Previous versions fail the test suite due to insufficient locale support.
 
-* The command-line application is implemented in `src/rot13-cli/rot13_cli.js` and `_rot13_cli_test.js`. It depends on `src/rot13-cli/infrastructure/rot13_client.js` to parse the microservice response, and that in turn depends on `src/rot13-cli/infrastructure/http_client.js` to perform the HTTP request.
-
-* To cancel a Node.js request, call `request.destroy(new Error("my error message"));`. That line of code belongs in the `http_client.js` class.
-
-* The assertion library used by the tests, `/src/node_modules/util/assert.js`, is a thin wrapper over [Chai](https://www.chaijs.com/api/assert/), a JavaScript assertion library. It has a few extra assertions that you might find useful, such as `assert.throwsAsync()`, which let you check if an async function throws an exception.
+* The client code is in `src/rot13-cli` and the server code is in `src/rot13-service`. They have shared code in `src/node_modules` (not to be confused with the top-level `node_modules`, which is for third-party libraries.)
 
 
 The Thinking Framework
@@ -33,74 +34,19 @@ The Thinking Framework
 
 (Previous episodes may be helpful. You can find them [here](https://www.jamesshore.com/v2/projects/lunch-and-learn).)
 
-This week's challenge is a design challenge. The implementation for cancellation is clear (use `request.destroy()` as described above), but it's not clear how to do that *cleanly.*
+The secret to this week's challenge is that microservice architecture is both a design technique and a protocol choice. To solve it, you need to keep the design technique while replacing the protocol. Specifically, keep the isolation between client and server, but replace the HTTP network calls with direct function calls.
 
-When faced with a thorny design problem, there are two approaches to use, and it's worth using both of them:
+To keep the isolation, you can use a technique I'm calling "microliths."
 
-1. How have other people solved this problem? Research the problem on the web.
+A microlith is a microservice in a monolith. You design a cluster of microliths the same way you design a cluster of microservices. But when you implement it, you use function calls rather than network calls.
 
-2. Ignoring implementation, what's a clean solution to this problem? Use Programming By Intention to prototype an API.
+For the provider, instead of serving the API over HTTP, provide a top-level module with functions in the place of endpoints.
 
-"Programming By Intention" means writing high-level code as if all the low-level code you need already exists. Just imagine what functions or methods would make your life easy, and write your code to use them. It's a good way to design an easy-to-use API.
+For the clients, continue to use [Infrastructure Wrappers](https://www.jamesshore.com/v2/projects/lunch-and-learn/application-infrastructure), but have them call the provider's functions rather than making HTTP requests.
 
-It's a good idea to use both techniques because, although your research will generally help you understand the scope of the problem, the generic solutions available online are often more complicated than you need. You might be able to come up with a simpler design that fits the narrow parameters of the specific problem you're solving. In design, simpler is almost always better—assuming the simpler solution actually works!—because lower complexity means easier maintenance and fewer bugs.
+The end result is much less complexity while still having strong isolation between components. You can even use static code analysis (linting) to enforce that nobody calls functions they're not supposed to. Because the call is abstracted behind an Infrastructure Wrapper, it's easy to refactor from microlith to microservice, and back, as needed.
 
-In the case of this week's challenge, a web search will lead you to the idea of "cancellation tokens." In .NET, you use cancellation tokens by instantiating a `CancellationTokenSource` object. Then you pass in `CancellationTokenSource.Token` to the things that you want to cancel, and call `CancellationTokenSource.Cancel()` to cancel them.
-
-The code currently looks like this:
-
-```javascript
-const response = await Promise.race([
-	rot13Client.transformAsync(port, text),
-	timeoutAsync(clock),
-]);
-commandLine.writeStdout(response + "\n");
-
-async function timeoutAsync(clock) {
-	await clock.waitAsync(TIMEOUT_IN_MS);
-	throw new Error("Service timed out.");
-}
-```
-
-With the cancellation token idea, the code would look like this:
-
-```javascript
-const cancellationSource = new CancellationTokenSource()
-const response = await Promise.race([
-	rot13Client.transformAsync(port, text, cancellationSource.token),
-	timeoutAsync(clock, cancellationSource),
-]);
-commandLine.writeStdout(response + "\n");
-
-async function timeoutAsync(clock, cancellationSource) {
-	await clock.waitAsync(TIMEOUT_IN_MS);
-	cancellationSource.cancel();
-	throw new Error("Service timed out.");
-}
-```
-
-Cancellation tokens are a well-known idea, and would solve the problem. But they require additional scaffolding (the `CancellationSource` class and everything to make it work) and they're indirect (the connection between the call to cancel() and the thing it cancels is implied, not explicit). Is there a simpler idea that's specific to our needs?
-
-This is where Programming By Intention comes in. Cancellation tokens assume a strongly object-oriented system, but JavaScript is a multi-paradigm language. Could a more functional approach work better? What if `transformAsync` returned a function that could be used to cancel the request?
-
-```javascript
-const { transformPromise, cancelFn } = rot13Client.transform(port, text);
-const response = await Promise.race([
-	transformPromise,
-	timeoutAsync(clock, cancelFn),
-]);
-commandLine.writeStdout(response + "\n");
-
-async function timeoutAsync(clock, cancelFn) {
-	await clock.waitAsync(TIMEOUT_IN_MS);
-	cancelFn();
-	throw new Error("Service timed out.");
-}
-```
-
-At this point, weigh the pros and cons of each approach (and try to come up with something better than both), then choose one. In this case, neither option is clearly better than the other. The functional approach is more explicit, but has some downsides, too. The cancellation token is well-known and is less likely to have hidden flaws, but has more moving parts.
-
-Tune in on September 22nd at noon Pacific to see how I apply these ideas, including my implementation of the functional cancellation approach. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 23rd, a video with my solution will be archived on that page.
+Tune in on September 29th at noon Pacific to see how I apply these ideas. For details, go to the [Lunch & Learn home page](https://www.jamesshore.com/v2/projects/lunch-and-learn). Starting September 30th, a video with my solution will be archived on that page.
 
 
 Running the Code
