@@ -16,10 +16,10 @@ describe.only("Comparison between test types for 'Usage' test case", function() 
 	 * speed: 0.00093ms (1,075,268 tests / sec)
 	 * error message:
 	 *   AssertionError: expected 'xxx' to equal 'Usage: run text_to_transform\n'
-   *   + expected - actual
+	 *   + expected - actual
 	 *
-   *   -xxx
-   *   +Usage: run text_to_transform
+	 *   -xxx
+	 *   +Usage: run text_to_transform
 	 */
 
 	it("NULLABLE INFRASTRUCTURE - writes usage to command-line when no argument provided", time("nullable", 1000000, function() {
